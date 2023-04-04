@@ -27,15 +27,15 @@ class MainActivity : AppCompatActivity() {
     var textViewDescription: TextView? = null
     var buttonFetch: Button? = null
     var imageView: ImageView? = null
-    val viewModel: MainActivityViewModel by viewModels()
+    val movieViewModel: MovieViewModel by viewModels()
+    val popularViewModel: PopularViewModel by viewModels()
 
-    val baseUrl: String = "https://api.themoviedb.org/3/movie/76600?api_key=7754ef3c3751d04070c226b198665358&language=en-US"
+    val baseUrl: String = "https://api.themoviedb.org/3/movie/popular?api_key=7754ef3c3751d04070c226b198665358&language=en-US"
     val imageUrl = "https://image.tmdb.org/t/p/w500/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         imageView = findViewById(R.id.imageview)
         textViewTitle = findViewById(R.id.textview_title)
@@ -47,22 +47,19 @@ class MainActivity : AppCompatActivity() {
             fetch(baseUrl)
         })
 
-        //observeViewModel()
-        viewModel.original_title.observe(this, Observer {
-            textViewTitle?.text = it
-        })
-        viewModel.overview.observe(this, Observer {
-            textViewDescription?.text = it
-        })
-
-        viewModel.poster_path.observe(this,Observer{
-            Glide.with(this)
-                .load(imageUrl + it)
-                .into(imageView!!)
-        })
-
+        observeViewModel()
     }
 
+    private fun observeViewModel(){
+        //observeViewModel()
+        popularViewModel.results.observe(this, Observer {
+            var str: String = ""
+            for (i in it){
+                str+=i.original_title + " "
+            }
+            textViewTitle?.text = str
+        })
+    }
 
     private fun getRequest(sUrl: String): String? {
         var result: String? = null
@@ -82,22 +79,21 @@ class MainActivity : AppCompatActivity() {
         return result
     }
 
-    private fun fetch(sUrl: String): Movie? {
+    private fun fetch(sUrl: String): Popular? {
 
-        var movie: Movie? = null
+        var popular: Popular? = null
 
         lifecycleScope.launch(Dispatchers.IO) {
             val result = getRequest(sUrl)
             if (result != null) {
                 try {
                     // Parse result string JSON to data class
-                    movie = Klaxon().parse<Movie>(result)
+                    popular = Klaxon().parse<Popular>(result)
 
                     withContext(Dispatchers.Main) {
                         // Update view model
-                        viewModel.original_title.value = movie?.original_title
-                        viewModel.overview.value = movie?.overview
-                        viewModel.poster_path.value =movie?.poster_path
+                        popularViewModel.page.value = popular?.page
+                        popularViewModel.results.value = popular?.results
                     }
                 }
                 catch(err:Error) {
@@ -108,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 print("Error: Get request returned no response")
             }
         }
-        return movie
+        return popular
     }
 
 
