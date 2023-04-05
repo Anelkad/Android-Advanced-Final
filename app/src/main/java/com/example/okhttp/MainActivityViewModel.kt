@@ -9,6 +9,7 @@ class PopularViewModel : ViewModel() {
 }
 
 class MovieViewModel : ViewModel() {
+    val id = MutableLiveData<Int>()
     val original_title = MutableLiveData<String>()
     val overview = MutableLiveData<String>()
     val poster_path = MutableLiveData<String>()

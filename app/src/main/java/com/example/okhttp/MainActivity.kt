@@ -1,85 +1,62 @@
 package com.example.okhttp
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.beust.klaxon.Klaxon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.net.URL
-import com.beust.klaxon.Klaxon
-import com.bumptech.glide.Glide
-import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity() {
-    // Create OkHttp Client
-    var client: OkHttpClient = OkHttpClient();
 
-    var textViewTitle: TextView? = null
-    var textViewDescription: TextView? = null
-    var buttonFetch: Button? = null
-    var imageView: ImageView? = null
-    val movieViewModel: MovieViewModel by viewModels()
+class MainActivity : BaseActivity() {
+
+    var listView: ListView? = null
     val popularViewModel: PopularViewModel by viewModels()
 
     val baseUrl: String = "https://api.themoviedb.org/3/movie/popular?api_key=7754ef3c3751d04070c226b198665358&language=en-US"
-    val imageUrl = "https://image.tmdb.org/t/p/w500/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        imageView = findViewById(R.id.imageview)
-        textViewTitle = findViewById(R.id.textview_title)
-        textViewDescription = findViewById(R.id.textview_description)
-        buttonFetch = findViewById(R.id.button_fetch)
+        listView = findViewById(R.id.listView)
 
-        buttonFetch?.setOnClickListener(View.OnClickListener {
-            // Launch get request
-            fetch(baseUrl)
-        })
+        // Launch get request
+        fetchList(baseUrl)
 
         observeViewModel()
     }
 
     private fun observeViewModel(){
         //observeViewModel()
+        listView?.isClickable = true
+
         popularViewModel.results.observe(this, Observer {
-            var str: String = ""
-            for (i in it){
-                str+=i.original_title + " "
+
+            var arrayAdapter = MovieAdapter(this, it)
+                listView?.adapter = arrayAdapter
+
+            listView?.setOnItemClickListener { parent, view, position, id ->
+                val id = it[position].id
+
+                val intent = Intent(this, MovieActivity::class.java)
+                intent.putExtra("id",id)
+                startActivity(intent)
             }
-            textViewTitle?.text = str
         })
     }
 
-    private fun getRequest(sUrl: String): String? {
-        var result: String? = null
-        try {
-            // Create URL
-            val url = URL(sUrl)
-            // Build request
-            val request = Request.Builder().url(url).build()
-            // Execute request
-            val response = client.newCall(request).execute()
-            result = response.body?.string()
-            Log.d("qwerty: ", result!!)
-        }
-        catch(err:Error) {
-            print("Error when executing get request: "+err.localizedMessage)
-        }
-        return result
-    }
-
-    private fun fetch(sUrl: String): Popular? {
+    private fun fetchList(sUrl: String): Popular? {
 
         var popular: Popular? = null
 
