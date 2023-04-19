@@ -2,28 +2,23 @@ package com.example.okhttp
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.beust.klaxon.Klaxon
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.net.URL
 
 
 class MainActivity : BaseActivity() {
 
     var listView: ListView? = null
-    val popularViewModel: PopularViewModel by viewModels()
-
-    val baseUrl: String = "https://api.themoviedb.org/3/movie/popular?api_key=7754ef3c3751d04070c226b198665358&language=en-US"
+    val movieListViewModel: MovieListViewModel by viewModels()
+    val apiKey = "7754ef3c3751d04070c226b198665358"
+    val baseUrl: String = "https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=16,18&language=ru-RU"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,15 +28,14 @@ class MainActivity : BaseActivity() {
 
         // Launch get request
         fetchList(baseUrl)
-
         observeViewModel()
     }
 
     private fun observeViewModel(){
         //observeViewModel()
         listView?.isClickable = true
+        movieListViewModel.results.observe(this, Observer {
 
-        popularViewModel.results.observe(this, Observer {
 
             var arrayAdapter = MovieAdapter(this, it)
                 listView?.adapter = arrayAdapter
@@ -56,21 +50,24 @@ class MainActivity : BaseActivity() {
         })
     }
 
-    private fun fetchList(sUrl: String): Popular? {
+    private fun fetchList(sUrl: String): MovieList? {
 
-        var popular: Popular? = null
+        var movieList: MovieList? = null
+        showWaitDialog()
 
+        //это надо пересестить в MainActivityView Model через ViewModelScope
         lifecycleScope.launch(Dispatchers.IO) {
             val result = getRequest(sUrl)
             if (result != null) {
                 try {
                     // Parse result string JSON to data class
-                    popular = Klaxon().parse<Popular>(result)
+                    movieList = Klaxon().parse<MovieList>(result)
 
                     withContext(Dispatchers.Main) {
                         // Update view model
-                        popularViewModel.page.value = popular?.page
-                        popularViewModel.results.value = popular?.results
+                        movieListViewModel.page.value = movieList?.page
+                        movieListViewModel.results.value = movieList?.results
+                        hideWaitDialog()
                     }
                 }
                 catch(err:Error) {
@@ -81,7 +78,7 @@ class MainActivity : BaseActivity() {
                 print("Error: Get request returned no response")
             }
         }
-        return popular
+        return movieList
     }
 
 

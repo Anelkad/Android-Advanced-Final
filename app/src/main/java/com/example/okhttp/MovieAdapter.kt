@@ -11,12 +11,12 @@ import com.bumptech.glide.Glide
 
 class MovieAdapter(
     private val context: Activity,
-    private val arrayList: List<Movie>):
-    ArrayAdapter<Movie>(context,R.layout.list_item, arrayList) {
+    private val arrayList: List<MovieItem>):
+    ArrayAdapter<MovieItem>(context,R.layout.list_item, arrayList) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
-        val imageUrl = "https://image.tmdb.org/t/p/w500/"
+        val imageUrl = "https://image.tmdb.org/t/p/w500"
 
         val inflater : LayoutInflater = LayoutInflater.from(context)
         val view: View = inflater.inflate(R.layout.list_item, null)
@@ -25,11 +25,17 @@ class MovieAdapter(
         val title = view.findViewById<TextView>(R.id.title)
         val description = view.findViewById<TextView>(R.id.description)
 
-        title.text = arrayList[position].original_title
-        description.text = arrayList[position].overview
+        title.text = arrayList[position].title
+        description.text = "Рейтинг: ${arrayList[position].vote_average.toString()}\n" +
+                "Премьера: ${arrayList[position].release_date}"
         val imagePath = arrayList[position].poster_path
 
-        Glide.with(context).load(imageUrl+imagePath).into(imageView);
+        Glide
+            .with(context)
+            .load(imageUrl+imagePath)
+            .placeholder(R.drawable.progress_animation)
+            .error(R.drawable.baseline_image_24)
+            .into(imageView);
 
         return view
     }
