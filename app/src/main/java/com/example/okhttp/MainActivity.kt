@@ -18,7 +18,8 @@ class MainActivity : BaseActivity() {
     var listView: ListView? = null
     val movieListViewModel: MovieListViewModel by viewModels()
     val apiKey = "7754ef3c3751d04070c226b198665358"
-    val baseUrl: String = "https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=16,18&language=ru-RU"
+    val language = "ru-RU"
+    val baseUrl: String = "https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=16,18&language=${language}"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +56,7 @@ class MainActivity : BaseActivity() {
         var movieList: MovieList? = null
         showWaitDialog()
 
-        //это надо пересестить в MainActivityView Model через ViewModelScope
+        //это надо переместить в MainActivityView Model через ViewModelScope
         lifecycleScope.launch(Dispatchers.IO) {
             val result = getRequest(sUrl)
             if (result != null) {

@@ -18,6 +18,7 @@ class MovieActivity : BaseActivity() {
     val movieViewModel: MovieViewModel by viewModels()
     val imageUrl = "https://image.tmdb.org/t/p/original"
     val apiKey = "7754ef3c3751d04070c226b198665358"
+    val language = "ru-RU"
 
 
     var textViewTitle: TextView? = null
@@ -43,7 +44,7 @@ class MovieActivity : BaseActivity() {
         release_date = findViewById(R.id.release_date)
 
         id = intent.getIntExtra("id", 0)
-        val baseUrl = "https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=ru-RU"
+        val baseUrl = "https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=${language}"
 
         fetchMovie(baseUrl)
         observeViewModel()
@@ -69,7 +70,7 @@ class MovieActivity : BaseActivity() {
         })
 
         movieViewModel.runtime.observe(this, Observer {
-            runtime?.text = "${it/60} час ${it%60} минут"
+            runtime?.text = "${it/60} ч ${it%60} мин"
         })
 
         movieViewModel.revenue.observe(this, Observer {
