@@ -5,13 +5,7 @@ import android.os.Bundle
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import com.beust.klaxon.Klaxon
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-
+import com.example.okhttp.adapters.MovieAdapter
 
 class MainActivity : BaseActivity() {
 

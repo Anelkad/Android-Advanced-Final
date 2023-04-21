@@ -1,4 +1,4 @@
-package com.example.okhttp
+package com.example.okhttp.models
 
 class MovieItem(
     val id: Int,

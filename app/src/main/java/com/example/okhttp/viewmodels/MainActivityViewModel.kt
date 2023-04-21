@@ -3,9 +3,11 @@ package com.example.okhttp
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.beust.klaxon.Klaxon
+import com.example.okhttp.models.Movie
+import com.example.okhttp.models.MovieItem
+import com.example.okhttp.models.MovieList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -15,7 +17,6 @@ import java.net.URL
 
 fun getRequest(sUrl: String): String? {
 
-    // Create OkHttp Client
     var client = OkHttpClient();
 
     var result: String? = null
@@ -35,6 +36,7 @@ fun getRequest(sUrl: String): String? {
 class MovieListViewModel : ViewModel() {
     val page = MutableLiveData<Int>()
     val results = MutableLiveData<List<MovieItem>>()
+    val total_pages = MutableLiveData<Int>()
 
     fun fetchList(sUrl: String): MovieList? {
 

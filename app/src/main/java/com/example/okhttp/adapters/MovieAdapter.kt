@@ -1,4 +1,4 @@
-package com.example.okhttp
+package com.example.okhttp.adapters
 
 import android.app.Activity
 import android.view.LayoutInflater
@@ -8,11 +8,14 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.example.okhttp.R
+import com.example.okhttp.models.MovieItem
 
 class MovieAdapter(
     private val context: Activity,
-    private val arrayList: List<MovieItem>):
-    ArrayAdapter<MovieItem>(context,R.layout.list_item, arrayList) {
+    private val arrayList: List<MovieItem>
+    ):
+    ArrayAdapter<MovieItem>(context, R.layout.list_item, arrayList) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 

@@ -5,12 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import com.beust.klaxon.Klaxon
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MovieActivity : BaseActivity() {
 
