@@ -28,18 +28,20 @@ class MainActivity : BaseActivity() {
         listView = findViewById(R.id.listView)
 
         // Launch get request
-        fetchList(baseUrl)
+        movieListViewModel.fetchList(baseUrl)
         observeViewModel()
     }
 
     private fun observeViewModel(){
+        showWaitDialog()
         //observeViewModel()
         listView?.isClickable = true
         movieListViewModel.results.observe(this, Observer {
 
-
             var arrayAdapter = MovieAdapter(this, it)
                 listView?.adapter = arrayAdapter
+
+            hideWaitDialog()
 
             listView?.setOnItemClickListener { parent, view, position, id ->
                 val id = it[position].id
@@ -50,37 +52,5 @@ class MainActivity : BaseActivity() {
             }
         })
     }
-
-    private fun fetchList(sUrl: String): MovieList? {
-
-        var movieList: MovieList? = null
-        showWaitDialog()
-
-        //это надо переместить в MainActivityView Model через ViewModelScope
-        lifecycleScope.launch(Dispatchers.IO) {
-            val result = getRequest(sUrl)
-            if (result != null) {
-                try {
-                    // Parse result string JSON to data class
-                    movieList = Klaxon().parse<MovieList>(result)
-
-                    withContext(Dispatchers.Main) {
-                        // Update view model
-                        movieListViewModel.page.value = movieList?.page
-                        movieListViewModel.results.value = movieList?.results
-                        hideWaitDialog()
-                    }
-                }
-                catch(err:Error) {
-                    print("Error when parsing JSON: "+err.localizedMessage)
-                }
-            }
-            else {
-                print("Error: Get request returned no response")
-            }
-        }
-        return movieList
-    }
-
 
 }

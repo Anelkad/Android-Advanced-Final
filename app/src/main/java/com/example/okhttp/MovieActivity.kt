@@ -46,15 +46,17 @@ class MovieActivity : BaseActivity() {
         id = intent.getIntExtra("id", 0)
         val baseUrl = "https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=${language}"
 
-        fetchMovie(baseUrl)
+        movieViewModel.fetchMovie(baseUrl)
         observeViewModel()
 
     }
 
     private fun observeViewModel(){
+        showWaitDialog()
         //observeViewModel()
         movieViewModel.title.observe(this, Observer {
             textViewTitle?.text = it
+            hideWaitDialog()
         })
 
         movieViewModel.overview.observe(this, Observer {
@@ -94,43 +96,6 @@ class MovieActivity : BaseActivity() {
                 .error(R.drawable.baseline_image_24)
                 .into(imageView2!!);
         })
-
-    }
-
-    private fun fetchMovie(sUrl: String): Movie? {
-        var movie: Movie? = null
-        showWaitDialog()
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            val result = getRequest(sUrl)
-            if (result != null) {
-                try {
-                    // Parse result string JSON to data class
-                    movie = Klaxon().parse<Movie>(result)
-
-                    withContext(Dispatchers.Main) {
-                        // Update view model
-                        movieViewModel.title.value = movie?.title
-                        movieViewModel.overview.value = movie?.overview
-                        movieViewModel.release_date.value = movie?.release_date
-                        movieViewModel.vote_average.value = movie?.vote_average
-                        movieViewModel.poster_path.value = movie?.poster_path
-                        movieViewModel.backdrop_path.value = movie?.backdrop_path
-                        movieViewModel.tagline.value = movie?.tagline
-                        movieViewModel.runtime.value = movie?.runtime
-                        movieViewModel.revenue.value = movie?.revenue
-                        hideWaitDialog()
-                    }
-                }
-                catch(err:Error) {
-                    print("Error when parsing JSON: "+err.localizedMessage)
-                }
-            }
-            else {
-                print("Error: Get request returned no response")
-            }
-        }
-        return movie
     }
 
 
