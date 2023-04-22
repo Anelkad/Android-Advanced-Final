@@ -1,7 +1,7 @@
 package com.example.okhttp.models
 
-class MovieList(
+class MoviePage(
     val page: Int,
-    val results: List<MovieItem>,
+    val results: ArrayList<MovieItem>,
     val total_pages: Int
 )

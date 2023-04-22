@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.beust.klaxon.Klaxon
 import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieItem
-import com.example.okhttp.models.MovieList
+import com.example.okhttp.models.MoviePage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ fun getRequest(sUrl: String): String? {
 
         val response = client.newCall(request).execute()
         result = response.body?.string()
-        Log.d("qwerty: ", result!!)
+        //Log.d("qwerty: ", result!!)
     }
     catch(err:Error) {
         print("Error when executing get request: "+err.localizedMessage)
@@ -34,50 +34,51 @@ fun getRequest(sUrl: String): String? {
     return result
 }
 class MovieListViewModel : ViewModel() {
-    val page = MutableLiveData<Int>()
-    val results = MutableLiveData<List<MovieItem>>()
-    val total_pages = MutableLiveData<Int>()
+    var page = MutableLiveData<Int>()
+    var results = MutableLiveData<ArrayList<MovieItem>>()
+    var total_pages = MutableLiveData<Int>()
 
-    fun fetchList(sUrl: String): MovieList? {
 
-        var movieList: MovieList? = null
+    fun fetchList(sUrl: String): MoviePage? {
+
+        var moviePage: MoviePage? = null
 
         viewModelScope.launch(Dispatchers.IO) {
             val result = getRequest(sUrl)
             if (result != null) {
                 try {
                     // Parse result string JSON to data class
-                    movieList = Klaxon().parse<MovieList>(result)
+                    moviePage = Klaxon().parse<MoviePage>(result)
 
                     withContext(Dispatchers.Main) {
                         // Update view model
-                        page.value = movieList?.page
-                        results.value = movieList?.results
+                        page.value = moviePage?.page
+                        results.value = moviePage?.results
+                        total_pages.value = moviePage?.total_pages
+                        Log.d("page: ", moviePage?.page.toString())
                     }
+                } catch (err: Error) {
+                    print("Error when parsing JSON: " + err.localizedMessage)
                 }
-                catch(err:Error) {
-                    print("Error when parsing JSON: "+err.localizedMessage)
-                }
-            }
-            else {
+            } else {
                 print("Error: Get request returned no response")
             }
         }
-        return movieList
+        return moviePage
     }
 }
 
 class MovieViewModel : ViewModel() {
-    val id = MutableLiveData<Int>()
-    val title = MutableLiveData<String>()
-    val overview = MutableLiveData<String>()
-    val release_date = MutableLiveData<String>()
-    val poster_path = MutableLiveData<String>()
-    val backdrop_path = MutableLiveData<String>()
-    val tagline = MutableLiveData<String>()
-    val vote_average = MutableLiveData<Float>()
-    val runtime = MutableLiveData<Int>()
-    val revenue = MutableLiveData<Int>()
+    var id = MutableLiveData<Int>()
+    var title = MutableLiveData<String>()
+    var overview = MutableLiveData<String>()
+    var release_date = MutableLiveData<String>()
+    var poster_path = MutableLiveData<String>()
+    var backdrop_path = MutableLiveData<String>()
+    var tagline = MutableLiveData<String>()
+    var vote_average = MutableLiveData<Float>()
+    var runtime = MutableLiveData<Int>()
+    var revenue = MutableLiveData<Int>()
     fun fetchMovie(sUrl: String): Movie? {
         var movie: Movie? = null
 
@@ -90,6 +91,7 @@ class MovieViewModel : ViewModel() {
 
                     withContext(Dispatchers.Main) {
                         // Update view model
+                        id.value = movie?.id
                         title.value = movie?.title
                         overview.value = movie?.overview
                         release_date.value = movie?.release_date

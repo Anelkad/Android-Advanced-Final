@@ -1,45 +1,71 @@
 package com.example.okhttp.adapters
 
-import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.okhttp.MovieActivity
 import com.example.okhttp.R
+import com.example.okhttp.databinding.ListItemBinding
 import com.example.okhttp.models.MovieItem
 
-class MovieAdapter(
-    private val context: Activity,
-    private val arrayList: List<MovieItem>
-    ):
-    ArrayAdapter<MovieItem>(context, R.layout.list_item, arrayList) {
+class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+    lateinit var binding: ListItemBinding
+    val imageUrl = "https://image.tmdb.org/t/p/w500"
 
-        val imageUrl = "https://image.tmdb.org/t/p/w500"
+    var context: Context
+    var movieList: ArrayList<MovieItem>
 
-        val inflater : LayoutInflater = LayoutInflater.from(context)
-        val view: View = inflater.inflate(R.layout.list_item, null)
+    constructor(context: Context, movieList: ArrayList<MovieItem>) : super() {
+        this.context = context
+        this.movieList = movieList
+    }
 
-        val imageView = view.findViewById<ImageView>(R.id.imageView)
-        val title = view.findViewById<TextView>(R.id.title)
-        val description = view.findViewById<TextView>(R.id.description)
+    inner class HolderMovie(itemView: View): RecyclerView.ViewHolder(itemView){
+        val title = binding.title
+        val description = binding.description
+        val image = binding.imageView
+        val itemView = binding.itemView
+    }
 
-        title.text = arrayList[position].title
-        description.text = "Рейтинг: ${arrayList[position].vote_average.toString()}\n" +
-                "Премьера: ${arrayList[position].release_date}"
-        val imagePath = arrayList[position].poster_path
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderMovie {
+        binding = ListItemBinding.inflate(LayoutInflater.from(context),parent,false)
+        return HolderMovie(binding.root)
+    }
+
+    override fun onBindViewHolder(holder: MovieAdapter.HolderMovie, position: Int) {
+        val movie = movieList[position]
+        val id = movie.id
+        val title = movie.title
+        val vote_average = movie.vote_average
+        val release_date = movie.release_date
+        val image = movie.poster_path
+
+        holder.title.text = title
+        holder.description.text = "Рейтинг: ${vote_average.toString()}\nПремьера: ${release_date}"
 
         Glide
             .with(context)
-            .load(imageUrl+imagePath)
+            .load(imageUrl+image)
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
-            .into(imageView);
+            .into(holder.image)
 
-        return view
+
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context,MovieActivity::class.java)
+            intent.putExtra("id",id)
+            context.startActivity(intent)
+        }
     }
+
+    override fun getItemCount(): Int {
+        return movieList.size
+    }
+
+
 }
