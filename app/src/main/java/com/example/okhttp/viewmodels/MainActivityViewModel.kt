@@ -1,5 +1,6 @@
 package com.example.okhttp
 
+import BASE_URL
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -38,10 +39,13 @@ class MovieListViewModel : ViewModel() {
     var results = MutableLiveData<ArrayList<MovieItem>>()
     var total_pages = MutableLiveData<Int>()
 
+    val loading = MutableLiveData<Boolean>()
 
-    fun fetchList(sUrl: String): MoviePage? {
+
+    fun fetchList(sUrl: String){
 
         var moviePage: MoviePage? = null
+        loading.postValue(true)
 
         viewModelScope.launch(Dispatchers.IO) {
             val result = getRequest(sUrl)
@@ -63,8 +67,8 @@ class MovieListViewModel : ViewModel() {
             } else {
                 print("Error: Get request returned no response")
             }
+        loading.postValue(false)
         }
-        return moviePage
     }
 }
 
