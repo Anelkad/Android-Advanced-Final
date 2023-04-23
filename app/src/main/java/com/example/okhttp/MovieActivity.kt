@@ -1,95 +1,85 @@
 package com.example.okhttp
 
+import API_KEY
+import IMAGEURL
+import LANGUAGE
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.example.okhttp.databinding.ActivityMovieBinding
 
-class MovieActivity : BaseActivity() {
+class MovieActivity : AppCompatActivity()  {
 
     var id: Int = 0
     val movieViewModel: MovieViewModel by viewModels()
-    val imageUrl = "https://image.tmdb.org/t/p/original"
-    val apiKey = "7754ef3c3751d04070c226b198665358"
-    val language = "ru-RU"
 
-
-    var textViewTitle: TextView? = null
-    var textViewDescription: TextView? = null
-    var tagline: TextView? = null
-    var release_date: TextView? = null
-    var runtime: TextView? = null
-    var revenue: TextView? = null
-    var imageView: ImageView? = null
-    var imageView2: ImageView? = null
+    lateinit var binding: ActivityMovieBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_movie)
+        binding = ActivityMovieBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        imageView = findViewById(R.id.imageview)
-        imageView2 = findViewById(R.id.imageview2)
-        textViewTitle = findViewById(R.id.textview_title)
-        textViewDescription = findViewById(R.id.textview_description)
-        tagline = findViewById(R.id.tagline)
-        runtime = findViewById(R.id.runtime)
-        revenue = findViewById(R.id.revenue)
-        release_date = findViewById(R.id.release_date)
-
-        id = intent.getIntExtra("id", 0)
-        val baseUrl = "https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=${language}"
-
-        movieViewModel.fetchMovie(baseUrl)
+        getMovieDetails()
         observeViewModel()
 
     }
 
+    private fun getMovieDetails(){
+        id = intent.getIntExtra("id", 0)
+
+        val baseUrl = "https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=${LANGUAGE}"
+
+        movieViewModel.fetchMovie(baseUrl)
+    }
+
     private fun observeViewModel(){
-        showWaitDialog()
         //observeViewModel()
         movieViewModel.title.observe(this, Observer {
-            textViewTitle?.text = it
-            hideWaitDialog()
+            binding.prgBarMovies.isVisible = true
+            binding.textviewTitle.text = it
+            binding.prgBarMovies.isVisible = false
         })
 
         movieViewModel.overview.observe(this, Observer {
-            textViewDescription?.text = it
+            binding.textviewDescription.text = it
         })
 
         movieViewModel.tagline.observe(this, Observer {
-            if(it.isNotEmpty()) tagline?.text = "\"${it}\""
+            if(it.isNotEmpty()) binding.tagline.text = "\"${it}\""
         })
 
         movieViewModel.release_date.observe(this, Observer {
-            release_date?.text = "Премьера: ${it}"
+            binding.releaseDate.text = "Премьера: ${it}"
         })
 
         movieViewModel.runtime.observe(this, Observer {
-            runtime?.text = "${it/60} ч ${it%60} мин"
+            binding.runtime.text = "${it/60} ч ${it%60} мин"
         })
 
         movieViewModel.revenue.observe(this, Observer {
-            if (it>0) revenue?.text = "Кассовые сборы: ${it/1000000} млн $"
+            if (it>0) binding.revenue.text = "Кассовые сборы: ${it/1000000} млн $"
         })
 
         movieViewModel.poster_path.observe(this, Observer {
             Glide
                 .with(this)
-                .load(imageUrl+it)
+                .load(IMAGEURL+it)
                 .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.baseline_image_24)
-                .into(imageView!!);
+                .into(binding.imageview);
         })
 
         movieViewModel.backdrop_path.observe(this, Observer {
             Glide
                 .with(this)
-                .load(imageUrl+it)
+                .load(IMAGEURL+it)
                 .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.baseline_image_24)
-                .into(imageView2!!);
+                .into(binding.imageview2);
         })
     }
 

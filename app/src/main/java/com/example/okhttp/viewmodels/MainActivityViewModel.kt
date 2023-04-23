@@ -43,7 +43,6 @@ class MovieListViewModel : ViewModel() {
 
 
     fun fetchList(sUrl: String){
-
         var moviePage: MoviePage? = null
         loading.postValue(true)
 
@@ -83,7 +82,7 @@ class MovieViewModel : ViewModel() {
     var vote_average = MutableLiveData<Float>()
     var runtime = MutableLiveData<Int>()
     var revenue = MutableLiveData<Int>()
-    fun fetchMovie(sUrl: String): Movie? {
+    fun fetchMovie(sUrl: String){
         var movie: Movie? = null
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -115,7 +114,6 @@ class MovieViewModel : ViewModel() {
                 print("Error: Get request returned no response")
             }
         }
-        return movie
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.okhttp.adapters
 
+import IMAGEURL
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -15,7 +16,6 @@ import com.example.okhttp.models.MovieItem
 class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
 
     lateinit var binding: ListItemBinding
-    val imageUrl = "https://image.tmdb.org/t/p/w500"
 
     var context: Context
     var movieList: ArrayList<MovieItem>
@@ -50,7 +50,7 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
 
         Glide
             .with(context)
-            .load(imageUrl+image)
+            .load(IMAGEURL+image)
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
             .into(holder.image)

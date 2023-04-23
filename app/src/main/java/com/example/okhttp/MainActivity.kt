@@ -1,10 +1,11 @@
 package com.example.okhttp
 
 import API_KEY
-import LANQUAGE
+import LANGUAGE
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -12,17 +13,15 @@ import com.example.okhttp.adapters.MovieAdapter
 import com.example.okhttp.databinding.ActivityMainBinding
 import com.example.okhttp.models.MovieItem
 
-class MainActivity : BaseActivity() {
+class MainActivity : AppCompatActivity() {
 
     var current_page = 1
     var total_pages = 2
-    var baseUrl: String = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANQUAGE}&page=${current_page}"
+    var baseUrl: String = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANGUAGE}&page=${current_page}"
 
     lateinit var movieList: ArrayList<MovieItem>
-
     lateinit var binding: ActivityMainBinding
     lateinit var movieAdapter: MovieAdapter
-
     val movieListViewModel: MovieListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,13 +41,12 @@ class MainActivity : BaseActivity() {
                  if (!binding.listView.canScrollVertically(1)){
                      if(current_page<=total_pages){
                          current_page++
-                         baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANQUAGE}&page=${current_page}"
+                         baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANGUAGE}&page=${current_page}"
                          movieListViewModel.fetchList(baseUrl)
                      }
                  }
             }
         })
-        Log.d("onCreate: ", movieList.size.toString())
     }
 
     private fun firstObserveViewModel(){
@@ -56,6 +54,7 @@ class MainActivity : BaseActivity() {
         movieListViewModel.fetchList(baseUrl)
 
         movieListViewModel.results.observe(this, Observer {
+
             binding.prgBarMovies.isVisible = true
 
             Log.d("progress","is visible")

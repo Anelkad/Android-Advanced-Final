@@ -94,7 +94,6 @@
             android:padding="10dp"
             android:adjustViewBounds="true"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/baseline_image_24"
             android:layout_below="@+id/tagline"/>
 
         <ImageView
@@ -102,11 +101,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:src="@drawable/baseline_image_24"
             android:layout_below="@+id/textview_description"/>
 
 
-
+        <ProgressBar
+            android:id="@+id/prgBarMovies"
+            style="?android:attr/progressBarStyle"
+            android:indeterminateTint="@color/main_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true"/>
 
    </RelativeLayout>
 
