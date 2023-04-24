@@ -1,6 +1,8 @@
 package com.example.okhttp
 
+import API_KEY
 import BASE_URL
+import LANGUAGE
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,7 +43,9 @@ class MovieListViewModel : ViewModel() {
 
     val loading = MutableLiveData<Boolean>()
 
-
+    init {
+        fetchList(BASE_URL)
+    }
     fun fetchList(sUrl: String){
         var moviePage: MoviePage? = null
         loading.postValue(true)
@@ -82,7 +86,9 @@ class MovieViewModel : ViewModel() {
     var vote_average = MutableLiveData<Float>()
     var runtime = MutableLiveData<Int>()
     var revenue = MutableLiveData<Int>()
-    fun fetchMovie(sUrl: String){
+    fun fetchMovie(movieId: Int){
+        var sUrl = "https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&language=${LANGUAGE}"
+
         var movie: Movie? = null
 
         viewModelScope.launch(Dispatchers.IO) {

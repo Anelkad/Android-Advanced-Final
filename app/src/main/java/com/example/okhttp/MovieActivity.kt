@@ -1,8 +1,6 @@
 package com.example.okhttp
 
-import API_KEY
 import IMAGEURL
-import LANGUAGE
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -30,10 +28,7 @@ class MovieActivity : AppCompatActivity()  {
 
     private fun getMovieDetails(){
         id = intent.getIntExtra("id", 0)
-
-        val baseUrl = "https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=${LANGUAGE}"
-
-        movieViewModel.fetchMovie(baseUrl)
+        movieViewModel.fetchMovie(id)
     }
 
     private fun observeViewModel(){
