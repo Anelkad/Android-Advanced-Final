@@ -2,9 +2,7 @@ package com.example.okhttp.fragments
 
 import IMAGEURL
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -15,7 +13,7 @@ import com.example.okhttp.MovieViewModel
 import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentMovieDetailsBinding
 
-class MovieDetailsFragment: Fragment()  {
+class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
 
     lateinit var binding: FragmentMovieDetailsBinding
 
@@ -31,18 +29,9 @@ class MovieDetailsFragment: Fragment()  {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        movieViewModel.fetchMovie(requireArguments().getInt(ARG_MOVIE_ID))
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        binding = FragmentMovieDetailsBinding.inflate(inflater,container,false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentMovieDetailsBinding.bind(view)
 
         movieViewModel.title.observe(viewLifecycleOwner, Observer {
             binding.prgBarMovies.isVisible = true
@@ -87,7 +76,9 @@ class MovieDetailsFragment: Fragment()  {
                 .error(R.drawable.baseline_image_24)
                 .into(binding.imageview2);
         })
-
-        return binding.root
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        movieViewModel.fetchMovie(requireArguments().getInt(ARG_MOVIE_ID))
     }
 }

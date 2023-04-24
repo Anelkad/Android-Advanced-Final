@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.okhttp.MovieActivity
 import com.example.okhttp.R
 import com.example.okhttp.databinding.MovieItemBinding
+import com.example.okhttp.databinding.SavedItemBinding
 import com.example.okhttp.fragments.MovieDetailsFragment
 import com.example.okhttp.fragments.MovieListFragment
 import com.example.okhttp.models.Movie
@@ -23,9 +24,9 @@ import com.example.okhttp.models.MovieItem
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
+class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
 
-    lateinit var binding: MovieItemBinding
+    lateinit var binding: SavedItemBinding
     var movieList: ArrayList<MovieItem>
 
     private lateinit var database: DatabaseReference
@@ -38,17 +39,17 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
         val title = binding.title
         val description = binding.description
         val image = binding.imageView
-        val save = binding.save
+        val delete = binding.delete
         val itemView = binding.itemView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderMovie {
-        binding = MovieItemBinding.inflate(LayoutInflater
+        binding = SavedItemBinding.inflate(LayoutInflater
             .from(parent.context),parent,false)
         return HolderMovie(binding.root)
     }
 
-    override fun onBindViewHolder(holder: MovieAdapter.HolderMovie, position: Int) {
+    override fun onBindViewHolder(holder: SavedMovieAdapter.HolderMovie, position: Int) {
         val movie = movieList[position]
         val id = movie.id
         val title = movie.title
@@ -84,29 +85,22 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
             holder.itemView.context.startActivity(intent)
         }
 
-        holder.save.setOnClickListener {
+        holder.delete.setOnClickListener {
 
             database = FirebaseDatabase.getInstance(FIREBASE_URL).getReference("movies")
-            val movie = MovieItem(
-                id,
-                title,
-                description,
-                release_date,
-                image,
-                back_image,
-                vote_average
-            )
-            database.child(id.toString()).setValue(movie)
+
+            database.child(id.toString())
+                .removeValue()
                 .addOnSuccessListener {
-                    Toast.makeText(holder.save.context,"Movie saved!",
+                    Toast.makeText(holder.delete.context,"Movie deleted!",
                         Toast.LENGTH_LONG).show()
                 }
-                .addOnFailureListener { e->
-                    Log.d("Movie saving","Error: ${e.message}")
-                    Toast.makeText(holder.save.context,"Cannot save movie!",
+                .addOnFailureListener{ e->
+                    Log.d("book delete","Error: ${e.message}")
+                    Toast.makeText(holder.delete.context,"Cannot delete movie!",
                         Toast.LENGTH_LONG).show()
                 }
-        }
+            }
     }
 
     override fun getItemCount(): Int {

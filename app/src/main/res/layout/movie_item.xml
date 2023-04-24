@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:contentPadding="15dp">
+    app:contentPadding="10dp">
     
     <RelativeLayout
         android:id="@+id/itemView"
@@ -45,8 +45,17 @@
                 android:textSize="19sp"/>
 
         </LinearLayout>
-            
+
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:src="@drawable/baseline_bookmark_add_24"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@color/white"/>
 
     </RelativeLayout>
 

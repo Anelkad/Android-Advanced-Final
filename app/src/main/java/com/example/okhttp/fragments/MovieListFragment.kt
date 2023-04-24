@@ -4,20 +4,19 @@ import API_KEY
 import LANGUAGE
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.okhttp.MovieListViewModel
+import com.example.okhttp.R
 import com.example.okhttp.adapters.MovieAdapter
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.models.MovieItem
 
-class MovieListFragment: Fragment() {
+class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var binding: FragmentMovieListBinding
     lateinit var movieAdapter: MovieAdapter
     lateinit var movieList: ArrayList<MovieItem>
@@ -36,14 +35,10 @@ class MovieListFragment: Fragment() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding = FragmentMovieListBinding.bind(view)
+        Log.d("onViewCreated"," done")
 
-        Log.d("onCreateView"," done")
-        binding = FragmentMovieListBinding.inflate(inflater,container,false)
         binding.listView.adapter = movieAdapter
 
         observeViewModel()
@@ -61,8 +56,6 @@ class MovieListFragment: Fragment() {
                 }
             }
         })
-
-        return binding.root
     }
 
     private fun observeViewModel(){
