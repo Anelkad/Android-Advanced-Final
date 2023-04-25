@@ -1,6 +1,5 @@
 package com.example.okhttp.adapters
 
-import FIREBASE_URL
 import IMAGEURL
 import android.content.Context
 import android.content.Intent
@@ -10,29 +9,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.okhttp.MovieActivity
 import com.example.okhttp.R
-import com.example.okhttp.databinding.MovieItemBinding
+import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.SavedItemBinding
-import com.example.okhttp.fragments.MovieDetailsFragment
-import com.example.okhttp.fragments.MovieListFragment
-import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieItem
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 
 class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
 
     lateinit var binding: SavedItemBinding
     var movieList: ArrayList<MovieItem>
 
-    private lateinit var database: DatabaseReference
+    var savedMovieListViewModel: SavedMovieListViewModel
 
-    constructor(movieList: ArrayList<MovieItem>) : super() {
+    constructor(movieList: ArrayList<MovieItem>, savedMovieListViewModel: SavedMovieListViewModel) : super() {
         this.movieList = movieList
+        this.savedMovieListViewModel = savedMovieListViewModel
     }
 
     inner class HolderMovie(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -86,21 +84,8 @@ class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
         }
 
         holder.delete.setOnClickListener {
-
-            database = FirebaseDatabase.getInstance(FIREBASE_URL).getReference("movies")
-
-            database.child(id.toString())
-                .removeValue()
-                .addOnSuccessListener {
-                    Toast.makeText(holder.delete.context,"Movie deleted!",
-                        Toast.LENGTH_LONG).show()
-                }
-                .addOnFailureListener{ e->
-                    Log.d("book delete","Error: ${e.message}")
-                    Toast.makeText(holder.delete.context,"Cannot delete movie!",
-                        Toast.LENGTH_LONG).show()
-                }
-            }
+            savedMovieListViewModel.deleteMovie(id,holder.delete.context)
+        }
     }
 
     override fun getItemCount(): Int {

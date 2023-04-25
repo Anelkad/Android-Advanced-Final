@@ -14,11 +14,10 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.okhttp.MovieActivity
+import com.example.okhttp.MovieListViewModel
 import com.example.okhttp.R
+import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.MovieItemBinding
-import com.example.okhttp.fragments.MovieDetailsFragment
-import com.example.okhttp.fragments.MovieListFragment
-import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieItem
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -28,10 +27,11 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
     lateinit var binding: MovieItemBinding
     var movieList: ArrayList<MovieItem>
 
-    private lateinit var database: DatabaseReference
+    var savedMovieListViewModel: SavedMovieListViewModel
 
-    constructor(movieList: ArrayList<MovieItem>) : super() {
+    constructor(movieList: ArrayList<MovieItem>, movieListViewModel: SavedMovieListViewModel) : super() {
         this.movieList = movieList
+        this.savedMovieListViewModel = movieListViewModel
     }
 
     inner class HolderMovie(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -85,8 +85,6 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
         }
 
         holder.save.setOnClickListener {
-
-            database = FirebaseDatabase.getInstance(FIREBASE_URL).getReference("movies")
             val movie = MovieItem(
                 id,
                 title,
@@ -96,16 +94,7 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
                 back_image,
                 vote_average
             )
-            database.child(id.toString()).setValue(movie)
-                .addOnSuccessListener {
-                    Toast.makeText(holder.save.context,"Movie saved!",
-                        Toast.LENGTH_LONG).show()
-                }
-                .addOnFailureListener { e->
-                    Log.d("Movie saving","Error: ${e.message}")
-                    Toast.makeText(holder.save.context,"Cannot save movie!",
-                        Toast.LENGTH_LONG).show()
-                }
+            savedMovieListViewModel.addMovie(movie,holder.save.context)
         }
     }
 

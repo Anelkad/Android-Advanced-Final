@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.okhttp.MovieListViewModel
 import com.example.okhttp.R
+import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.adapters.MovieAdapter
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.models.MovieItem
@@ -26,11 +27,12 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     var baseUrl: String = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANGUAGE}&page=${current_page}"
 
     val movieListViewModel: MovieListViewModel by viewModels()
+    val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         current_page = 1
         movieList = ArrayList()
-        movieAdapter = MovieAdapter(movieList)
+        movieAdapter = MovieAdapter(movieList,savedMovieListViewModel)
         Log.d("onCreate"," done")
         super.onCreate(savedInstanceState)
     }

@@ -6,6 +6,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.SavedMovieFragment">
 
+
+    <TextView
+        android:id="@+id/noSavedMovie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="No saved movie"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:textAlignment="center"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listView"
         android:layout_width="match_parent"
