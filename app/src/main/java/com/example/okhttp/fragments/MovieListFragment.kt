@@ -5,6 +5,7 @@ import LANGUAGE
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -51,7 +52,10 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                 if (!binding.listView.canScrollVertically(1)){
                     if(current_page<=total_pages){
                         current_page++
+
                         Log.d("onScroll"," done")
+                        Toast.makeText(activity,"Downloading...", Toast.LENGTH_SHORT).show()
+
                         baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANGUAGE}&page=${current_page}"
                         movieListViewModel.fetchList(baseUrl)
                     }
