@@ -72,16 +72,16 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie>{
         holder.itemView.tag = movie
         holder.itemView.setOnClickListener {
             //bottom nav doesn't respond
-//            val activity  = it!!.context as AppCompatActivity
-//
-//            activity.supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragmentContainer, MovieDetailsFragment.newInstance(id))
-//                .addToBackStack(null)
-//                .commit()
+            val activity  = it!!.context as AppCompatActivity
 
-            val intent = Intent(holder.itemView.context, MovieActivity::class.java)
-            intent.putExtra("id",id)
-            holder.itemView.context.startActivity(intent)
+            activity.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, MovieDetailsFragment.newInstance(id))
+                .addToBackStack(null)
+                .commit()
+
+//            val intent = Intent(holder.itemView.context, MovieActivity::class.java)
+//            intent.putExtra("id",id)
+//            holder.itemView.context.startActivity(intent)
         }
 
         holder.save.setOnClickListener {
