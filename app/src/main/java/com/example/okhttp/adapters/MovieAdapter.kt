@@ -18,6 +18,7 @@ import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.MovieItemBinding
 import com.example.okhttp.fragments.MovieDetailsFragment
+import com.example.okhttp.fragments.MovieListFragment
 import com.example.okhttp.models.MovieItem
 
 
@@ -72,12 +73,14 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie>{
         holder.itemView.tag = movie
         holder.itemView.setOnClickListener {
             //bottom nav doesn't respond
-            val activity  = it!!.context as AppCompatActivity
+            val action = MovieListFragmentDirections.actionMovieListFragmentToMovieDetailsFragment(movie)
 
-            activity.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, MovieDetailsFragment.newInstance(id))
-                .addToBackStack(null)
-                .commit()
+            val currentFragment = holder.itemView.findNavController().currentDestination
+            val destinationFragment = holder.itemView.findNavController().graph.findNode(R.id.movieDetailsFragment)
+
+            if (currentFragment != null && destinationFragment != null && currentFragment != destinationFragment) {
+                holder.itemView.findNavController().navigate(action)
+            }
 
 //            val intent = Intent(holder.itemView.context, MovieActivity::class.java)
 //            intent.putExtra("id",id)

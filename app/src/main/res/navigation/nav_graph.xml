@@ -8,11 +8,20 @@
     <fragment
         android:id="@+id/movieListFragment"
         android:name="com.example.okhttp.fragments.MovieListFragment"
-        android:label="MovieListFragment" />
+        android:label="MovieListFragment" >
+        <action
+            android:id="@+id/action_movieListFragment_to_movieDetailsFragment"
+            app:destination="@id/movieDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/savedMovieFragment"
         android:name="com.example.okhttp.fragments.SavedMovieFragment"
         android:label="fragment_saved_movie"
         tools:layout="@layout/fragment_saved_movie" />
+
+    <fragment
+        android:id="@+id/movieDetailsFragment"
+        android:name="com.example.okhttp.fragments.MovieDetailsFragment"
+        android:label="MovieDetailsFragment" />
 </navigation>
