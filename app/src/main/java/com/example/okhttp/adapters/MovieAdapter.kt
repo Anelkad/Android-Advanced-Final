@@ -1,6 +1,5 @@
 package com.example.okhttp.adapters
 
-import FIREBASE_URL
 import IMAGEURL
 import android.content.Context
 import android.content.Intent
@@ -18,11 +17,11 @@ import com.example.okhttp.MovieListViewModel
 import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.MovieItemBinding
+import com.example.okhttp.fragments.MovieDetailsFragment
 import com.example.okhttp.models.MovieItem
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 
-class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
+
+class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie>{
 
     lateinit var binding: MovieItemBinding
     var movieList: ArrayList<MovieItem>
@@ -31,6 +30,7 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
 
     constructor(movieList: ArrayList<MovieItem>, movieListViewModel: SavedMovieListViewModel) : super() {
         this.movieList = movieList
+        //todo lambda function чтобы не передавать в конструктор ViewModel
         this.savedMovieListViewModel = movieListViewModel
     }
 
@@ -69,15 +69,15 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie> {
             .error(R.drawable.baseline_image_24)
             .into(holder.image)
 
-
+        holder.itemView.tag = movie
         holder.itemView.setOnClickListener {
             //bottom nav doesn't respond
-//            val activity  = it.context as? AppCompatActivity
+//            val activity  = it!!.context as AppCompatActivity
 //
-//            activity?.supportFragmentManager?.beginTransaction()
-//                ?.addToBackStack(null)
-//                ?.replace(R.id.fragmentContainer,MovieDetailsFragment.newInstance(id))
-//                ?.commit()
+//            activity.supportFragmentManager.beginTransaction()
+//                .replace(R.id.fragmentContainer, MovieDetailsFragment.newInstance(id))
+//                .addToBackStack(null)
+//                .commit()
 
             val intent = Intent(holder.itemView.context, MovieActivity::class.java)
             intent.putExtra("id",id)

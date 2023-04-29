@@ -7,7 +7,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.example.okhttp.databinding.ActivityMainBinding
 
-
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
@@ -19,14 +18,10 @@ class MainActivity : AppCompatActivity() {
         setUpNavController()
     }
 
-    fun setUpNavController(){
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+    private fun setUpNavController() {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.navController
-         setupWithNavController(binding.bottomNavigationView, navController)
-
+        setupWithNavController(binding.bottomNavigationView, navController)
     }
-
-
-
-
 }

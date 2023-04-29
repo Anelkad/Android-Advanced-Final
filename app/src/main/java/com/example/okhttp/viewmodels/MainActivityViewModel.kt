@@ -35,12 +35,12 @@ fun getRequest(sUrl: String): String? {
         val response = client.newCall(request).execute()
         result = response.body?.string()
         //Log.d("qwerty: ", result!!)
-    }
-    catch(err:Error) {
-        print("Error when executing get request: "+err.localizedMessage)
+    } catch (err: Error) {
+        print("Error when executing get request: " + err.localizedMessage)
     }
     return result
 }
+
 class MovieListViewModel : ViewModel() {
     var page = MutableLiveData<Int>()
     var results = MutableLiveData<ArrayList<MovieItem>>()
@@ -49,7 +49,8 @@ class MovieListViewModel : ViewModel() {
     init {
         fetchList(BASE_URL)
     }
-    fun fetchList(sUrl: String){
+
+    fun fetchList(sUrl: String) {
         var moviePage: MoviePage? = null
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -57,15 +58,13 @@ class MovieListViewModel : ViewModel() {
             if (result != null) {
                 try {
                     // Parse result string JSON to data class
+                    //todo заменить klaxon на другое
                     moviePage = Klaxon().parse<MoviePage>(result)
-
-                    withContext(Dispatchers.Main) {
-                        // Update view model
-                        page.value = moviePage?.page
-                        results.value = moviePage?.results
-                        total_pages.value = moviePage?.total_pages
-                        Log.d("page: ", moviePage?.page.toString())
-                    }
+                    // Update view model
+                    page.postValue(moviePage?.page)
+                    results.postValue(moviePage?.results)
+                    total_pages.postValue(moviePage?.total_pages)
+                    Log.d("page: ", moviePage?.page.toString())
                 } catch (err: Error) {
                     print("Error when parsing JSON: " + err.localizedMessage)
                 }
@@ -79,10 +78,12 @@ class MovieListViewModel : ViewModel() {
 class SavedMovieListViewModel : ViewModel() {
     var results = MutableLiveData<ArrayList<MovieItem>>()
     lateinit var database: DatabaseReference
+
     init {
         fetchList()
     }
-    fun fetchList(){
+
+    fun fetchList() {
         var movieList = ArrayList<MovieItem>()
 
         viewModelScope.launch(Dispatchers.Main) {
@@ -98,7 +99,7 @@ class SavedMovieListViewModel : ViewModel() {
                             Log.d("movie add", movie.title)
                         }
                     }
-                        results.value = movieList
+                    results.value = movieList
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -108,7 +109,7 @@ class SavedMovieListViewModel : ViewModel() {
         }
     }
 
-    fun deleteMovie(id: Int, context: Context){
+    fun deleteMovie(id: Int, context: Context) {
         viewModelScope.launch(Dispatchers.Main) {
             database = FirebaseDatabase.getInstance(FIREBASE_URL).getReference("movies")
 
@@ -130,7 +131,7 @@ class SavedMovieListViewModel : ViewModel() {
         }
     }
 
-    fun addMovie(movie: MovieItem, context: Context){
+    fun addMovie(movie: MovieItem, context: Context) {
         viewModelScope.launch(Dispatchers.Main) {
             database = FirebaseDatabase.getInstance(FIREBASE_URL).getReference("movies")
             database.child(movie.id.toString()).setValue(movie)
@@ -162,7 +163,7 @@ class MovieViewModel : ViewModel() {
     var vote_average = MutableLiveData<Float>()
     var runtime = MutableLiveData<Int>()
     var revenue = MutableLiveData<Int>()
-    fun fetchMovie(movieId: Int){
+    fun fetchMovie(movieId: Int) {
         var sUrl = "https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&language=${LANGUAGE}"
 
         var movie: Movie? = null
@@ -187,12 +188,10 @@ class MovieViewModel : ViewModel() {
                         runtime.value = movie?.runtime
                         revenue.value = movie?.revenue
                     }
+                } catch (err: Error) {
+                    print("Error when parsing JSON: " + err.localizedMessage)
                 }
-                catch(err:Error) {
-                    print("Error when parsing JSON: "+err.localizedMessage)
-                }
-            }
-            else {
+            } else {
                 print("Error: Get request returned no response")
             }
         }
