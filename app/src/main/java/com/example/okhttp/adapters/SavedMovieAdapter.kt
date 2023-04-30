@@ -1,25 +1,15 @@
 package com.example.okhttp.adapters
 
 import IMAGEURL
-import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.okhttp.MovieActivity
 import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.SavedItemBinding
 import com.example.okhttp.models.MovieItem
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 
 class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
 
@@ -69,19 +59,7 @@ class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
             .into(holder.image)
 
 
-        holder.itemView.setOnClickListener {
-            //bottom nav doesn't respond
-//            val activity  = it.context as? AppCompatActivity
-//
-//            activity?.supportFragmentManager?.beginTransaction()
-//                ?.addToBackStack(null)
-//                ?.replace(R.id.fragmentContainer,MovieDetailsFragment.newInstance(id))
-//                ?.commit()
-
-            val intent = Intent(holder.itemView.context, MovieActivity::class.java)
-            intent.putExtra("id",id)
-            holder.itemView.context.startActivity(intent)
-        }
+        holder.itemView.setOnClickListener {onItemClickListener?.let { it(id) }}
 
         holder.delete.setOnClickListener {
             savedMovieListViewModel.deleteMovie(id,holder.delete.context)
@@ -92,5 +70,9 @@ class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
         return movieList.size
     }
 
+    private var onItemClickListener: ((Int) -> Unit)? = null
+    fun setOnItemClickListener(listener: (Int) -> Unit) {
+        onItemClickListener = listener
+    }
 
 }

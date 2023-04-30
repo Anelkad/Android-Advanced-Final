@@ -3,11 +3,11 @@ package com.example.okhttp.fragments
 import IMAGEURL
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.okhttp.MovieViewModel
 import com.example.okhttp.R
@@ -18,16 +18,7 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
     lateinit var binding: FragmentMovieDetailsBinding
 
     val movieViewModel: MovieViewModel by viewModels()
-
-    companion object {
-        private val ARG_MOVIE_ID = "ARG_MOVIE_ID"
-
-        fun newInstance(movieId: Int): MovieDetailsFragment{
-            val fragment = MovieDetailsFragment()
-            fragment.arguments = bundleOf(ARG_MOVIE_ID to movieId)
-            return fragment
-        }
-    }
+    val args: MovieDetailsFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,6 +70,6 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        movieViewModel.fetchMovie(requireArguments().getInt(ARG_MOVIE_ID))
+        movieViewModel.fetchMovie(args.id)
     }
 }

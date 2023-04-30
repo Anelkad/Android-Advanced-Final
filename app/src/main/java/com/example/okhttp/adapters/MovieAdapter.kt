@@ -1,24 +1,14 @@
 package com.example.okhttp.adapters
 
 import IMAGEURL
-import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.okhttp.MovieActivity
-import com.example.okhttp.MovieListViewModel
 import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.MovieItemBinding
-import com.example.okhttp.fragments.MovieDetailsFragment
-import com.example.okhttp.fragments.MovieListFragment
 import com.example.okhttp.models.MovieItem
 
 
@@ -71,21 +61,7 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie>{
             .into(holder.image)
 
         holder.itemView.tag = movie
-        holder.itemView.setOnClickListener {
-            //bottom nav doesn't respond
-            val action = MovieListFragmentDirections.actionMovieListFragmentToMovieDetailsFragment(movie)
-
-            val currentFragment = holder.itemView.findNavController().currentDestination
-            val destinationFragment = holder.itemView.findNavController().graph.findNode(R.id.movieDetailsFragment)
-
-            if (currentFragment != null && destinationFragment != null && currentFragment != destinationFragment) {
-                holder.itemView.findNavController().navigate(action)
-            }
-
-//            val intent = Intent(holder.itemView.context, MovieActivity::class.java)
-//            intent.putExtra("id",id)
-//            holder.itemView.context.startActivity(intent)
-        }
+        holder.itemView.setOnClickListener { onItemClickListener?.let { it(id) } }
 
         holder.save.setOnClickListener {
             val movie = MovieItem(
@@ -105,5 +81,9 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie>{
         return movieList.size
     }
 
+    private var onItemClickListener: ((Int) -> Unit)? = null
+    fun setOnItemClickListener(listener: (Int) -> Unit) {
+        onItemClickListener = listener
+    }
 
 }

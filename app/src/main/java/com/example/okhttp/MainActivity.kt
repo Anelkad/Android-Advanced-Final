@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI.setupWithNavController
+import androidx.navigation.ui.NavigationUI
 import com.example.okhttp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +22,16 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.navController
-        setupWithNavController(binding.bottomNavigationView, navController)
+        NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
+
     }
+
+    override fun onBackPressed() {
+        if (navController.currentDestination?.id == R.id.movieDetailsFragment)
+            navController.popBackStack()
+        else
+            super.onBackPressed()
+    }
+
+
 }

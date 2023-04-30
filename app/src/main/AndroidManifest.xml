@@ -14,10 +14,6 @@
         android:theme="@style/Theme.OkHttp"
         tools:targetApi="31">
         <activity
-            android:name=".MovieActivity"
-            android:exported="false"
-            android:theme="@style/Theme.OkHttp.NoActionBar"/>
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.OkHttp.NoActionBar">
