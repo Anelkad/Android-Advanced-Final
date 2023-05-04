@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/movieListFragment"
+        android:id="@+id/movie_list_graph"
         android:icon="@drawable/baseline_home_24"
         android:title="Home" />
     <item
-        android:id="@+id/savedMovieFragment"
+        android:id="@+id/saved_movie_list_graph"
         android:icon="@drawable/baseline_favorite_24"
         android:title="Saved" />
 </menu>
