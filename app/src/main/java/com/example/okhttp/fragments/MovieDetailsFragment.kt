@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.okhttp.MovieViewModel
@@ -24,49 +25,34 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMovieDetailsBinding.bind(view)
 
-        movieViewModel.title.observe(viewLifecycleOwner, Observer {
+        movieViewModel.movie.observe(viewLifecycleOwner, Observer {
             binding.prgBarMovies.isVisible = true
-            binding.textviewTitle.text = it
-            binding.prgBarMovies.isVisible = false
-        })
+            if (it != null) {
+                binding.prgBarMovies.isVisible = false
+                binding.textviewTitle.text = it.title
+                binding.textviewDescription.text = it.overview
+                if (it.tagline.isNotEmpty()) binding.tagline.text = "\"${it.tagline}\""
+                binding.releaseDate.text = "Премьера: ${it.release_date}"
+                binding.runtime.text = "${it.runtime/60} ч ${it.runtime%60} мин"
+                if (it.revenue>0) binding.revenue.text = "Кассовые сборы: ${it.revenue/1000000} млн $"
+                Glide
+                    .with(this)
+                    .load(IMAGEURL+it.poster_path)
+                    .placeholder(R.drawable.progress_animation)
+                    .error(R.drawable.baseline_image_24)
+                    .into(binding.imageview)
+                Glide
+                    .with(this)
+                    .load(IMAGEURL+it.backdrop_path)
+                    .placeholder(R.drawable.progress_animation)
+                    .error(R.drawable.baseline_image_24)
+                    .into(binding.imageview2);
+            }
+            })
 
-        movieViewModel.overview.observe(viewLifecycleOwner, Observer {
-            binding.textviewDescription.text = it
-        })
-
-        movieViewModel.tagline.observe(viewLifecycleOwner, Observer {
-            if(it.isNotEmpty()) binding.tagline.text = "\"${it}\""
-        })
-
-        movieViewModel.release_date.observe(viewLifecycleOwner, Observer {
-            binding.releaseDate.text = "Премьера: ${it}"
-        })
-
-        movieViewModel.runtime.observe(viewLifecycleOwner, Observer {
-            binding.runtime.text = "${it/60} ч ${it%60} мин"
-        })
-
-        movieViewModel.revenue.observe(viewLifecycleOwner, Observer {
-            if (it>0) binding.revenue.text = "Кассовые сборы: ${it/1000000} млн $"
-        })
-
-        movieViewModel.poster_path.observe(viewLifecycleOwner, Observer {
-            Glide
-                .with(this)
-                .load(IMAGEURL+it)
-                .placeholder(R.drawable.progress_animation)
-                .error(R.drawable.baseline_image_24)
-                .into(binding.imageview);
-        })
-
-        movieViewModel.backdrop_path.observe(viewLifecycleOwner, Observer {
-            Glide
-                .with(this)
-                .load(IMAGEURL+it)
-                .placeholder(R.drawable.progress_animation)
-                .error(R.drawable.baseline_image_24)
-                .into(binding.imageview2);
-        })
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

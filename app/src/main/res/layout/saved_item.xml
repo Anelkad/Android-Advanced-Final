@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:contentPadding="10dp">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/itemView"
@@ -12,7 +10,7 @@
         android:layout_marginBottom="10dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -23,16 +21,17 @@
                 android:layout_gravity="center"/>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="7"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="10dp">
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp">
 
                 <TextView
                     android:id="@+id/title"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
                     android:textSize="23sp"
                     android:textColor="@color/black"
                     android:textStyle="bold"/>
@@ -47,16 +46,15 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+            <ImageButton
+                android:id="@+id/delete"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_delete_forever_24"
+                android:backgroundTint="@color/white"/>
 
-        <ImageButton
-            android:id="@+id/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_delete_forever_24"
-            android:padding="2dp"
-            android:backgroundTint="@color/white"
-            android:layout_alignParentEnd="true"/>
+        </LinearLayout>
 
     </RelativeLayout>
 

@@ -6,6 +6,8 @@
     <color name="background">#B3B2C8</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="scrollbar_color">#8316128E</color>
     
     <color name="bottom_nav_selected_item">#5959E1</color>
     <color name="bottom_nav_item">#2E2D43</color>

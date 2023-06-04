@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.MovieItemBinding
@@ -51,11 +53,12 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie>{
 
 
         holder.title.text = title
-        holder.description.text = "Рейтинг: ${vote_average.toString()}\nПремьера: ${release_date}"
+        holder.description.text = "★ ${vote_average}\nПремьера: ${release_date}"
 
         Glide
             .with(holder.image.context)
             .load(IMAGEURL+image)
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(10)))
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
             .into(holder.image)

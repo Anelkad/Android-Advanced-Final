@@ -1,63 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:contentPadding="10dp">
+    app:contentPadding="5dp"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="5dp"
+    app:strokeColor="@color/scrollbar_color"
+    app:strokeWidth="1dp">
     
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/itemView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginBottom="10dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+       <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="10dp">
-            
-            <TextView
+       <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="23sp"
+                android:textSize="20sp"
                 android:layout_marginRight="20dp"
                 android:textColor="@color/black"
                 android:textStyle="bold"/>
 
-            <TextView
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <TextView
                 android:id="@+id/description"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_color"
                 android:textStyle="italic"
-                android:textSize="19sp"/>
-
-        </LinearLayout>
-
-        </LinearLayout>
+                android:textSize="16sp"/>
 
         <ImageButton
             android:id="@+id/save"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:src="@drawable/baseline_bookmark_add_24"
-            android:layout_alignParentEnd="true"
             android:backgroundTint="@color/white"/>
+        </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

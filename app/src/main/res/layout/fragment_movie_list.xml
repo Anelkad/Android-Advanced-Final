@@ -11,12 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
-        android:scrollbarThumbVertical="@color/dark_color"
+        android:scrollbarThumbVertical="@color/scrollbar_color"
         android:scrollbarSize="3dp"
         android:orientation="vertical"
         android:clipToPadding="false"
-        android:layout_marginEnd="5dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/movie_item"/>
 
     <ProgressBar

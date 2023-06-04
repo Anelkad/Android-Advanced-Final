@@ -16,7 +16,7 @@ import com.example.okhttp.adapters.SavedMovieAdapter
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.models.MovieItem
 
-class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie) {
+class SavedMovieFragment : Fragment() {
 
     lateinit var movieList: ArrayList<MovieItem>
     lateinit var binding: FragmentSavedMovieBinding
@@ -28,7 +28,7 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         movieList = ArrayList()
         movieAdapter = SavedMovieAdapter(movieList, savedMovieListViewModel)
 
