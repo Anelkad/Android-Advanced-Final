@@ -18,7 +18,7 @@
         tools:listitem="@layout/movie_item"/>
 
     <ProgressBar
-        android:id="@+id/prgBarMovies"
+        android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
         android:indeterminateTint="@color/main_color"
         android:layout_width="wrap_content"

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:contentPadding="5dp"
-    android:layout_margin="5dp"
+    android:layout_margin="2dp"
     app:cardCornerRadius="5dp"
     app:strokeColor="@color/scrollbar_color"
     app:strokeWidth="1dp">

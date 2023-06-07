@@ -11,17 +11,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.example.okhttp.MovieListViewModel
 import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.adapters.MovieAdapter
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.models.MovieItem
+import com.example.okhttp.utils.Resource
+import com.example.okhttp.viewmodels.MovieListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var binding: FragmentMovieListBinding
     lateinit var movieAdapter: MovieAdapter
@@ -64,6 +66,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         binding.listView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
                 super.onScrolled(recyclerView, dx, dy)
+                //todo пагинация не работает
                 if (!binding.listView.canScrollVertically(1)){
                     if(current_page<=total_pages){
                         current_page++
@@ -72,7 +75,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                         Toast.makeText(requireContext(),"Downloading...", Toast.LENGTH_SHORT).show()
 
                         baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANGUAGE}&page=${current_page}"
-                        movieListViewModel.fetchList(baseUrl)
+                        movieListViewModel.getMovieList(baseUrl)
                     }
                 }
             }
@@ -80,23 +83,23 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     }
 
     private fun observeViewModel(){
-        movieListViewModel.results.observe(viewLifecycleOwner, Observer {
-
-            binding.prgBarMovies.isVisible = true
-
-            Log.d("progress","is visible")
-            if (current_page * 20 > movieList.size) movieList.addAll(it)
-            movieAdapter.notifyDataSetChanged()
-
-            binding.prgBarMovies.isVisible = false
-
-            Log.d("first_observe: ", "${movieList[movieList.size-1].title}: ${movieList.size}")
+        movieListViewModel.movieListState.observe(viewLifecycleOwner, Observer {
+            when (it){
+                is Resource.Failure -> {
+                    binding.progressBar.isVisible = false
+                }
+                is Resource.Loading -> {
+                    binding.progressBar.isVisible = true
+                }
+                is Resource.Success ->{
+                    binding.progressBar.isVisible = false
+                    val fetchedMovies = it.getSuccessResult()
+                    if (current_page * 20 > movieList.size)
+                        movieList.addAll(fetchedMovies.results)
+                    movieAdapter.notifyDataSetChanged()
+                }
+                else -> Unit
+            }
         })
-
-        movieListViewModel.total_pages.observe(viewLifecycleOwner, Observer{
-            total_pages = it
-            Log.d("pages_total: ", total_pages.toString())
-        })
-
     }
 }
