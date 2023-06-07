@@ -32,9 +32,9 @@ class MovieRepositoryImp @Inject constructor(): MovieRepository{
 
     override fun getMovie(movieId: Int): Resource<Movie> {
         var resource: Resource<Movie> = Resource.Loading
-        val sUrl = "https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&language=${LANGUAGE}"
+        val url = "https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&language=${LANGUAGE}"
 
-        val result = getRequest(sUrl)
+        val result = getRequest(url)
         if (result != null) {
             resource = try {
                 val movie = Gson()

@@ -25,4 +25,5 @@ class MovieDetailsViewModel @Inject constructor(
         val result = repository.getMovie(movieId)
         _movieDetailsState.postValue(result)
     }
+
 }

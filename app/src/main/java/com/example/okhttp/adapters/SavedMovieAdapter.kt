@@ -13,17 +13,10 @@ import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.SavedItemBinding
 import com.example.okhttp.models.MovieItem
 
-class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
+class SavedMovieAdapter(var movieList: ArrayList<MovieItem>) :
+    RecyclerView.Adapter<SavedMovieAdapter.HolderMovie>() {
 
     lateinit var binding: SavedItemBinding
-    var movieList: ArrayList<MovieItem>
-
-    var savedMovieListViewModel: SavedMovieListViewModel
-
-    constructor(movieList: ArrayList<MovieItem>, savedMovieListViewModel: SavedMovieListViewModel) : super() {
-        this.movieList = movieList
-        this.savedMovieListViewModel = savedMovieListViewModel
-    }
 
     inner class HolderMovie(itemView: View): RecyclerView.ViewHolder(itemView){
         val title = binding.title
@@ -63,10 +56,7 @@ class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
 
 
         holder.itemView.setOnClickListener {onItemClickListener?.let { it(id) }}
-
-        holder.delete.setOnClickListener {
-            savedMovieListViewModel.deleteMovie(id,holder.delete.context)
-        }
+        holder.delete.setOnClickListener {deleteMovieListener?.let {it(id)}}
     }
 
     override fun getItemCount(): Int {
@@ -76,6 +66,11 @@ class SavedMovieAdapter: RecyclerView.Adapter<SavedMovieAdapter.HolderMovie> {
     private var onItemClickListener: ((Int) -> Unit)? = null
     fun setOnItemClickListener(listener: (Int) -> Unit) {
         onItemClickListener = listener
+    }
+
+    private var deleteMovieListener: ((Int) -> Unit)? = null
+    fun setDeleteMovieClickListener(listener: (Int) -> Unit){
+        deleteMovieListener = listener
     }
 
 }

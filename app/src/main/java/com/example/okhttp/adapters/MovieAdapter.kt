@@ -14,18 +14,10 @@ import com.example.okhttp.databinding.MovieItemBinding
 import com.example.okhttp.models.MovieItem
 
 
-class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie>{
+class MovieAdapter(var movieList: ArrayList<MovieItem>) :
+    RecyclerView.Adapter<MovieAdapter.HolderMovie>() {
 
     lateinit var binding: MovieItemBinding
-    var movieList: ArrayList<MovieItem>
-
-    var savedMovieListViewModel: SavedMovieListViewModel
-
-    constructor(movieList: ArrayList<MovieItem>, movieListViewModel: SavedMovieListViewModel) : super() {
-        this.movieList = movieList
-        //todo lambda function чтобы не передавать в конструктор ViewModel
-        this.savedMovieListViewModel = movieListViewModel
-    }
 
     inner class HolderMovie(itemView: View): RecyclerView.ViewHolder(itemView){
         val title = binding.title
@@ -64,29 +56,22 @@ class MovieAdapter: RecyclerView.Adapter<MovieAdapter.HolderMovie>{
             .into(holder.image)
 
         holder.itemView.tag = movie
-        holder.itemView.setOnClickListener { onItemClickListener?.let { it(id) } }
+        holder.itemView.setOnClickListener { onMovieClickListener?.let { it(id) } }
 
-        holder.save.setOnClickListener {
-            val movie = MovieItem(
-                id,
-                title,
-                description,
-                release_date,
-                image,
-                back_image,
-                vote_average
-            )
-            savedMovieListViewModel.addMovie(movie,holder.save.context)
-        }
+        holder.save.setOnClickListener {saveMovieListener?.let{ it(movie)}}
     }
 
     override fun getItemCount(): Int {
         return movieList.size
     }
 
-    private var onItemClickListener: ((Int) -> Unit)? = null
-    fun setOnItemClickListener(listener: (Int) -> Unit) {
-        onItemClickListener = listener
+    private var onMovieClickListener: ((Int) -> Unit)? = null
+    fun setOnMovieClickListener(listener: (Int) -> Unit) {
+        onMovieClickListener = listener
+    }
+    private var saveMovieListener: ((MovieItem) -> Unit)? = null
+    fun setSaveMovieClickListener(listener: (MovieItem) -> Unit){
+        saveMovieListener = listener
     }
 
 }

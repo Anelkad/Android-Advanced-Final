@@ -1,11 +1,11 @@
 package com.example.okhttp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -15,7 +15,10 @@ import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.adapters.SavedMovieAdapter
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.models.MovieItem
+import com.example.okhttp.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SavedMovieFragment : Fragment() {
 
     lateinit var movieList: ArrayList<MovieItem>
@@ -23,16 +26,15 @@ class SavedMovieFragment : Fragment() {
     lateinit var movieAdapter: SavedMovieAdapter
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         movieList = ArrayList()
-        movieAdapter = SavedMovieAdapter(movieList, savedMovieListViewModel)
+        movieAdapter = SavedMovieAdapter(movieList)
 
-        savedMovieListViewModel.fetchList()
+        savedMovieListViewModel.getMovieList()
 
         binding = FragmentSavedMovieBinding.inflate(inflater,container, false)
         binding.listView.adapter = movieAdapter
@@ -46,27 +48,48 @@ class SavedMovieFragment : Fragment() {
                 bundle
             )
         }
+        movieAdapter.setDeleteMovieClickListener { movie ->
+            savedMovieListViewModel.deleteMovie(movie)
+            savedMovieListViewModel.deleteMovieState.observe(viewLifecycleOwner, Observer {
+                when (it){
+                    is Resource.Failure -> {
+                        Toast.makeText(
+                            context, "Cannot delete movie!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    is Resource.Loading -> {
+                        Toast.makeText(
+                            context, "Loading...",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    is Resource.Success ->{
+                        Toast.makeText(
+                            context, "Movie deleted!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    else -> Unit
+                }
+            })
+        }
 
         loadMovieList()
         return binding.root
     }
 
     private fun loadMovieList() {
-
-        savedMovieListViewModel.results.observe(viewLifecycleOwner, Observer {
+        savedMovieListViewModel.savedMovieList.observe(viewLifecycleOwner, Observer {
             movieList.clear()
-            binding.prgBarMovies.isVisible = true
-            movieList.addAll(it)
-            binding.noSavedMovie.isVisible = movieList.size==0
+            binding.progressBar.isVisible = true
+            if (it!=null) {
+                binding.progressBar.isVisible = false
+                movieList.addAll(it)
+                binding.noSavedMovie.isVisible = movieList.isEmpty()
+            }
 
             movieAdapter.notifyDataSetChanged()
-
-            binding.prgBarMovies.isVisible = false
-
-            if(movieList.size>0)Log.d("observe_firebase: ", "${movieList[movieList.size-1].title}: ${movieList.size}")
         })
-
     }
-
-
 }

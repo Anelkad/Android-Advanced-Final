@@ -39,7 +39,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     override fun onCreate(savedInstanceState: Bundle?) {
         current_page = 1
         movieList = ArrayList()
-        movieAdapter = MovieAdapter(movieList,savedMovieListViewModel)
+        movieAdapter = MovieAdapter(movieList)
         Log.d("onCreate"," done")
         super.onCreate(savedInstanceState)
     }
@@ -51,7 +51,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         binding.listView.layoutManager = StaggeredGridLayoutManager(2,LinearLayoutManager.VERTICAL)
         binding.listView.adapter = movieAdapter
 
-        movieAdapter.setOnItemClickListener {
+        movieAdapter.setOnMovieClickListener {
             val bundle = Bundle().apply {
                 putInt("id", it)
             }
@@ -61,12 +61,39 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
             )
         }
 
+        movieAdapter.setSaveMovieClickListener { movieItem ->
+            savedMovieListViewModel.saveMovie(movieItem)
+            savedMovieListViewModel.saveMovieState.observe(viewLifecycleOwner, Observer {
+                when (it){
+                    is Resource.Failure -> {
+                        Toast.makeText(
+                            context, "Cannot save movie!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    is Resource.Loading -> {
+                        Toast.makeText(
+                            context, "Loading...",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    is Resource.Success ->{
+                        Toast.makeText(
+                            context, "Movie saved!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    else -> Unit
+                }
+            })
+        }
+
         observeViewModel()
 
         binding.listView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
                 super.onScrolled(recyclerView, dx, dy)
-                //todo пагинация не работает
+                //todo пагинация сломалась
                 if (!binding.listView.canScrollVertically(1)){
                     if(current_page<=total_pages){
                         current_page++
