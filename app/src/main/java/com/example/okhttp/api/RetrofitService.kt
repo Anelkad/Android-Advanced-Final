@@ -1,6 +1,5 @@
 package com.example.okhttp.api
 
-import API_KEY
 import BASE_URL
 import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieDetails

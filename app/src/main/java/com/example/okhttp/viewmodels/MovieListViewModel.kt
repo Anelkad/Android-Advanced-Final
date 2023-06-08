@@ -1,12 +1,9 @@
 package com.example.okhttp.viewmodels
 
-import BASE_URL
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.okhttp.models.Movie
-import com.example.okhttp.models.MovieListResponse
 import com.example.okhttp.repository.MovieRepository
 import com.example.okhttp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

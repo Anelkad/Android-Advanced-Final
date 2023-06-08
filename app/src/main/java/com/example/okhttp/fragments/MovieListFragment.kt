@@ -1,7 +1,5 @@
 package com.example.okhttp.fragments
 
-import API_KEY
-import LANGUAGE
 import android.os.Bundle
 import android.util.Log
 import android.view.View

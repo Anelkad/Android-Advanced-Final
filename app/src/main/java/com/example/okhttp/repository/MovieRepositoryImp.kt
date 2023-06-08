@@ -2,11 +2,8 @@ package com.example.okhttp.repository
 
 import API_KEY
 import LANGUAGE
-import android.util.Log
 import com.example.okhttp.api.RetrofitService
-import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieDetails
-import com.example.okhttp.models.MovieListResponse
 import com.example.okhttp.utils.Resource
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
