@@ -1,5 +1,6 @@
 package com.example.okhttp.fragments
 
+import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -53,18 +54,17 @@ class SavedMovieFragment : Fragment() {
             savedMovieListViewModel.deleteMovieState.observe(viewLifecycleOwner, Observer {
                 when (it){
                     is Resource.Failure -> {
+                        hideWaitDialog()
                         Toast.makeText(
                             context, "Cannot delete movie!",
                             Toast.LENGTH_LONG
                         ).show()
                     }
                     is Resource.Loading -> {
-                        Toast.makeText(
-                            context, "Loading...",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showWaitDialog()
                     }
                     is Resource.Success ->{
+                        hideWaitDialog()
                         Toast.makeText(
                             context, "Movie deleted!",
                             Toast.LENGTH_LONG
@@ -91,5 +91,21 @@ class SavedMovieFragment : Fragment() {
 
             movieAdapter.notifyDataSetChanged()
         })
+    }
+
+    private lateinit var waitDialog: Dialog
+    fun showWaitDialog(){
+        if (!this::waitDialog.isInitialized) {
+            waitDialog = Dialog(requireActivity())
+            waitDialog.setContentView(R.layout.wait_dialog)
+
+            waitDialog.setCancelable(false)
+            waitDialog.setCanceledOnTouchOutside(false)
+        }
+        if (!waitDialog.isShowing) waitDialog.show()
+    }
+
+    fun hideWaitDialog(){
+        if (this::waitDialog.isInitialized or waitDialog.isShowing) waitDialog.dismiss()
     }
 }

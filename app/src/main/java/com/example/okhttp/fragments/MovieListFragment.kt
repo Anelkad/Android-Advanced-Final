@@ -1,5 +1,6 @@
 package com.example.okhttp.fragments
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -31,7 +32,6 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
 
     val movieListViewModel: MovieListViewModel by viewModels()
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         current_page = 1
         movieList = ArrayList()
@@ -60,20 +60,19 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
             savedMovieListViewModel.saveMovieState.observe(viewLifecycleOwner, Observer {
                 when (it){
                     is Resource.Failure -> {
+                        hideWaitDialog()
                         Toast.makeText(
                             context, "Cannot save movie!",
                             Toast.LENGTH_LONG
                         ).show()
                     }
                     is Resource.Loading -> {
-                        Toast.makeText(
-                            context, "Loading...",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showWaitDialog()
                     }
                     is Resource.Success ->{
+                        hideWaitDialog()
                         Toast.makeText(
-                            context, "Movie saved!",
+                            context, "Movie \"${it.getSuccessResult().title}\" saved!",
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -116,5 +115,21 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                 else -> Unit
             }
         })
+    }
+
+    private lateinit var waitDialog: Dialog
+    fun showWaitDialog(){
+        if (!this::waitDialog.isInitialized) {
+            waitDialog = Dialog(requireActivity())
+            waitDialog.setContentView(R.layout.wait_dialog)
+
+            waitDialog.setCancelable(false)
+            waitDialog.setCanceledOnTouchOutside(false)
+        }
+        if (!waitDialog.isShowing) waitDialog.show()
+    }
+
+    fun hideWaitDialog(){
+        if (this::waitDialog.isInitialized or waitDialog.isShowing) waitDialog.dismiss()
     }
 }

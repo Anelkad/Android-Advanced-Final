@@ -24,6 +24,7 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
 
     val movieViewModel: MovieDetailsViewModel by viewModels()
     val args: MovieDetailsFragmentArgs by navArgs()
+    //todo добавить кнопку save movie
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
