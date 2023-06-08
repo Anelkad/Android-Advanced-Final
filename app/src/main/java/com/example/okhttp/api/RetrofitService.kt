@@ -1,8 +1,8 @@
 package com.example.okhttp.api
 
 import BASE_URL
-import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieDetails
+import com.example.okhttp.models.MovieListResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -30,8 +30,8 @@ class RetrofitService {
         return movieAPI.getMovie(id)
     }
 
-    suspend fun getMovieList(page: Int): ArrayList<Movie> {
-        return movieAPI.getMovieList(page).results
+    suspend fun getMovieList(page: Int): MovieListResponse {
+        return movieAPI.getMovieList(page)
     }
 }
 

@@ -29,6 +29,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var movieList: ArrayList<Movie>
 
     var current_page = 1
+    var total_pages = 2
 
     val movieListViewModel: MovieListViewModel by viewModels()
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
@@ -86,11 +87,12 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         binding.listView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
                 super.onScrolled(recyclerView, dx, dy)
-                //todo pagination
+                //todo paging
                 if (!binding.listView.canScrollVertically(1)){
+                    if (current_page<=total_pages) {
                         current_page++
-                        Log.d("qwerty onScroll"," done")
                         movieListViewModel.getMovieList(current_page)
+                    }
                 }
             }
         })
@@ -107,12 +109,12 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                 }
                 is Resource.Success ->{
                     binding.progressBar.isVisible = false
-                    val fetchedMovies = it.getSuccessResult()
+                    val fetchedMovies = it.getSuccessResult().results
+                    total_pages = it.getSuccessResult().total_pages
                     if (current_page * 20 > movieList.size){
                         movieList.addAll(fetchedMovies)
                         movieAdapter.submitList(movieList)
                     }
-                    movieAdapter.notifyDataSetChanged()
                 }
                 else -> Unit
             }

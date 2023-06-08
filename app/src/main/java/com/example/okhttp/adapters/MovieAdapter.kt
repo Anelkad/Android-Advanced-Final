@@ -15,7 +15,6 @@ import com.example.okhttp.models.Movie
 
 
 class MovieAdapter: ListAdapter<Movie, MovieAdapter.HolderMovie>(DiffCallback()){
-
      class HolderMovie(binding: MovieItemBinding): RecyclerView.ViewHolder(binding.root){
         val title = binding.title
         val description = binding.description
@@ -61,6 +60,7 @@ class MovieAdapter: ListAdapter<Movie, MovieAdapter.HolderMovie>(DiffCallback())
 
         holder.save.setOnClickListener {saveMovieListener?.let{ it(movie)}}
     }
+    override fun submitList(list: List<Movie>?) = super.submitList(list?.let { ArrayList(it)})
 
     private var onMovieClickListener: ((Int) -> Unit)? = null
     fun setOnMovieClickListener(listener: (Int) -> Unit) {
