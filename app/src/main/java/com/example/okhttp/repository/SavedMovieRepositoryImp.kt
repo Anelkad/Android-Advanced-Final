@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class SavedMovieRepositoryImp @Inject constructor(
@@ -49,6 +50,7 @@ class SavedMovieRepositoryImp @Inject constructor(
     override suspend fun deleteMovie(movieId: Int): Resource<Int> {
          firebase.getReference(MOVIES).child(movieId.toString())
                 .removeValue()
+                .await()
         return Resource.Success(movieId)
     }
 
@@ -56,7 +58,7 @@ class SavedMovieRepositoryImp @Inject constructor(
         val database = firebase.getReference(MOVIES)
         database.child(movie.id.toString())
             .setValue(movie)
-        //todo почему await не ставиться
+            .await()
         return Resource.Success(movie)
     }
 }

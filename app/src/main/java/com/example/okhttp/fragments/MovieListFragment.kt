@@ -28,7 +28,6 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var movieList: ArrayList<Movie>
 
     var current_page = 1
-    var total_pages = 2
 
     val movieListViewModel: MovieListViewModel by viewModels()
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
@@ -37,13 +36,11 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         current_page = 1
         movieList = ArrayList()
         movieAdapter = MovieAdapter(movieList)
-        Log.d("onCreate"," done")
         super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentMovieListBinding.bind(view)
-        Log.d("onViewCreated"," done")
 
         binding.listView.layoutManager = StaggeredGridLayoutManager(2,LinearLayoutManager.VERTICAL)
         binding.listView.adapter = movieAdapter
@@ -90,16 +87,11 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         binding.listView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
                 super.onScrolled(recyclerView, dx, dy)
-                //todo пагинация сломалась
+                //todo listadapter, pagination
                 if (!binding.listView.canScrollVertically(1)){
-                    if(current_page<=total_pages){
                         current_page++
-
-                        Log.d("onScroll"," done")
-                        Toast.makeText(requireContext(),"Downloading...", Toast.LENGTH_SHORT).show()
-
+                        Log.d("qwerty onScroll"," done")
                         movieListViewModel.getMovieList(current_page)
-                    }
                 }
             }
         })

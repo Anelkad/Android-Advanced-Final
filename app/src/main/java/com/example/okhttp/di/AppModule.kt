@@ -6,7 +6,6 @@ import com.example.okhttp.repository.MovieRepositoryImp
 import com.example.okhttp.repository.SavedMovieRepository
 import com.example.okhttp.repository.SavedMovieRepositoryImp
 import com.google.firebase.database.FirebaseDatabase
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
