@@ -14,9 +14,6 @@ import com.example.okhttp.databinding.SavedItemBinding
 import com.example.okhttp.models.Movie
 
 class SavedMovieAdapter: ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffCallback()) {
-
-    lateinit var binding: SavedItemBinding
-
     class HolderMovie(binding: SavedItemBinding): RecyclerView.ViewHolder(binding.root){
         val title = binding.title
         val description = binding.description
@@ -45,7 +42,6 @@ class SavedMovieAdapter: ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffC
         val release_date = movie.release_date
         val image = movie.poster_path
         val back_image = movie.backdrop_path
-
 
         holder.title.text = title
         holder.description.text = "★ ${vote_average}\nПремьера: ${release_date}"
