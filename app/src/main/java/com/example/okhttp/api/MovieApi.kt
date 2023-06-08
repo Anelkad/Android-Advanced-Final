@@ -15,13 +15,9 @@ interface MovieApi {
         page: Int = 1
     ): MovieListResponse
 
-    @GET("movie")
+    @GET("movie/{movie_id}?api_key=${API_KEY}&language=${LANGUAGE}")
     suspend fun getMovie(
         @Path("movie_id")
-        movie_id: String,
-        @Query("api_key")
-        api_key: String = API_KEY,
-        @Query("language")
-        language: String = LANGUAGE
+        movie_id: Int
     ): MovieDetails
 }

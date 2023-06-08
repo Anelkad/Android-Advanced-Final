@@ -23,7 +23,7 @@ class MovieDetailsViewModel @Inject constructor(
     fun getMovie(movieId: Int) = viewModelScope.launch(Dispatchers.IO) {
         _movieDetailsDetailsState.postValue(Resource.Loading)
         val result = repository.getMovie(movieId)
-        _movieDetailsDetailsState.postValue(result)
+        _movieDetailsDetailsState.postValue(Resource.Success(result))
     }
 
 }

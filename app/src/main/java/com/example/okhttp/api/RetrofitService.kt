@@ -26,7 +26,7 @@ class RetrofitService {
         return client
     }
 
-    suspend fun getMovie(id: String): MovieDetails {
+    suspend fun getMovie(id: Int): MovieDetails {
         return movieAPI.getMovie(id)
     }
 

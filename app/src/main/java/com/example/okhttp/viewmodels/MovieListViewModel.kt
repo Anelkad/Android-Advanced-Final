@@ -3,6 +3,7 @@ package com.example.okhttp.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.okhttp.models.Movie
 import com.example.okhttp.repository.MovieRepository
 import com.example.okhttp.utils.Resource
@@ -22,7 +23,7 @@ class MovieListViewModel @Inject constructor(
     init {
         getMovieList(1)
     }
-    fun getMovieList(page: Int) = CoroutineScope(Dispatchers.IO).launch {
+    fun getMovieList(page: Int) = viewModelScope.launch(Dispatchers.IO) {
         _movieListState.postValue(Resource.Loading)
         val result = repository.getMovieList(page)
         _movieListState.postValue(Resource.Success(result))
