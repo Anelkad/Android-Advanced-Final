@@ -35,7 +35,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     override fun onCreate(savedInstanceState: Bundle?) {
         current_page = 1
         movieList = ArrayList()
-        movieAdapter = MovieAdapter(movieList)
+        movieAdapter = MovieAdapter()
         super.onCreate(savedInstanceState)
     }
 
@@ -108,8 +108,10 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                 is Resource.Success ->{
                     binding.progressBar.isVisible = false
                     val fetchedMovies = it.getSuccessResult()
-                    if (current_page * 20 > movieList.size)
+                    if (current_page * 20 > movieList.size){
                         movieList.addAll(fetchedMovies)
+                        movieAdapter.submitList(movieList)
+                    }
                     movieAdapter.notifyDataSetChanged()
                 }
                 else -> Unit
@@ -118,7 +120,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     }
 
     private lateinit var waitDialog: Dialog
-    fun showWaitDialog(){
+    private fun showWaitDialog(){
         if (!this::waitDialog.isInitialized) {
             waitDialog = Dialog(requireActivity())
             waitDialog.setContentView(R.layout.wait_dialog)
@@ -129,7 +131,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         if (!waitDialog.isShowing) waitDialog.show()
     }
 
-    fun hideWaitDialog(){
+    private fun hideWaitDialog(){
         if (this::waitDialog.isInitialized or waitDialog.isShowing) waitDialog.dismiss()
     }
 }

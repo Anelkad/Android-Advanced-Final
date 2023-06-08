@@ -33,7 +33,7 @@ class SavedMovieFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         movieList = ArrayList()
-        movieAdapter = SavedMovieAdapter(movieList)
+        movieAdapter = SavedMovieAdapter()
 
         savedMovieListViewModel.getMovieList()
 
@@ -86,15 +86,15 @@ class SavedMovieFragment : Fragment() {
             if (it!=null) {
                 binding.progressBar.isVisible = false
                 movieList.addAll(it)
+                movieAdapter.submitList(movieList)
                 binding.noSavedMovie.isVisible = movieList.isEmpty()
             }
-
             movieAdapter.notifyDataSetChanged()
         })
     }
 
     private lateinit var waitDialog: Dialog
-    fun showWaitDialog(){
+    private fun showWaitDialog(){
         if (!this::waitDialog.isInitialized) {
             waitDialog = Dialog(requireActivity())
             waitDialog.setContentView(R.layout.wait_dialog)
@@ -105,7 +105,7 @@ class SavedMovieFragment : Fragment() {
         if (!waitDialog.isShowing) waitDialog.show()
     }
 
-    fun hideWaitDialog(){
+    private fun hideWaitDialog(){
         if (this::waitDialog.isInitialized or waitDialog.isShowing) waitDialog.dismiss()
     }
 }
