@@ -9,11 +9,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.okhttp.R
-import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.SavedItemBinding
-import com.example.okhttp.models.MovieItem
+import com.example.okhttp.models.Movie
 
-class SavedMovieAdapter(var movieList: ArrayList<MovieItem>) :
+class SavedMovieAdapter(var movieList: ArrayList<Movie>) :
     RecyclerView.Adapter<SavedMovieAdapter.HolderMovie>() {
 
     lateinit var binding: SavedItemBinding

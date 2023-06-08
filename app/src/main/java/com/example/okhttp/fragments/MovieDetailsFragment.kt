@@ -12,7 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentMovieDetailsBinding
-import com.example.okhttp.models.Movie
+import com.example.okhttp.models.MovieDetails
 import com.example.okhttp.utils.Resource
 import com.example.okhttp.viewmodels.MovieDetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +29,7 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMovieDetailsBinding.bind(view)
 
-        movieViewModel.movieDetailsState.observe(viewLifecycleOwner, Observer {
+        movieViewModel.movieDetailsDetailsState.observe(viewLifecycleOwner, Observer {
             when(it) {
                 is Resource.Failure -> {
                     binding.progressBar.isVisible = false
@@ -55,22 +55,22 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
         movieViewModel.getMovie(args.id)
     }
 
-    private fun bindMovie(movie: Movie){
-        binding.textviewTitle.text = movie.title
-        binding.textviewDescription.text = movie.overview
-        if (movie.tagline.isNotEmpty()) binding.tagline.text = "\"${movie.tagline}\""
-        binding.releaseDate.text = "Премьера: ${movie.release_date}"
-        binding.runtime.text = "${movie.runtime/60} ч ${movie.runtime%60} мин"
-        if (movie.revenue>0) binding.revenue.text = "Кассовые сборы: ${movie.revenue/1000000} млн $"
+    private fun bindMovie(movieDetails: MovieDetails){
+        binding.textviewTitle.text = movieDetails.title
+        binding.textviewDescription.text = movieDetails.overview
+        if (movieDetails.tagline.isNotEmpty()) binding.tagline.text = "\"${movieDetails.tagline}\""
+        binding.releaseDate.text = "Премьера: ${movieDetails.release_date}"
+        binding.runtime.text = "${movieDetails.runtime/60} ч ${movieDetails.runtime%60} мин"
+        if (movieDetails.revenue>0) binding.revenue.text = "Кассовые сборы: ${movieDetails.revenue/1000000} млн $"
         Glide
             .with(this)
-            .load(IMAGEURL+movie.poster_path)
+            .load(IMAGEURL+movieDetails.poster_path)
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
             .into(binding.imageview)
         Glide
             .with(this)
-            .load(IMAGEURL+movie.backdrop_path)
+            .load(IMAGEURL+movieDetails.backdrop_path)
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
             .into(binding.imageview2)

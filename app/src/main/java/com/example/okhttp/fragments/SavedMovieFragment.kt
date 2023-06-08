@@ -14,14 +14,14 @@ import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.adapters.SavedMovieAdapter
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
-import com.example.okhttp.models.MovieItem
+import com.example.okhttp.models.Movie
 import com.example.okhttp.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SavedMovieFragment : Fragment() {
 
-    lateinit var movieList: ArrayList<MovieItem>
+    lateinit var movieList: ArrayList<Movie>
     lateinit var binding: FragmentSavedMovieBinding
     lateinit var movieAdapter: SavedMovieAdapter
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()

@@ -9,12 +9,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.okhttp.R
-import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.databinding.MovieItemBinding
-import com.example.okhttp.models.MovieItem
+import com.example.okhttp.models.Movie
 
 
-class MovieAdapter(var movieList: ArrayList<MovieItem>) :
+class MovieAdapter(var movieList: ArrayList<Movie>) :
     RecyclerView.Adapter<MovieAdapter.HolderMovie>() {
 
     lateinit var binding: MovieItemBinding
@@ -69,8 +68,8 @@ class MovieAdapter(var movieList: ArrayList<MovieItem>) :
     fun setOnMovieClickListener(listener: (Int) -> Unit) {
         onMovieClickListener = listener
     }
-    private var saveMovieListener: ((MovieItem) -> Unit)? = null
-    fun setSaveMovieClickListener(listener: (MovieItem) -> Unit){
+    private var saveMovieListener: ((Movie) -> Unit)? = null
+    fun setSaveMovieClickListener(listener: (Movie) -> Unit){
         saveMovieListener = listener
     }
 

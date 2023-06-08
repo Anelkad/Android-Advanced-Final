@@ -18,7 +18,7 @@ import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.adapters.MovieAdapter
 import com.example.okhttp.databinding.FragmentMovieListBinding
-import com.example.okhttp.models.MovieItem
+import com.example.okhttp.models.Movie
 import com.example.okhttp.utils.Resource
 import com.example.okhttp.viewmodels.MovieListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,11 +27,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var binding: FragmentMovieListBinding
     lateinit var movieAdapter: MovieAdapter
-    lateinit var movieList: ArrayList<MovieItem>
+    lateinit var movieList: ArrayList<Movie>
 
     var current_page = 1
     var total_pages = 2
-    var baseUrl: String = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANGUAGE}&page=${current_page}"
 
     val movieListViewModel: MovieListViewModel by viewModels()
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
@@ -101,8 +100,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                         Log.d("onScroll"," done")
                         Toast.makeText(requireContext(),"Downloading...", Toast.LENGTH_SHORT).show()
 
-                        baseUrl = "https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=16,18&language=${LANGUAGE}&page=${current_page}"
-                        movieListViewModel.getMovieList(baseUrl)
+                        movieListViewModel.getMovieList(current_page)
                     }
                 }
             }
@@ -122,7 +120,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                     binding.progressBar.isVisible = false
                     val fetchedMovies = it.getSuccessResult()
                     if (current_page * 20 > movieList.size)
-                        movieList.addAll(fetchedMovies.results)
+                        movieList.addAll(fetchedMovies)
                     movieAdapter.notifyDataSetChanged()
                 }
                 else -> Unit

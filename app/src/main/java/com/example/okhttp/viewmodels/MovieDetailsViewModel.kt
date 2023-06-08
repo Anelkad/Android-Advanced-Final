@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.okhttp.models.Movie
+import com.example.okhttp.models.MovieDetails
 import com.example.okhttp.repository.MovieRepository
 import com.example.okhttp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,13 +17,13 @@ class MovieDetailsViewModel @Inject constructor(
     private val repository: MovieRepository
 ): ViewModel() {
 
-    private val _movieDetailsState = MutableLiveData<Resource<Movie>>(null)
-    val movieDetailsState: LiveData<Resource<Movie>> = _movieDetailsState
+    private val _movieDetailsDetailsState = MutableLiveData<Resource<MovieDetails>>(null)
+    val movieDetailsDetailsState: LiveData<Resource<MovieDetails>> = _movieDetailsDetailsState
 
     fun getMovie(movieId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        _movieDetailsState.postValue(Resource.Loading)
+        _movieDetailsDetailsState.postValue(Resource.Loading)
         val result = repository.getMovie(movieId)
-        _movieDetailsState.postValue(result)
+        _movieDetailsDetailsState.postValue(result)
     }
 
 }
