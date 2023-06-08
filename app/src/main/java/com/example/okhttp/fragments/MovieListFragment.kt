@@ -86,7 +86,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         binding.listView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
                 super.onScrolled(recyclerView, dx, dy)
-                //todo listadapter, pagination
+                //todo pagination
                 if (!binding.listView.canScrollVertically(1)){
                         current_page++
                         Log.d("qwerty onScroll"," done")
