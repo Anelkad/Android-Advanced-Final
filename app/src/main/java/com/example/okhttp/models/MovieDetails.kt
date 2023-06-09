@@ -12,4 +12,7 @@ data class MovieDetails(
     val tagline: String,
     val revenue: Int,
     val runtime: Int
-)
+){
+    fun toMovie(): Movie =
+        Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average)
+}

@@ -84,20 +84,30 @@
                 android:textAlignment="textEnd"
                 android:layout_below="@+id/runtime"/>
 
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/revenue"
+                android:text="Save movie"
+                android:layout_alignParentEnd="true"
+                android:layout_marginHorizontal="10dp"
+                android:visibility="gone"/>
+
             <TextView
                 android:id="@+id/textview_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:padding="20dp"
+                android:paddingHorizontal="20dp"
                 android:textSize="20sp"
                 android:textColor="@color/black"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/revenue"/>
+                android:layout_below="@+id/saveButton"/>
 
             <ImageView
                 android:id="@+id/imageview"
-                android:layout_width="300dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:adjustViewBounds="true"
@@ -108,6 +118,7 @@
                 android:id="@+id/imageview2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
                 android:padding="10dp"
                 android:layout_below="@+id/textview_description"/>
 
