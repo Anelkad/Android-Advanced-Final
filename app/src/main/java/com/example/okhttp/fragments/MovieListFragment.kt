@@ -73,7 +73,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         movieAdapter.setSaveMovieClickListener {saveMovie(it)}
 
         binding.btnRetry.setOnClickListener {
-            //todo как проверить refresh?
+            //todo как проверить retry кнопку?
             movieAdapter.retry()
         }
 
