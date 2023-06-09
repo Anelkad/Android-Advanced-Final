@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
 import com.example.okhttp.adapters.MovieAdapter
+import com.example.okhttp.adapters.MovieLoadStateAdapter
 import com.example.okhttp.adapters.PagedMovieAdapter
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.models.Movie
@@ -49,7 +50,9 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         binding = FragmentMovieListBinding.bind(view)
 
         binding.listView.layoutManager = StaggeredGridLayoutManager(2,LinearLayoutManager.VERTICAL)
-        binding.listView.adapter = movieAdapter
+        binding.listView.adapter = movieAdapter.withLoadStateFooter(
+            MovieLoadStateAdapter { movieAdapter.retry()}
+        )
 
         lifecycleScope.launch {
             movieListViewModel.pagedMovieList.collectLatest {
@@ -70,6 +73,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         movieAdapter.setSaveMovieClickListener {saveMovie(it)}
 
         binding.btnRetry.setOnClickListener {
+            //todo как проверить refresh?
             movieAdapter.retry()
         }
 
@@ -85,7 +89,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                     loadState.append is LoadState.Error -> loadState.append as LoadState.Error
                     loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
                     loadState.refresh is LoadState.Error -> {
-                        binding.btnRetry.visibility = View.VISIBLE
+                        binding.btnRetry.isVisible = true
                         loadState.refresh as LoadState.Error
                     }
                     else -> null
@@ -132,7 +136,6 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         binding.listView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
                 super.onScrolled(recyclerView, dx, dy)
-                //todo paging
                 if (!binding.listView.canScrollVertically(1)){
                     if (current_page<=total_pages) {
                         current_page++

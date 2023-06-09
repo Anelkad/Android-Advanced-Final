@@ -20,7 +20,7 @@
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
-        android:indeterminateTint="@color/main_color"
+        android:indeterminateTint="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="15dp"
