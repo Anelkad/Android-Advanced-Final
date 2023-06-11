@@ -36,6 +36,8 @@ class SavedMovieFragment : Fragment() {
         movieAdapter = SavedMovieAdapter()
 
         savedMovieListViewModel.getMovieList()
+        //todo список сохранненых не прогружает в другом устройстве
+        //todo CamelCase везде переименовать
 
         binding = FragmentSavedMovieBinding.inflate(inflater,container, false)
         binding.listView.adapter = movieAdapter
@@ -49,32 +51,8 @@ class SavedMovieFragment : Fragment() {
                 bundle
             )
         }
-        movieAdapter.setDeleteMovieClickListener { movie ->
-            savedMovieListViewModel.deleteMovie(movie)
-            savedMovieListViewModel.deleteMovieState.observe(viewLifecycleOwner, Observer {
-                when (it){
-                    is Resource.Failure -> {
-                        hideWaitDialog()
-                        Toast.makeText(
-                            context, "Cannot delete movie!",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    is Resource.Loading -> {
-                        showWaitDialog()
-                    }
-                    is Resource.Success ->{
-                        hideWaitDialog()
-                        Toast.makeText(
-                            context, "Movie deleted!",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    else -> Unit
-                }
-            })
-        }
 
+        movieAdapter.setDeleteMovieClickListener {deleteMovie(it)}
         loadMovieList()
         return binding.root
     }
@@ -86,10 +64,35 @@ class SavedMovieFragment : Fragment() {
             if (it!=null) {
                 binding.progressBar.isVisible = false
                 movieList.addAll(it)
-                movieAdapter.submitList(movieList)
+                movieAdapter.submitList(movieList.toMutableList())
                 binding.noSavedMovie.isVisible = movieList.isEmpty()
             }
-            movieAdapter.notifyDataSetChanged()
+        })
+    }
+
+    private fun deleteMovie(movieId: Int){
+        savedMovieListViewModel.deleteMovie(movieId)
+        savedMovieListViewModel.deleteMovieState.observe(viewLifecycleOwner, Observer {
+            when (it){
+                is Resource.Failure -> {
+                    hideWaitDialog()
+                    Toast.makeText(
+                        context, "Cannot delete movie!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                is Resource.Loading -> {
+                    showWaitDialog()
+                }
+                is Resource.Success ->{
+                    hideWaitDialog()
+                    Toast.makeText(
+                        context, "Movie deleted!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                else -> Unit
+            }
         })
     }
 

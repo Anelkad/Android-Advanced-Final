@@ -2,7 +2,6 @@ package com.example.okhttp.fragments
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
-import com.example.okhttp.adapters.MovieAdapter
 import com.example.okhttp.adapters.MovieLoadStateAdapter
 import com.example.okhttp.adapters.PagedMovieAdapter
 import com.example.okhttp.databinding.FragmentMovieListBinding
@@ -34,13 +32,9 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var movieAdapter: PagedMovieAdapter
     lateinit var movieList: ArrayList<Movie>
 
-    var current_page = 1
-    var total_pages = 2
-
     val movieListViewModel: MovieListViewModel by viewModels()
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
-        current_page = 1
         movieList = ArrayList()
         movieAdapter = PagedMovieAdapter()
         super.onCreate(savedInstanceState)
@@ -98,11 +92,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                     Toast.makeText(requireContext(), it.error.message, Toast.LENGTH_LONG).show()
                 }
             }
-
         }
-
-        //observeViewModel()
-        //oldOnScroll()
 
     }
 
@@ -126,43 +116,6 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                         context, "Movie \"${it.getSuccessResult().title}\" saved!",
                         Toast.LENGTH_LONG
                     ).show()
-                }
-                else -> Unit
-            }
-        })
-    }
-
-    private fun oldOnScroll(){
-        binding.listView.addOnScrollListener(object: RecyclerView.OnScrollListener(){
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
-                super.onScrolled(recyclerView, dx, dy)
-                if (!binding.listView.canScrollVertically(1)){
-                    if (current_page<=total_pages) {
-                        current_page++
-                        movieListViewModel.getMovieList(current_page)
-                    }
-                }
-            }
-        })
-    }
-
-    private fun observeViewModel(){
-        movieListViewModel.movieListState.observe(viewLifecycleOwner, Observer {
-            when (it){
-                is Resource.Failure -> {
-                    binding.progressBar.isVisible = false
-                }
-                is Resource.Loading -> {
-                    binding.progressBar.isVisible = true
-                }
-                is Resource.Success ->{
-                    binding.progressBar.isVisible = false
-                    val fetchedMovies = it.getSuccessResult().results
-                    total_pages = it.getSuccessResult().total_pages
-                    if (current_page * 20 > movieList.size){
-                        movieList.addAll(fetchedMovies)
-                        //movieAdapter.submitList(movieList.toMutableList())
-                    }
                 }
                 else -> Unit
             }

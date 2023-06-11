@@ -1,6 +1,6 @@
 package com.example.okhttp.adapters
 
-import IMAGEURL
+import IMAGE_URL
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -16,16 +16,21 @@ import com.example.okhttp.models.Movie
 class PagedMovieAdapter: PagingDataAdapter<Movie, PagedMovieAdapter.MovieViewHolder>(
     DiffCallback()
 ) {
+    override fun getItemViewType(position: Int): Int {
+        //todo каждые 10 фильмов - реклама
+        return super.getItemViewType(position)
+    }
+
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie: Movie = getItem(position)!!
 
         with (holder.movieItemBinding){
             title.text = movie.title
-            description.text = "★ ${movie.vote_average}\nПремьера: ${movie.release_date}"
+            description.text = "★ ${movie.voteAverage}\nПремьера: ${movie.releaseDate}"
 
             Glide
                 .with(imageView.context)
-                .load(IMAGEURL+movie.poster_path)
+                .load(IMAGE_URL+movie.posterPath)
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(10)))
                 .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.baseline_image_24)

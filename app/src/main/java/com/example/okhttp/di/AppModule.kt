@@ -22,11 +22,12 @@ object AppModule {
     fun provideFirebaseDatabase(): FirebaseDatabase = FirebaseDatabase.getInstance(FIREBASE_URL)
     @Provides
     fun provideService(): RetrofitService = RetrofitService()
-//    @Provides
-//    fun providesMovieRepository(imp: MovieRepositoryImp): MovieRepository = imp
     @Provides
     fun providesSavedMovieRepository(imp: SavedMovieRepositoryImp): SavedMovieRepository = imp
-    //пример без использования Inject в provideMovieRepositoryImp
+
+    //@Provides
+    //fun providesMovieRepository(imp: MovieRepositoryImp): MovieRepository = imp
+    //пример без использования @Inject в provideMovieRepositoryImp
     @Provides
     fun provideMovieRepositoryImp(service: RetrofitService) = MovieRepositoryImp(service = service)
 
@@ -34,7 +35,7 @@ object AppModule {
     @InstallIn(ViewModelComponent::class)
     object ViewModelMovieModule {
         @Provides
-        @ViewModelScoped
+        @ViewModelScoped //жизненный цикл ViewModelScope
         fun providesMovieRepository(imp: MovieRepositoryImp): MovieRepository = imp
     }
 }

@@ -1,10 +1,18 @@
 package com.example.okhttp.models
 
+import com.google.gson.annotations.SerializedName
+
 data class Movie(
     var id: Int = 0,
-    var title: String ="",
+    var title: String = "",
     var overview: String = "",
-    var release_date: String = "",
-    var poster_path: String = "",
-    var backdrop_path: String = "",
-    var vote_average: Float = 0F)
+    //todo use CamelCase
+    @SerializedName("release_date")
+    var releaseDate: String = "",
+    @SerializedName("poster_path")
+    var posterPath: String = "",
+    @SerializedName("backdrop_path")
+    var backdropPath: String = "",
+    @SerializedName("vote_average")
+    var voteAverage: Float = 0F
+)

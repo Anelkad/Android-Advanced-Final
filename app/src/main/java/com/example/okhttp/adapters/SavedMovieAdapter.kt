@@ -1,6 +1,6 @@
 package com.example.okhttp.adapters
 
-import IMAGEURL
+import IMAGE_URL
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -13,8 +13,8 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.SavedItemBinding
 import com.example.okhttp.models.Movie
 
-class SavedMovieAdapter: ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffCallback()) {
-    class HolderMovie(binding: SavedItemBinding): RecyclerView.ViewHolder(binding.root){
+class SavedMovieAdapter : ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffCallback()) {
+    class HolderMovie(binding: SavedItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.title
         val description = binding.description
         val image = binding.imageView
@@ -22,14 +22,16 @@ class SavedMovieAdapter: ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffC
         val itemView = binding.itemView
     }
 
-    class DiffCallback: DiffUtil.ItemCallback<Movie>() {
+    class DiffCallback : DiffUtil.ItemCallback<Movie>() {
         override fun areItemsTheSame(oldItem: Movie, newItem: Movie) = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: Movie, newItem: Movie) = oldItem == newItem
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderMovie {
-        val binding = SavedItemBinding.inflate(LayoutInflater
-            .from(parent.context),parent,false)
+        val binding = SavedItemBinding.inflate(
+            LayoutInflater
+                .from(parent.context), parent, false
+        )
         return HolderMovie(binding)
     }
 
@@ -38,25 +40,25 @@ class SavedMovieAdapter: ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffC
         val id = movie.id
         val title = movie.title
         val description = movie.overview
-        val vote_average = movie.vote_average
-        val release_date = movie.release_date
-        val image = movie.poster_path
-        val back_image = movie.backdrop_path
+        val voteAverage = movie.voteAverage
+        val releaseDate = movie.releaseDate
+        val image = movie.posterPath
+        val backImage = movie.backdropPath
 
         holder.title.text = title
-        holder.description.text = "★ ${vote_average}\nПремьера: ${release_date}"
+        holder.description.text = holder.itemView.context.getString(R.string.premiere, releaseDate)
 
         Glide
             .with(holder.image.context)
-            .load(IMAGEURL+image)
+            .load(IMAGE_URL + image)
             .apply(RequestOptions.bitmapTransform(RoundedCorners(10)))
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
             .into(holder.image)
 
 
-        holder.itemView.setOnClickListener {onItemClickListener?.let { it(id) }}
-        holder.delete.setOnClickListener {deleteMovieListener?.let {it(id)}}
+        holder.itemView.setOnClickListener { onItemClickListener?.let { it(id) } }
+        holder.delete.setOnClickListener { deleteMovieListener?.let { it(id) } }
     }
 
     private var onItemClickListener: ((Int) -> Unit)? = null
@@ -65,7 +67,7 @@ class SavedMovieAdapter: ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffC
     }
 
     private var deleteMovieListener: ((Int) -> Unit)? = null
-    fun setDeleteMovieClickListener(listener: (Int) -> Unit){
+    fun setDeleteMovieClickListener(listener: (Int) -> Unit) {
         deleteMovieListener = listener
     }
 

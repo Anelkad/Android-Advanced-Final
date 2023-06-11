@@ -1,6 +1,6 @@
 package com.example.okhttp.fragments
 
-import IMAGEURL
+import IMAGE_URL
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
@@ -86,7 +86,9 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
             }
         })
     }
+    //todo don't hardcode
     private fun bindMovie(movieDetails: MovieDetails){
+        //todo заменить на binding.with
         binding.textviewTitle.text = movieDetails.title
         binding.textviewDescription.text = movieDetails.overview
         if (movieDetails.tagline.isNotEmpty()) binding.tagline.text = "\"${movieDetails.tagline}\""
@@ -95,13 +97,13 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
         if (movieDetails.revenue>0) binding.revenue.text = "Кассовые сборы: ${movieDetails.revenue/1000000} млн $"
         Glide
             .with(this)
-            .load(IMAGEURL+movieDetails.poster_path)
+            .load(IMAGE_URL+movieDetails.poster_path)
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
             .into(binding.imageview)
         Glide
             .with(this)
-            .load(IMAGEURL+movieDetails.backdrop_path)
+            .load(IMAGE_URL+movieDetails.backdrop_path)
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
             .into(binding.imageview2)

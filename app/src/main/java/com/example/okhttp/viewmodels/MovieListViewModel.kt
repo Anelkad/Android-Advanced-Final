@@ -21,18 +21,6 @@ class MovieListViewModel @Inject constructor(
 ) : ViewModel() {
     //todo заменить LiveData на StateFlow
 
-    private val _movieListState = MutableLiveData<Resource<MovieListResponse>>(null)
-    val movieListState: LiveData<Resource<MovieListResponse>> =_movieListState
-
     val pagedMovieList: Flow<PagingData<Movie>> =
         repository.getPagedMovieList().cachedIn(viewModelScope)
-    init {
-        getMovieList(1)
-    }
-    fun getMovieList(page: Int) = viewModelScope.launch(Dispatchers.IO) {
-        _movieListState.postValue(Resource.Loading)
-        val result = repository.getMovieList(page)
-        _movieListState.postValue(Resource.Success(result))
-    }
-
 }
