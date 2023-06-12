@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -52,6 +53,10 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
             movieListViewModel.pagedMovieList.collectLatest {
                 movieAdapter.submitData(it)
             }
+        }
+
+        binding.refreshButton.setOnClickListener {
+            movieAdapter.refresh()
         }
 
         movieAdapter.setOnMovieClickListener {

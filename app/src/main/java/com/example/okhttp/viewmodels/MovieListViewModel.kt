@@ -3,6 +3,7 @@ package com.example.okhttp.viewmodels
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.okhttp.models.ListItem
 import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieListResponse
 import com.example.okhttp.repository.MovieRepository
@@ -20,6 +21,6 @@ class MovieListViewModel @Inject constructor(
     private val repository: MovieRepository
 ) : ViewModel() {
 
-    val pagedMovieList: Flow<PagingData<Movie>> =
+    val pagedMovieList: Flow<PagingData<ListItem>> =
         repository.getPagedMovieList().cachedIn(viewModelScope)
 }

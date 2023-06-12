@@ -1,61 +1,63 @@
 package com.example.okhttp.adapters
 
-import IMAGE_URL
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.okhttp.R
-import com.example.okhttp.databinding.MovieItemBinding
+import com.example.okhttp.models.ListItem
 import com.example.okhttp.models.Movie
 
-class PagedMovieAdapter: PagingDataAdapter<Movie, PagedMovieAdapter.MovieViewHolder>(
+class PagedMovieAdapter: PagingDataAdapter<ListItem, RecyclerView.ViewHolder>(
     DiffCallback()
 ) {
     override fun getItemViewType(position: Int): Int {
-        //todo каждые 10 фильмов - реклама
-        return super.getItemViewType(position)
-    }
-
-    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie: Movie = getItem(position)!!
-
-        with (holder.movieItemBinding){
-            title.text = movie.title
-            description.text = description.context.getString(R.string.description,movie.voteAverage.toString(),movie.releaseDate)
-
-            Glide
-                .with(imageView.context)
-                .load(IMAGE_URL+movie.posterPath)
-                .apply(RequestOptions.bitmapTransform(RoundedCorners(10)))
-                .placeholder(R.drawable.progress_animation)
-                .error(R.drawable.baseline_image_24)
-                .into(imageView)
-
-            itemView.setOnClickListener { onMovieClickListener?.let { it(movie.id) } }
-            save.setOnClickListener {saveMovieListener?.let{ it(movie)}}
-
+        return when (peek(position)) {
+            is ListItem.MovieItem -> R.layout.movie_item
+            is ListItem.AdItem -> R.layout.ad_item
+            null -> throw IllegalStateException("Unknown view")
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        val binding = MovieItemBinding.inflate(
-            LayoutInflater
-            .from(parent.context),parent,false)
-        return MovieViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == R.layout.movie_item) {
+            MovieViewHolder.create(parent)
+        } else {
+            AdViewHolder.create(parent)
+        }
     }
 
-    class DiffCallback: DiffUtil.ItemCallback<Movie>() {
-        override fun areItemsTheSame(oldItem: Movie, newItem: Movie) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Movie, newItem: Movie) = oldItem == newItem
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val listItem = getItem(position)
+        listItem.let {
+            when (listItem) {
+                is ListItem.MovieItem -> {
+                    val movieHolder = (holder as MovieViewHolder)
+                    movieHolder.bind(listItem.movie)
+                    //todo listeter-ы дублируются
+                    movieHolder.setOnMovieClickListener {onMovieClickListener?.let {it(listItem.movie.id)}}
+                    movieHolder.setSaveMovieClickListener {saveMovieListener?.let{ it(listItem.movie)}}
+                }
+                is ListItem.AdItem -> (holder as AdViewHolder).bind(listItem.ad)
+                else -> {}
+            }
+        }
     }
 
-    class MovieViewHolder(val movieItemBinding: MovieItemBinding) :
-        RecyclerView.ViewHolder(movieItemBinding.root)
+    class DiffCallback: DiffUtil.ItemCallback<ListItem>() {
+        override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
+            val isSameMovieItem = oldItem is ListItem.MovieItem
+                    && newItem is ListItem.MovieItem
+                    && oldItem.movie.id == newItem.movie.id
+
+            val isSameAdItem = oldItem is ListItem.AdItem
+                    && newItem is ListItem.AdItem
+                    && oldItem.ad == newItem.ad
+
+            return isSameMovieItem || isSameAdItem
+        }
+        override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem) = oldItem == newItem
+    }
 
     private var onMovieClickListener: ((Int) -> Unit)? = null
     fun setOnMovieClickListener(listener: (Int) -> Unit) {

@@ -18,7 +18,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)//App lifecycle
+@InstallIn(SingletonComponent::class) //App lifecycle
 object AppModule {
     @Provides
     @Singleton
@@ -26,11 +26,4 @@ object AppModule {
     @Provides
     @Singleton
     fun provideService(): RetrofitService = RetrofitService()
-    //@Provides
-    //fun providesMovieRepository(imp: MovieRepositoryImp): MovieRepository = imp
-    //пример без использования @Inject в provideMovieRepositoryImp
-    @Provides
-    @Singleton
-    fun provideMovieRepositoryImp(service: RetrofitService) = MovieRepositoryImp(service = service)
-    //todo providesMovieRepository => provideMovieRepositoryImp => provideService
 }
