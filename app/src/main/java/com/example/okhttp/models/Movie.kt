@@ -6,7 +6,6 @@ data class Movie(
     var id: Int = 0,
     var title: String = "",
     var overview: String = "",
-    //todo use CamelCase
     @SerializedName("release_date")
     var releaseDate: String = "",
     @SerializedName("poster_path")

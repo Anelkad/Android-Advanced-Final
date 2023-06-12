@@ -17,6 +17,7 @@ class SavedMovieListViewModel @Inject constructor (
     private val repository: SavedMovieRepository
 ) : ViewModel() {
 
+    //todo заменить LiveData на StateFlow
     private val _savedMovieList = MutableLiveData<ArrayList<Movie>>(null)
     val savedMovieList: LiveData<ArrayList<Movie>> =_savedMovieList
 

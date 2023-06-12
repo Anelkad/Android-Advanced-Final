@@ -26,7 +26,7 @@ class PagedMovieAdapter: PagingDataAdapter<Movie, PagedMovieAdapter.MovieViewHol
 
         with (holder.movieItemBinding){
             title.text = movie.title
-            description.text = "★ ${movie.voteAverage}\nПремьера: ${movie.releaseDate}"
+            description.text = description.context.getString(R.string.description,movie.voteAverage.toString(),movie.releaseDate)
 
             Glide
                 .with(imageView.context)

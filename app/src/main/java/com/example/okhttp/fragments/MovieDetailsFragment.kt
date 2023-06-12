@@ -86,30 +86,31 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
             }
         })
     }
-    //todo don't hardcode
     private fun bindMovie(movieDetails: MovieDetails){
-        //todo заменить на binding.with
-        binding.textviewTitle.text = movieDetails.title
-        binding.textviewDescription.text = movieDetails.overview
-        if (movieDetails.tagline.isNotEmpty()) binding.tagline.text = "\"${movieDetails.tagline}\""
-        binding.releaseDate.text = "Премьера: ${movieDetails.release_date}"
-        binding.runtime.text = "${movieDetails.runtime/60} ч ${movieDetails.runtime%60} мин"
-        if (movieDetails.revenue>0) binding.revenue.text = "Кассовые сборы: ${movieDetails.revenue/1000000} млн $"
-        Glide
-            .with(this)
-            .load(IMAGE_URL+movieDetails.poster_path)
-            .placeholder(R.drawable.progress_animation)
-            .error(R.drawable.baseline_image_24)
-            .into(binding.imageview)
-        Glide
-            .with(this)
-            .load(IMAGE_URL+movieDetails.backdrop_path)
-            .placeholder(R.drawable.progress_animation)
-            .error(R.drawable.baseline_image_24)
-            .into(binding.imageview2)
-        binding.saveButton.isVisible = true
-        binding.saveButton.setOnClickListener {
-            saveMovie(movieDetails.toMovie())
+        with (binding){
+            textviewTitle.text = movieDetails.title
+            textviewDescription.text = movieDetails.overview
+            if (movieDetails.tagline.isNotEmpty()) tagline.text = tagline.context.getString(R.string.tagline, movieDetails.tagline)
+            releaseDate.text = releaseDate.context.getString(R.string.premiere,movieDetails.releaseDate)
+            runtime.text = runtime.context.getString(R.string.runtime, movieDetails.runtime/60,movieDetails.runtime%60)
+            if (movieDetails.revenue>0) revenue.text = revenue.context.getString(R.string.revenue, movieDetails.revenue/1000000)
+
+            Glide
+                .with(imageview.context)
+                .load(IMAGE_URL+movieDetails.posterPath)
+                .placeholder(R.drawable.progress_animation)
+                .error(R.drawable.baseline_image_24)
+                .into(imageview)
+
+            Glide
+                .with(imageview.context)
+                .load(IMAGE_URL+movieDetails.backdropPath)
+                .placeholder(R.drawable.progress_animation)
+                .error(R.drawable.baseline_image_24)
+                .into(binding.imageview2)
+
+            saveButton.isVisible = true
+            saveButton.setOnClickListener {saveMovie(movieDetails.toMovie())}
         }
     }
 

@@ -19,7 +19,6 @@ import javax.inject.Named
 class MovieListViewModel @Inject constructor(
     private val repository: MovieRepository
 ) : ViewModel() {
-    //todo заменить LiveData на StateFlow
 
     val pagedMovieList: Flow<PagingData<Movie>> =
         repository.getPagedMovieList().cachedIn(viewModelScope)

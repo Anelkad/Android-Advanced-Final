@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Assignment 4</string>
-    <string name="premiere">Premiere %s</string>
+    <string name="premiere">Премьера: %s</string>
+    <string name="tagline">"%s"</string>
+    <string name="runtime">%d ч %d мин</string>
+    <string name="description">★ %s\nПремьера: %s</string>
+    <string name="revenue">Кассовые сборы: %d млн $</string>
 </resources>

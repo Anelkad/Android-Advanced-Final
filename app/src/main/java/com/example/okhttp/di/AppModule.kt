@@ -8,34 +8,29 @@ import com.example.okhttp.repository.MovieRepositoryImp
 import com.example.okhttp.repository.SavedMovieRepository
 import com.example.okhttp.repository.SavedMovieRepositoryImp
 import com.google.firebase.database.FirebaseDatabase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@InstallIn(SingletonComponent::class)
 @Module
+@InstallIn(SingletonComponent::class)//App lifecycle
 object AppModule {
     @Provides
+    @Singleton
     fun provideFirebaseDatabase(): FirebaseDatabase = FirebaseDatabase.getInstance(FIREBASE_URL)
     @Provides
+    @Singleton
     fun provideService(): RetrofitService = RetrofitService()
-    @Provides
-    fun providesSavedMovieRepository(imp: SavedMovieRepositoryImp): SavedMovieRepository = imp
-
     //@Provides
     //fun providesMovieRepository(imp: MovieRepositoryImp): MovieRepository = imp
     //пример без использования @Inject в provideMovieRepositoryImp
     @Provides
+    @Singleton
     fun provideMovieRepositoryImp(service: RetrofitService) = MovieRepositoryImp(service = service)
-
-    @Module
-    @InstallIn(ViewModelComponent::class)
-    object ViewModelMovieModule {
-        @Provides
-        @ViewModelScoped //жизненный цикл ViewModelScope
-        fun providesMovieRepository(imp: MovieRepositoryImp): MovieRepository = imp
-    }
+    //todo providesMovieRepository => provideMovieRepositoryImp => provideService
 }

@@ -1,18 +1,24 @@
 package com.example.okhttp.models
 
+import com.google.gson.annotations.SerializedName
+
 
 data class MovieDetails(
     val id: Int,
     val title: String,
     val overview: String,
-    val release_date: String,
-    val poster_path: String,
-    val backdrop_path: String,
-    val vote_average: Float,
+    @SerializedName("release_date")
+    val releaseDate: String,
+    @SerializedName("poster_path")
+    val posterPath: String,
+    @SerializedName("backdrop_path")
+    val backdropPath: String,
+    @SerializedName("vote_average")
+    val voteAverage: Float,
     val tagline: String,
     val revenue: Int,
     val runtime: Int
 ){
     fun toMovie(): Movie =
-        Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average)
+        Movie(id, title, overview, releaseDate, posterPath, backdropPath, voteAverage)
 }

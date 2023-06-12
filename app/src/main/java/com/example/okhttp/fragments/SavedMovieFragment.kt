@@ -36,8 +36,6 @@ class SavedMovieFragment : Fragment() {
         movieAdapter = SavedMovieAdapter()
 
         savedMovieListViewModel.getMovieList()
-        //todo список сохранненых не прогружает в другом устройстве
-        //todo CamelCase везде переименовать
 
         binding = FragmentSavedMovieBinding.inflate(inflater,container, false)
         binding.listView.adapter = movieAdapter
