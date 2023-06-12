@@ -24,7 +24,7 @@ class MoviePagingSource(
 
             val list = buildList{
                 addAll(movieListResponse.results.map {ListItem.MovieItem(it)} )
-                //todo каждые 10 фильмов - реклама
+                //каждые 10 фильмов - реклама
                 add(10, ListItem.AdItem(ad))
                 add(21, ListItem.AdItem(ad))
             }

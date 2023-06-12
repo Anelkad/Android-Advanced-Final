@@ -6,11 +6,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragments.MovieListFragment">
 
-    <Button
-        android:id="@+id/refreshButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="refresh"/>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listView"
@@ -23,6 +22,8 @@
         android:clipToPadding="false"
         tools:listitem="@layout/movie_item"/>
 
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
@@ -30,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="15dp"
-        android:layout_gravity="center|bottom"
+        android:layout_gravity="center"
         android:visibility="gone"/>
 
     <Button

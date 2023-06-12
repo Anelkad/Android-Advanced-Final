@@ -8,9 +8,13 @@ import com.example.okhttp.R
 import com.example.okhttp.models.ListItem
 import com.example.okhttp.models.Movie
 
-class PagedMovieAdapter: PagingDataAdapter<ListItem, RecyclerView.ViewHolder>(
-    DiffCallback()
-) {
+class PagedMovieAdapter(
+    private val onMovieClickListener: ((Int) -> Unit),
+    private val saveMovieListener: ((Movie) -> Unit)
+) :
+    PagingDataAdapter<ListItem, RecyclerView.ViewHolder>(
+        DiffCallback()
+    ) {
     override fun getItemViewType(position: Int): Int {
         return when (peek(position)) {
             is ListItem.MovieItem -> R.layout.movie_item
@@ -21,7 +25,11 @@ class PagedMovieAdapter: PagingDataAdapter<ListItem, RecyclerView.ViewHolder>(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == R.layout.movie_item) {
-            MovieViewHolder.create(parent)
+            MovieViewHolder.create(
+                parent = parent,
+                onMovieClickListener = onMovieClickListener,
+                saveMovieListener = saveMovieListener
+            )
         } else {
             AdViewHolder.create(parent)
         }
@@ -34,17 +42,15 @@ class PagedMovieAdapter: PagingDataAdapter<ListItem, RecyclerView.ViewHolder>(
                 is ListItem.MovieItem -> {
                     val movieHolder = (holder as MovieViewHolder)
                     movieHolder.bind(listItem.movie)
-                    //todo listeter-ы дублируются
-                    movieHolder.setOnMovieClickListener {onMovieClickListener?.let {it(listItem.movie.id)}}
-                    movieHolder.setSaveMovieClickListener {saveMovieListener?.let{ it(listItem.movie)}}
-                }
+                    //todo Item Decorator
+                   }
                 is ListItem.AdItem -> (holder as AdViewHolder).bind(listItem.ad)
                 else -> {}
             }
         }
     }
 
-    class DiffCallback: DiffUtil.ItemCallback<ListItem>() {
+    class DiffCallback : DiffUtil.ItemCallback<ListItem>() {
         override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
             val isSameMovieItem = oldItem is ListItem.MovieItem
                     && newItem is ListItem.MovieItem
@@ -56,16 +62,7 @@ class PagedMovieAdapter: PagingDataAdapter<ListItem, RecyclerView.ViewHolder>(
 
             return isSameMovieItem || isSameAdItem
         }
+
         override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem) = oldItem == newItem
-    }
-
-    private var onMovieClickListener: ((Int) -> Unit)? = null
-    fun setOnMovieClickListener(listener: (Int) -> Unit) {
-        onMovieClickListener = listener
-    }
-
-    private var saveMovieListener: ((Movie) -> Unit)? = null
-    fun setSaveMovieClickListener(listener: (Movie) -> Unit){
-        saveMovieListener = listener
     }
 }

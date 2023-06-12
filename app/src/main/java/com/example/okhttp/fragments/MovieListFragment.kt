@@ -11,9 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.okhttp.R
 import com.example.okhttp.SavedMovieListViewModel
@@ -31,23 +29,33 @@ import kotlinx.coroutines.launch
 class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var binding: FragmentMovieListBinding
     lateinit var movieAdapter: PagedMovieAdapter
-    lateinit var movieList: ArrayList<Movie>
 
     val movieListViewModel: MovieListViewModel by viewModels()
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        movieList = ArrayList()
-        movieAdapter = PagedMovieAdapter()
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentMovieListBinding.bind(view)
 
+        movieAdapter = PagedMovieAdapter(
+            {
+                val bundle = Bundle().apply {
+                    putInt("id", it)
+                }
+                findNavController().navigate(
+                    R.id.action_movieListFragment_to_movieDetailsFragment,
+                    bundle
+                )
+            },
+            {
+                saveMovie(it)
+            }
+        )
         binding.listView.layoutManager = StaggeredGridLayoutManager(2,LinearLayoutManager.VERTICAL)
         binding.listView.adapter = movieAdapter.withLoadStateFooter(
             MovieLoadStateAdapter { movieAdapter.retry()}
         )
+
+        binding.progressBar.isVisible = true
 
         lifecycleScope.launch {
             movieListViewModel.pagedMovieList.collectLatest {
@@ -55,35 +63,23 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
             }
         }
 
-        binding.refreshButton.setOnClickListener {
+        binding.swipeRefresh.setOnRefreshListener {
             movieAdapter.refresh()
         }
 
-        movieAdapter.setOnMovieClickListener {
-            val bundle = Bundle().apply {
-                putInt("id", it)
-            }
-            findNavController().navigate(
-                R.id.action_movieListFragment_to_movieDetailsFragment,
-                bundle
-            )
-        }
-
-        movieAdapter.setSaveMovieClickListener {saveMovie(it)}
-
         binding.btnRetry.setOnClickListener {
-            //todo как проверить retry кнопку?
             movieAdapter.retry()
         }
 
         movieAdapter.addLoadStateListener { loadState ->
-
             if (loadState.refresh is LoadState.Loading) {
                 binding.btnRetry.isVisible = false
-                binding.progressBar.isVisible = true
-            }else{
+            }
+            else {
                 binding.progressBar.isVisible = false
-
+                if (binding.swipeRefresh.isRefreshing) {
+                    binding.swipeRefresh.isRefreshing = false;
+                }
                 val errorState = when {
                     loadState.append is LoadState.Error -> loadState.append as LoadState.Error
                     loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
@@ -101,8 +97,8 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
 
     }
 
-    private fun saveMovie(movieItem: Movie){
-        savedMovieListViewModel.saveMovie(movieItem)
+    private val saveMovie: (Movie) -> (Unit) = { movie ->
+        savedMovieListViewModel.saveMovie(movie)
         savedMovieListViewModel.saveMovieState.observe(viewLifecycleOwner, Observer {
             when (it){
                 is Resource.Failure -> {
