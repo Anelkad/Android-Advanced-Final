@@ -14,9 +14,9 @@ interface MovieApi {
         @Query("page")
         page: Int = 1,
         @Query("api_key")
-        api_key: String = API_KEY,
+        apiKey: String = API_KEY,
         @Query("with_genres")
-        with_genres: String = "16,18",
+        withGenres: String = "16,18",
         @Query("language")
         language: String = LANGUAGE
     ): MovieListResponse
@@ -24,9 +24,9 @@ interface MovieApi {
     @GET("movie/{movie_id}")
     suspend fun getMovie(
         @Path("movie_id")
-        movie_id: Int,
+        movieId: Int,
         @Query("api_key")
-        api_key: String = API_KEY,
+        apiKey: String = API_KEY,
         @Query("language")
         language: String = LANGUAGE
     ): MovieDetails
