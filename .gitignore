@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+.idea
+local.properties
+*.apk
+*.ap_
+*.aab
