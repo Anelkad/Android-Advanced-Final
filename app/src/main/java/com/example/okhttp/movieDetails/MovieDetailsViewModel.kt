@@ -1,4 +1,4 @@
-package com.example.okhttp.viewmodels
+package com.example.okhttp.movieDetails
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

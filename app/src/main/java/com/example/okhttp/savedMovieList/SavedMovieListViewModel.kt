@@ -1,4 +1,4 @@
-package com.example.okhttp
+package com.example.okhttp.savedMovieList
 
 import android.util.Log
 import androidx.lifecycle.LiveData

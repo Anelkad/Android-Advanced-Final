@@ -1,4 +1,4 @@
-package com.example.okhttp.fragments
+package com.example.okhttp.savedMovieList
 
 import android.app.Dialog
 import android.os.Bundle
@@ -12,8 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.okhttp.R
-import com.example.okhttp.SavedMovieListViewModel
-import com.example.okhttp.adapters.SavedMovieAdapter
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.models.Movie
 import com.example.okhttp.utils.Resource

@@ -2,20 +2,19 @@ package com.example.okhttp.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.okhttp.api.RetrofitService
+import com.example.okhttp.api.MovieApi
 import com.example.okhttp.models.Ad
 import com.example.okhttp.models.ListItem
-import com.example.okhttp.models.Movie
 
 class MoviePagingSource(
-    private val service: RetrofitService
+    private val api: MovieApi
 ) : PagingSource<Int, ListItem>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ListItem> {
 
         return try {
             val nextPage = params.key ?: 1
-            val movieListResponse = service.getMovieList(nextPage)
+            val movieListResponse = api.getMovieList(nextPage)
 
             val ad = Ad("1Fit",
                 "Абонемент на все виды спорта",

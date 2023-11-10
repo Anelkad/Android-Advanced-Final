@@ -1,4 +1,4 @@
-package com.example.okhttp.fragments
+package com.example.okhttp.movieDetails
 
 import IMAGE_URL
 import android.app.Dialog
@@ -13,12 +13,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.okhttp.R
-import com.example.okhttp.SavedMovieListViewModel
+import com.example.okhttp.savedMovieList.SavedMovieListViewModel
 import com.example.okhttp.databinding.FragmentMovieDetailsBinding
 import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieDetails
 import com.example.okhttp.utils.Resource
-import com.example.okhttp.viewmodels.MovieDetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,4 +1,4 @@
-package com.example.okhttp.adapters
+package com.example.okhttp.movieList
 
 import IMAGE_URL
 import android.view.LayoutInflater

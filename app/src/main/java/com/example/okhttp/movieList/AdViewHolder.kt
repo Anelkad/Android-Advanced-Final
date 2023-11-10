@@ -1,4 +1,4 @@
-package com.example.okhttp.adapters
+package com.example.okhttp.movieList
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,7 +14,7 @@ class AdViewHolder(val adItemBinding: AdItemBinding):
     RecyclerView.ViewHolder(adItemBinding.root) {
 
     companion object {
-        fun create (parent: ViewGroup): AdViewHolder{
+        fun create (parent: ViewGroup): AdViewHolder {
             val binding = AdItemBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )

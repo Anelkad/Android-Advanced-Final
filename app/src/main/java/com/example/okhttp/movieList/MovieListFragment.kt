@@ -1,4 +1,4 @@
-package com.example.okhttp.fragments
+package com.example.okhttp.movieList
 
 import android.app.Dialog
 import android.os.Bundle
@@ -14,13 +14,10 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.okhttp.R
-import com.example.okhttp.SavedMovieListViewModel
-import com.example.okhttp.adapters.MovieLoadStateAdapter
-import com.example.okhttp.adapters.PagedMovieAdapter
+import com.example.okhttp.savedMovieList.SavedMovieListViewModel
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.models.Movie
 import com.example.okhttp.utils.Resource
-import com.example.okhttp.viewmodels.MovieListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

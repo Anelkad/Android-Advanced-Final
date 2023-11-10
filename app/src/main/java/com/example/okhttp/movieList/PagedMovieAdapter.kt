@@ -1,4 +1,4 @@
-package com.example.okhttp.adapters
+package com.example.okhttp.movieList
 
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
