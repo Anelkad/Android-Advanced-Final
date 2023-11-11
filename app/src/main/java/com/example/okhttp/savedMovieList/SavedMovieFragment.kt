@@ -23,6 +23,7 @@ class SavedMovieFragment : Fragment() {
     lateinit var movieList: ArrayList<Movie>
     lateinit var binding: FragmentSavedMovieBinding
     lateinit var movieAdapter: SavedMovieAdapter
+
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
 
     override fun onCreateView(

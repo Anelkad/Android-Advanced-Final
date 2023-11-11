@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.okhttp.R
-import com.example.okhttp.savedMovieList.SavedMovieListViewModel
 import com.example.okhttp.databinding.FragmentMovieDetailsBinding
 import com.example.okhttp.models.Movie
 import com.example.okhttp.models.MovieDetails
@@ -27,7 +26,6 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
 
     val movieViewModel: MovieDetailsViewModel by viewModels()
     val args: MovieDetailsFragmentArgs by navArgs()
-    val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,8 +59,8 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
     }
 
     private fun saveMovie(movieItem: Movie){
-        savedMovieListViewModel.saveMovie(movieItem)
-        savedMovieListViewModel.saveMovieState.observe(viewLifecycleOwner, Observer {
+        movieViewModel.saveMovie(movieItem)
+        movieViewModel.saveMovieState.observe(viewLifecycleOwner, Observer {
             when (it){
                 is Resource.Failure -> {
                     hideWaitDialog()

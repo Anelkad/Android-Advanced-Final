@@ -15,7 +15,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class SavedMovieRepositoryImp @Inject constructor(
-    val firebase: FirebaseDatabase
+    private val firebase: FirebaseDatabase
 ): SavedMovieRepository {
     override fun getSavedMovieList(): Flow<Resource<ArrayList<Movie>>> = callbackFlow {
         val movieList = ArrayList<Movie>()

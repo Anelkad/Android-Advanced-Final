@@ -14,7 +14,6 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.okhttp.R
-import com.example.okhttp.savedMovieList.SavedMovieListViewModel
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.models.Movie
 import com.example.okhttp.utils.Resource
@@ -27,8 +26,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var binding: FragmentMovieListBinding
     lateinit var movieAdapter: PagedMovieAdapter
 
-    val movieListViewModel: MovieListViewModel by viewModels()
-    val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
+    private val movieListViewModel: MovieListViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentMovieListBinding.bind(view)
@@ -94,8 +92,8 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     }
 
     private val saveMovie: (Movie) -> (Unit) = { movie ->
-        savedMovieListViewModel.saveMovie(movie)
-        savedMovieListViewModel.saveMovieState.observe(viewLifecycleOwner, Observer {
+        movieListViewModel.saveMovie(movie)
+        movieListViewModel.saveMovieState.observe(viewLifecycleOwner, Observer {
             when (it){
                 is Resource.Failure -> {
                     hideWaitDialog()

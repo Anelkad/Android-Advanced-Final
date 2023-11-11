@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.okhttp.models.Movie
-import com.example.okhttp.repository.SavedMovieRepository
 import com.example.okhttp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavedMovieListViewModel @Inject constructor (
-    private val repository: SavedMovieRepository
+    private val savedMovieUseCase: SavedMovieUseCase
 ) : ViewModel() {
 
     //todo заменить LiveData на StateFlow
@@ -32,7 +31,7 @@ class SavedMovieListViewModel @Inject constructor (
     }
 
     fun getMovieList() = viewModelScope.launch {
-       repository.getSavedMovieList().collect{
+        savedMovieUseCase.getSavedMovieList().collect{
            when (it) {
                is Resource.Success -> {
                    _savedMovieList.value = it.result
@@ -48,13 +47,13 @@ class SavedMovieListViewModel @Inject constructor (
 
     fun deleteMovie(movieId: Int) = viewModelScope.launch {
         _deleteMovieState.value = Resource.Loading
-        val result = repository.deleteMovie(movieId)
+        val result = savedMovieUseCase.deleteMovie(movieId)
         _deleteMovieState.value = result
     }
 
     fun saveMovie(movie: Movie) = viewModelScope.launch {
         _saveMovieState.value = Resource.Loading
-        val result = repository.saveMovie(movie)
+        val result = savedMovieUseCase.saveMovie(movie)
         _saveMovieState.value = result
     }
 }
