@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.okhttp.models.MovieDetails
-import com.example.okhttp.repository.MovieRepository
+import com.example.okhttp.movieList.MovieUseCase
 import com.example.okhttp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val repository: MovieRepository
+    private val movieUseCase: MovieUseCase
 ): ViewModel() {
 
     private val _movieDetailsDetailsState = MutableLiveData<Resource<MovieDetails>>(null)
@@ -22,7 +22,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     fun getMovie(movieId: Int) = viewModelScope.launch(Dispatchers.IO) {
         _movieDetailsDetailsState.postValue(Resource.Loading)
-        val result = repository.getMovie(movieId)
+        val result = movieUseCase.getMovie(movieId)
         _movieDetailsDetailsState.postValue(Resource.Success(result))
     }
 

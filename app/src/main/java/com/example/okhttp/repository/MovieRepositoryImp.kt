@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MovieRepositoryImp @Inject constructor(
-    val api: MovieApi
+    private val api: MovieApi
 ) : MovieRepository {
     override suspend fun getMovie(movieId: Int): MovieDetails = api.getMovie(movieId)
     override fun getPagedMovieList(): Flow<PagingData<ListItem>> {

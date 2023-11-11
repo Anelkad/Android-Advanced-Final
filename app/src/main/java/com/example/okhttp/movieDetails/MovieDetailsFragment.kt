@@ -44,7 +44,7 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
                 }
                 is Resource.Success -> {
                     binding.progressBar.isVisible = false
-                    val movie = it.getSuccessResult()
+                    val movie = it.result
                     bindMovie(movie)
                 }
                 else -> Unit
@@ -77,7 +77,7 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details)  {
                 is Resource.Success ->{
                     hideWaitDialog()
                     Toast.makeText(
-                        context, "Movie \"${it.getSuccessResult().title}\" saved!",
+                        context, "Movie \"${it.result.title}\" saved!",
                         Toast.LENGTH_LONG
                     ).show()
                 }

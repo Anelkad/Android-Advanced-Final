@@ -91,7 +91,6 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                 }
             }
         }
-
     }
 
     private val saveMovie: (Movie) -> (Unit) = { movie ->
@@ -111,7 +110,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                 is Resource.Success ->{
                     hideWaitDialog()
                     Toast.makeText(
-                        context, "Movie \"${it.getSuccessResult().title}\" saved!",
+                        context, "Movie \"${it.result.title}\" saved!",
                         Toast.LENGTH_LONG
                     ).show()
                 }

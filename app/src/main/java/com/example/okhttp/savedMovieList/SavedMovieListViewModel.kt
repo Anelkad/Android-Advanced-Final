@@ -18,8 +18,8 @@ class SavedMovieListViewModel @Inject constructor (
 ) : ViewModel() {
 
     //todo заменить LiveData на StateFlow
-    private val _savedMovieList = MutableLiveData<ArrayList<Movie>>(null)
-    val savedMovieList: LiveData<ArrayList<Movie>> =_savedMovieList
+    private val _savedMovieList = MutableLiveData<ArrayList<Movie>?>(null)
+    val savedMovieList: LiveData<ArrayList<Movie>?> =_savedMovieList
 
     private val _saveMovieState = MutableLiveData<Resource<Movie>>(null)
     val saveMovieState: LiveData<Resource<Movie>> = _saveMovieState
@@ -35,7 +35,7 @@ class SavedMovieListViewModel @Inject constructor (
        repository.getSavedMovieList().collect{
            when (it) {
                is Resource.Success -> {
-                   _savedMovieList.value = it.getSuccessResult()
+                   _savedMovieList.value = it.result
                }
                is Resource.Failure -> {
                    Log.d("product list view model", "error")
