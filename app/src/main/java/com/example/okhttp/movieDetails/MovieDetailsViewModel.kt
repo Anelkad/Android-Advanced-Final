@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,16 +23,27 @@ class MovieDetailsViewModel @Inject constructor(
     private var _state = MutableStateFlow<State>(State.ShowLoading)
     val state: StateFlow<State> = _state
 
-    fun getMovie(movieId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        val response = movieUseCase.getMovie(movieId)
-        response.result?.let { _state.value = State.ShowMovieDetails(movie = it)}
-        response.error?.let { _state.value = State.Error(it) }
-        _state.value = State.HideLoading
+    fun getMovie(movieId: Int) = viewModelScope.launch {
+        val response = withContext(Dispatchers.IO) {
+            val result = movieUseCase.getMovie(movieId)
+            result
+        }
+        response.result?.let {
+            _state.value = State.ShowMovieDetails(movie = it)
+            _state.value = State.HideLoading
+        }
+        response.error?.let {
+            _state.value = State.Error(it)
+            _state.value = State.HideLoading
+        }
     }
 
     fun saveMovie(movie: Movie) = viewModelScope.launch {
         _state.value = State.ShowWaitDialog
-        _state.value = State.MovieSaved(savedMovieUseCase.saveMovie(movie))
+        val isMovieSaved = withContext(Dispatchers.IO){
+            savedMovieUseCase.saveMovie(movie)
+        }
+        _state.value = State.MovieSaved(isMovieSaved)
         _state.value = State.HideWaitDialog
     }
 

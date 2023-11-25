@@ -8,10 +8,12 @@ import com.example.okhttp.models.ListItem
 import com.example.okhttp.models.Movie
 import com.example.okhttp.savedMovieList.SavedMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,9 +27,13 @@ class MovieListViewModel @Inject constructor(
 
     val pagedMovieList: Flow<PagingData<ListItem>> =
         movieUseCase.getPagedMovieList().cachedIn(viewModelScope)
+
     fun saveMovie(movie: Movie) = viewModelScope.launch {
         _state.value = State.ShowWaitDialog
-        _state.value = State.MovieSaved(savedMovieUseCase.saveMovie(movie))
+        val isMovieSaved = withContext(Dispatchers.IO){
+            savedMovieUseCase.saveMovie(movie)
+        }
+        _state.value = State.MovieSaved(isMovieSaved)
         _state.value = State.HideWaitDialog
     }
 

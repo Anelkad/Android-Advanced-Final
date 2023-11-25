@@ -1,6 +1,8 @@
 package com.example.okhttp.savedMovieList
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +26,7 @@ class SavedMovieFragment : Fragment() {
     lateinit var movieList: ArrayList<Movie>
     lateinit var binding: FragmentSavedMovieBinding
     lateinit var movieAdapter: SavedMovieAdapter
+    private lateinit var waitDialog: Dialog
 
     val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
 
@@ -37,7 +40,7 @@ class SavedMovieFragment : Fragment() {
 
         savedMovieListViewModel.getMovieList()
 
-        binding = FragmentSavedMovieBinding.inflate(inflater,container, false)
+        binding = FragmentSavedMovieBinding.inflate(inflater, container, false)
         binding.listView.adapter = movieAdapter
 
         movieAdapter.setOnItemClickListener {
@@ -50,14 +53,11 @@ class SavedMovieFragment : Fragment() {
             )
         }
 
-        movieAdapter.setDeleteMovieClickListener {deleteMovie(it)}
+        movieAdapter.setDeleteMovieClickListener { deleteMovie(it) }
+        setupObservers()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupObservers()
-    }
 
     private fun setupObservers() {
         savedMovieListViewModel.state.onEach { state ->
@@ -78,12 +78,12 @@ class SavedMovieFragment : Fragment() {
                 }
 
                 is SavedMovieListViewModel.State.SavedMovieList -> {
+                    binding.progressBar.isVisible = false //todo Hloading
                     movieList.clear()
-                    if (state.movies!= null) {
-                        movieList.addAll(state.movies)
-                        movieAdapter.submitList(movieList.toMutableList())
-                        binding.noSavedMovie.isVisible = movieList.isEmpty()
-                    }
+                    movieList.addAll(state.movies)
+                    movieAdapter.submitList(movieList.toMutableList())
+                    binding.noSavedMovie.isVisible = movieList.isEmpty()
+
                 }
 
                 is SavedMovieListViewModel.State.MovieDeleted -> {
@@ -104,15 +104,15 @@ class SavedMovieFragment : Fragment() {
         }.launchIn(lifecycleScope)
     }
 
-    private fun deleteMovie(movieId: Int){
+    private fun deleteMovie(movieId: Int) {
         savedMovieListViewModel.deleteMovie(movieId)
     }
 
-    private lateinit var waitDialog: Dialog
-    private fun showWaitDialog(){
+    private fun showWaitDialog() {
         if (!this::waitDialog.isInitialized) {
             waitDialog = Dialog(requireActivity())
             waitDialog.setContentView(R.layout.wait_dialog)
+            waitDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
             waitDialog.setCancelable(false)
             waitDialog.setCanceledOnTouchOutside(false)
@@ -120,7 +120,7 @@ class SavedMovieFragment : Fragment() {
         if (!waitDialog.isShowing) waitDialog.show()
     }
 
-    private fun hideWaitDialog(){
+    private fun hideWaitDialog() {
         if (this::waitDialog.isInitialized or waitDialog.isShowing) waitDialog.dismiss()
     }
 }

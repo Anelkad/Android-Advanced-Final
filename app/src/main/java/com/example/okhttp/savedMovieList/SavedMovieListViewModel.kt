@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.okhttp.models.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,16 +25,23 @@ class SavedMovieListViewModel @Inject constructor (
 
     fun getMovieList() = viewModelScope.launch {
         savedMovieUseCase.getSavedMovieList().collect { response ->
-            response.result?.let { _state.value = State.SavedMovieList(it)}
-            response.error?.let { _state.value = State.Error(it) }
-            _state.value = State.HideLoading
+            response.result?.let {
+                _state.value = State.SavedMovieList(it)
+            }
+            response.error?.let {
+                _state.value = State.Error(it)
+            }
        }
+        _state.value = State.HideLoading //todo не доходит до HideLoading
     }
 
 
     fun deleteMovie(movieId: Int) = viewModelScope.launch {
         _state.value = State.ShowWaitDialog
-        _state.value = State.MovieDeleted(savedMovieUseCase.deleteMovie(movieId))
+        val isMovieDeleted = withContext(Dispatchers.IO) {
+            savedMovieUseCase.deleteMovie(movieId)
+        }
+        _state.value = State.MovieDeleted(isMovieDeleted)
         _state.value = State.HideWaitDialog
     }
 

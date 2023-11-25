@@ -2,6 +2,8 @@ package com.example.okhttp.movieDetails
 
 import IMAGE_URL
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -128,6 +130,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
         if (!this::waitDialog.isInitialized) {
             waitDialog = Dialog(requireActivity())
             waitDialog.setContentView(R.layout.wait_dialog)
+            waitDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
             waitDialog.setCancelable(false)
             waitDialog.setCanceledOnTouchOutside(false)
