@@ -13,7 +13,10 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.SavedItemBinding
 import com.example.okhttp.models.Movie
 
-class SavedMovieAdapter : ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffCallback()) {
+class SavedMovieAdapter(
+    private val onItemClickListener: (Int) -> Unit = {},
+    private val deleteMovieListener: ((Int) -> Unit) = {},
+) : ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffCallback()) {
     class HolderMovie(binding: SavedItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.title
         val description = binding.description
@@ -57,18 +60,7 @@ class SavedMovieAdapter : ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(Diff
             .into(holder.image)
 
 
-        holder.itemView.setOnClickListener { onItemClickListener?.let { it(id) } }
-        holder.delete.setOnClickListener { deleteMovieListener?.let { it(id) } }
+        holder.itemView.setOnClickListener { onItemClickListener.invoke(id) }
+        holder.delete.setOnClickListener { deleteMovieListener.invoke(id) }
     }
-
-    private var onItemClickListener: ((Int) -> Unit)? = null
-    fun setOnItemClickListener(listener: (Int) -> Unit) {
-        onItemClickListener = listener
-    }
-
-    private var deleteMovieListener: ((Int) -> Unit)? = null
-    fun setDeleteMovieClickListener(listener: (Int) -> Unit) {
-        deleteMovieListener = listener
-    }
-
 }

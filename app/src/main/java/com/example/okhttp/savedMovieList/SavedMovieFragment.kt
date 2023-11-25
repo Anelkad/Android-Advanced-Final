@@ -36,24 +36,24 @@ class SavedMovieFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         movieList = ArrayList()
-        movieAdapter = SavedMovieAdapter()
+        movieAdapter = SavedMovieAdapter(
+            onItemClickListener = {
+                val bundle = Bundle().apply {
+                    putInt("id", it)
+                }
+                findNavController().navigate(
+                    R.id.action_savedMovieFragment_to_movieDetailsFragment,
+                    bundle
+                )
+            },
+            deleteMovieListener = { deleteMovie(it) }
+        )
 
         savedMovieListViewModel.getMovieList()
 
         binding = FragmentSavedMovieBinding.inflate(inflater, container, false)
         binding.listView.adapter = movieAdapter
 
-        movieAdapter.setOnItemClickListener {
-            val bundle = Bundle().apply {
-                putInt("id", it)
-            }
-            findNavController().navigate(
-                R.id.action_savedMovieFragment_to_movieDetailsFragment,
-                bundle
-            )
-        }
-
-        movieAdapter.setDeleteMovieClickListener { deleteMovie(it) }
         setupObservers()
         return binding.root
     }

@@ -36,7 +36,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         binding = FragmentMovieListBinding.bind(view)
 
         movieAdapter = PagedMovieAdapter(
-            {
+            onMovieClickListener = {
                 val bundle = Bundle().apply {
                     putInt("id", it)
                 }
@@ -45,9 +45,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                     bundle
                 )
             },
-            {
-                saveMovie(it)
-            }
+            saveMovieListener = { saveMovie(it) }
         )
 
         setupObserver()
@@ -80,7 +78,7 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
             else {
                 binding.progressBar.isVisible = false
                 if (binding.swipeRefresh.isRefreshing) {
-                    binding.swipeRefresh.isRefreshing = false;
+                    binding.swipeRefresh.isRefreshing = false
                 }
                 val errorState = when {
                     loadState.append is LoadState.Error -> loadState.append as LoadState.Error
