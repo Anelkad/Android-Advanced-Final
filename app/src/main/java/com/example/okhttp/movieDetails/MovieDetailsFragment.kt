@@ -1,9 +1,6 @@
 package com.example.okhttp.movieDetails
 
 import IMAGE_URL
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -16,27 +13,34 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentMovieDetailsBinding
-import com.example.okhttp.models.Movie
+import com.example.okhttp.delegates.DialogDelegate
+import com.example.okhttp.delegates.WaitDialogDelegate
 import com.example.okhttp.models.MovieDetails
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
+class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
+    DialogDelegate by WaitDialogDelegate() {
 
     private var binding: FragmentMovieDetailsBinding? = null
     private val movieViewModel: MovieDetailsViewModel by viewModels()
     private val args: MovieDetailsFragmentArgs by navArgs()
-    private var waitDialog: Dialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMovieDetailsBinding.bind(view)
+        movieViewModel.getMovie(args.id)
+        bindViews()
+        setupObservers()
+        registerWaitDialogDelegate(this)
+    }
+
+    private fun bindViews() {
         binding?.backButton?.setOnClickListener {
             findNavController().popBackStack()
         }
-        setupObservers()
     }
 
     private fun setupObservers() {
@@ -44,7 +48,8 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             when (state) {
                 is MovieDetailsViewModel.State.Error -> {
                     Toast.makeText(
-                        context, "Something went wrong",
+                        context,
+                        requireContext().getString(R.string.smth_went_wrong),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -63,7 +68,8 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
 
                 is MovieDetailsViewModel.State.MovieSaved -> {
                     Toast.makeText(
-                        context, "Movie \"${state.movie.title}\" saved!",
+                        context,
+                        requireContext().getString(R.string.movie_saved_title, state.movie.title),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -78,14 +84,6 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             }
         }.launchIn(lifecycleScope)
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        movieViewModel.getMovie(args.id)
-    }
-
-    private fun saveMovie(movieItem: Movie) = movieViewModel.saveMovie(movieItem)
-
 
     private fun bindMovie(movieDetails: MovieDetails) {
         binding?.apply {
@@ -118,23 +116,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
                 .into(imageview2)
 
             saveButton.isVisible = true
-            saveButton.setOnClickListener { saveMovie(movieDetails.toMovie()) }
+            saveButton.setOnClickListener { movieViewModel.saveMovie(movieDetails.toMovie()) }
         }
-    }
-
-    private fun showWaitDialog() {
-        if (waitDialog == null) {
-            waitDialog = Dialog(requireActivity()).apply {
-                setContentView(R.layout.wait_dialog)
-                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                setCancelable(false)
-                setCanceledOnTouchOutside(false)
-            }
-        }
-        if (waitDialog?.isShowing == false) waitDialog?.show()
-    }
-
-    private fun hideWaitDialog() {
-        if (waitDialog != null || waitDialog?.isShowing == true) waitDialog?.dismiss()
     }
 }

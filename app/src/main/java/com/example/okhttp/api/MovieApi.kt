@@ -20,7 +20,7 @@ interface MovieApi {
         withGenres: String = "16,18",
         @Query("language")
         language: String = LANGUAGE
-    ): Response<MovieListResponse>
+    ): MovieListResponse
 
     @GET("movie/{movie_id}")
     suspend fun getMovie(

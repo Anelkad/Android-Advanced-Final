@@ -1,8 +1,5 @@
 package com.example.okhttp.savedMovieList
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -13,38 +10,33 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
+import com.example.okhttp.delegates.DialogDelegate
+import com.example.okhttp.delegates.WaitDialogDelegate
 import com.example.okhttp.models.Movie
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie) {
+class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
+    DialogDelegate by WaitDialogDelegate() {
 
     private var movieList: ArrayList<Movie> = arrayListOf()
     private var binding: FragmentSavedMovieBinding? = null
     private var movieAdapter: SavedMovieAdapter? = null
-    private var waitDialog: Dialog? = null
     private val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentSavedMovieBinding.bind(view)
+        registerWaitDialogDelegate(this)
         bindViews()
         setupObservers()
     }
 
     private fun bindViews() {
         movieAdapter = SavedMovieAdapter(
-            onItemClickListener = {
-                val bundle = Bundle().apply {
-                    putInt("id", it)
-                }
-                findNavController().navigate(
-                    R.id.action_savedMovieFragment_to_movieDetailsFragment,
-                    bundle
-                )
-            },
-            deleteMovieListener = { deleteMovie(it) }
+            onItemClickListener = ::navigateToDetails,
+            deleteMovieListener = { savedMovieListViewModel.deleteMovie(it) }
         )
         savedMovieListViewModel.getMovieList()
         binding?.listView?.adapter = movieAdapter
@@ -55,7 +47,8 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie) {
             when (state) {
                 is SavedMovieListViewModel.State.Error -> {
                     Toast.makeText(
-                        context, "Something went wrong",
+                        context,
+                        requireContext().getString(R.string.smth_went_wrong),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -69,7 +62,7 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie) {
                 }
 
                 is SavedMovieListViewModel.State.SavedMovieList -> {
-                    binding?.progressBar?.isVisible = false //todo Hloading
+                    binding?.progressBar?.isVisible = false //todo Hideloading
                     movieList.clear()
                     movieList.addAll(state.movies)
                     movieAdapter?.submitList(movieList.toMutableList())
@@ -79,7 +72,8 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie) {
 
                 is SavedMovieListViewModel.State.MovieDeleted -> {
                     Toast.makeText(
-                        context, "Movie deleted!",
+                        context,
+                        requireContext().getString(R.string.movie_deleted_title),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -95,23 +89,13 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie) {
         }.launchIn(lifecycleScope)
     }
 
-    private fun deleteMovie(movieId: Int) {
-        savedMovieListViewModel.deleteMovie(movieId)
-    }
-
-    private fun showWaitDialog() {
-        if (waitDialog == null) {
-            waitDialog = Dialog(requireActivity()).apply {
-                setContentView(R.layout.wait_dialog)
-                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                setCancelable(false)
-                setCanceledOnTouchOutside(false)
-            }
+    private fun navigateToDetails(movieId: Int) {
+        val bundle = Bundle().apply {
+            putInt("id", movieId)
         }
-        if (waitDialog?.isShowing == false) waitDialog?.show()
-    }
-
-    private fun hideWaitDialog() {
-        if (waitDialog != null || waitDialog?.isShowing == true) waitDialog?.dismiss()
+        findNavController().navigate(
+            R.id.action_savedMovieFragment_to_movieDetailsFragment,
+            bundle
+        )
     }
 }

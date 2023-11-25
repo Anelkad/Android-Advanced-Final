@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premiere">Премьера: %s</string>
+    <string name="tagline">"%s"</string>
+    <string name="runtime">%d ч %d мин</string>
+    <string name="description">★ %s\nПремьера: %s</string>
+    <string name="revenue">Кассовые сборы: %d млн $</string>
+    <string name="smth_went_wrong">Что-то пошло не так</string>
+    <string name="movie_saved_title">Фильм \"%s\" сохранен!</string>
+    <string name="movie_deleted_title">Фильм удален!</string>
+    <string name="retry">Повторить</string>
+    <string name="error_message">Ошибка</string>
+    <string name="no_saved_movie">Нету сохраненных фильмов</string>
+    <string name="save_movie">Сохранить фильм</string>
+</resources>

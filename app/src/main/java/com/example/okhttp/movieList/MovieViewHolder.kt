@@ -12,9 +12,9 @@ import com.example.okhttp.databinding.MovieItemBinding
 import com.example.okhttp.models.Movie
 
 class MovieViewHolder(
-    val movieItemBinding: MovieItemBinding,
-    val onMovieClickListener: ((Int) -> Unit),
-    val saveMovieListener: ((Movie) -> Unit)
+    private val movieItemBinding: MovieItemBinding,
+    private val onMovieClickListener: (Int) -> Unit,
+    private val saveMovieListener: (Movie) -> Unit
 ) :
     RecyclerView.ViewHolder(movieItemBinding.root) {
     companion object {
@@ -46,8 +46,7 @@ class MovieViewHolder(
             .error(R.drawable.baseline_image_24)
             .into(movieItemBinding.imageView)
 
-        movieItemBinding.itemView.setOnClickListener { onMovieClickListener.let { it(movie.id) } }
-        movieItemBinding.saveButton.setOnClickListener { saveMovieListener.let { it(movie) } }
+        movieItemBinding.itemView.setOnClickListener { onMovieClickListener.invoke(movie.id) }
+        movieItemBinding.saveButton.setOnClickListener { saveMovieListener.invoke(movie) }
     }
-
 }

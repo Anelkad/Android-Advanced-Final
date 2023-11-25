@@ -60,26 +60,24 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-
     //GSON
     implementation 'com.google.code.gson:gson:2.10.1'
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
-
     implementation "androidx.activity:activity-ktx:1.7.0"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.15.1'
 
     // paging library v3
     implementation "androidx.paging:paging-runtime-ktx:3.1.0"
+
     // swipe refresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     implementation 'androidx.fragment:fragment-ktx:1.5.7'
-
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -91,6 +89,5 @@ dependencies {
 
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-
 
 }
