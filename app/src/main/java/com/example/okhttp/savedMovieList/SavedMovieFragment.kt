@@ -4,9 +4,7 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -21,21 +19,21 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class SavedMovieFragment : Fragment() {
+class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie) {
 
-    lateinit var movieList: ArrayList<Movie>
-    lateinit var binding: FragmentSavedMovieBinding
-    lateinit var movieAdapter: SavedMovieAdapter
-    private lateinit var waitDialog: Dialog
+    private var movieList: ArrayList<Movie> = arrayListOf()
+    private var binding: FragmentSavedMovieBinding? = null
+    private var movieAdapter: SavedMovieAdapter? = null
+    private var waitDialog: Dialog? = null
+    private val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
 
-    val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding = FragmentSavedMovieBinding.bind(view)
+        bindViews()
+        setupObservers()
+    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        movieList = ArrayList()
+    private fun bindViews() {
         movieAdapter = SavedMovieAdapter(
             onItemClickListener = {
                 val bundle = Bundle().apply {
@@ -48,16 +46,9 @@ class SavedMovieFragment : Fragment() {
             },
             deleteMovieListener = { deleteMovie(it) }
         )
-
         savedMovieListViewModel.getMovieList()
-
-        binding = FragmentSavedMovieBinding.inflate(inflater, container, false)
-        binding.listView.adapter = movieAdapter
-
-        setupObservers()
-        return binding.root
+        binding?.listView?.adapter = movieAdapter
     }
-
 
     private fun setupObservers() {
         savedMovieListViewModel.state.onEach { state ->
@@ -70,19 +61,19 @@ class SavedMovieFragment : Fragment() {
                 }
 
                 is SavedMovieListViewModel.State.HideLoading -> {
-                    binding.progressBar.isVisible = false
+                    binding?.progressBar?.isVisible = false
                 }
 
                 is SavedMovieListViewModel.State.ShowLoading -> {
-                    binding.progressBar.isVisible = true
+                    binding?.progressBar?.isVisible = true
                 }
 
                 is SavedMovieListViewModel.State.SavedMovieList -> {
-                    binding.progressBar.isVisible = false //todo Hloading
+                    binding?.progressBar?.isVisible = false //todo Hloading
                     movieList.clear()
                     movieList.addAll(state.movies)
-                    movieAdapter.submitList(movieList.toMutableList())
-                    binding.noSavedMovie.isVisible = movieList.isEmpty()
+                    movieAdapter?.submitList(movieList.toMutableList())
+                    binding?.noSavedMovie?.isVisible = movieList.isEmpty()
 
                 }
 
@@ -109,18 +100,18 @@ class SavedMovieFragment : Fragment() {
     }
 
     private fun showWaitDialog() {
-        if (!this::waitDialog.isInitialized) {
-            waitDialog = Dialog(requireActivity())
-            waitDialog.setContentView(R.layout.wait_dialog)
-            waitDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            waitDialog.setCancelable(false)
-            waitDialog.setCanceledOnTouchOutside(false)
+        if (waitDialog == null) {
+            waitDialog = Dialog(requireActivity()).apply {
+                setContentView(R.layout.wait_dialog)
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                setCancelable(false)
+                setCanceledOnTouchOutside(false)
+            }
         }
-        if (!waitDialog.isShowing) waitDialog.show()
+        if (waitDialog?.isShowing == false) waitDialog?.show()
     }
 
     private fun hideWaitDialog() {
-        if (this::waitDialog.isInitialized or waitDialog.isShowing) waitDialog.dismiss()
+        if (waitDialog != null || waitDialog?.isShowing == true) waitDialog?.dismiss()
     }
 }

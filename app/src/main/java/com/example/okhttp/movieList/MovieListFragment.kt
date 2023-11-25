@@ -25,16 +25,18 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
-    lateinit var binding: FragmentMovieListBinding
-    lateinit var movieAdapter: PagedMovieAdapter
-
+     private var binding: FragmentMovieListBinding? = null
+     private var movieAdapter: PagedMovieAdapter? = null
     private val movieListViewModel: MovieListViewModel by viewModels()
-
-    private lateinit var waitDialog: Dialog
+    private var waitDialog: Dialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentMovieListBinding.bind(view)
+        setupObserver()
+        bindViews()
+    }
 
+    private fun bindViews() {
         movieAdapter = PagedMovieAdapter(
             onMovieClickListener = {
                 val bundle = Bundle().apply {
@@ -47,44 +49,41 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
             },
             saveMovieListener = { saveMovie(it) }
         )
-
-        setupObserver()
-
-        binding.listView.layoutManager = StaggeredGridLayoutManager(2,LinearLayoutManager.VERTICAL)
-        binding.listView.adapter = movieAdapter.withLoadStateFooter(
-            MovieLoadStateAdapter { movieAdapter.retry()}
+        binding?.listView?.layoutManager = StaggeredGridLayoutManager(2,LinearLayoutManager.VERTICAL)
+        binding?.listView?.adapter = movieAdapter?.withLoadStateFooter(
+            MovieLoadStateAdapter { movieAdapter?.retry()}
         )
 
-        binding.progressBar.isVisible = true
+        binding?.progressBar?.isVisible = true
 
         lifecycleScope.launch {
             movieListViewModel.pagedMovieList.collectLatest {
-                movieAdapter.submitData(it)
+                movieAdapter?.submitData(it)
             }
         }
 
-        binding.swipeRefresh.setOnRefreshListener {
-            movieAdapter.refresh()
+        binding?.swipeRefresh?.setOnRefreshListener {
+            movieAdapter?.refresh()
         }
 
-        binding.btnRetry.setOnClickListener {
-            movieAdapter.retry()
+        binding?.btnRetry?.setOnClickListener {
+            movieAdapter?.retry()
         }
 
-        movieAdapter.addLoadStateListener { loadState ->
+        movieAdapter?.addLoadStateListener { loadState ->
             if (loadState.refresh is LoadState.Loading) {
-                binding.btnRetry.isVisible = false
+                binding?.btnRetry?.isVisible = false
             }
             else {
-                binding.progressBar.isVisible = false
-                if (binding.swipeRefresh.isRefreshing) {
-                    binding.swipeRefresh.isRefreshing = false
+                binding?.progressBar?.isVisible = false
+                if (binding?.swipeRefresh?.isRefreshing == true) {
+                    binding?.swipeRefresh?.isRefreshing = false
                 }
                 val errorState = when {
                     loadState.append is LoadState.Error -> loadState.append as LoadState.Error
                     loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
                     loadState.refresh is LoadState.Error -> {
-                        binding.btnRetry.isVisible = true
+                        binding?.btnRetry?.isVisible = true
                         loadState.refresh as LoadState.Error
                     }
                     else -> null
@@ -135,19 +134,19 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     private val saveMovie: (Movie) -> (Unit) = { movie ->
         movieListViewModel.saveMovie(movie)
     }
-    private fun showWaitDialog(){
-        if (!this::waitDialog.isInitialized) {
-            waitDialog = Dialog(requireActivity())
-            waitDialog.setContentView(R.layout.wait_dialog)
-            waitDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            waitDialog.setCancelable(false)
-            waitDialog.setCanceledOnTouchOutside(false)
+    private fun showWaitDialog() {
+        if (waitDialog == null) {
+            waitDialog = Dialog(requireActivity()).apply {
+                setContentView(R.layout.wait_dialog)
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                setCancelable(false)
+                setCanceledOnTouchOutside(false)
+            }
         }
-        if (!waitDialog.isShowing) waitDialog.show()
+        if (waitDialog?.isShowing == false) waitDialog?.show()
     }
 
-    private fun hideWaitDialog(){
-        if (this::waitDialog.isInitialized or waitDialog.isShowing) waitDialog.dismiss()
+    private fun hideWaitDialog() {
+        if (waitDialog != null || waitDialog?.isShowing == true) waitDialog?.dismiss()
     }
 }

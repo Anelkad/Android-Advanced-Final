@@ -25,22 +25,18 @@ import kotlinx.coroutines.flow.onEach
 @AndroidEntryPoint
 class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
 
-    lateinit var binding: FragmentMovieDetailsBinding
-
-    val movieViewModel: MovieDetailsViewModel by viewModels()
-    val args: MovieDetailsFragmentArgs by navArgs()
-
-    private lateinit var waitDialog: Dialog
+    private var binding: FragmentMovieDetailsBinding? = null
+    private val movieViewModel: MovieDetailsViewModel by viewModels()
+    private val args: MovieDetailsFragmentArgs by navArgs()
+    private var waitDialog: Dialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMovieDetailsBinding.bind(view)
-
-        setupObservers()
-
-        binding.backButton.setOnClickListener {
+        binding?.backButton?.setOnClickListener {
             findNavController().popBackStack()
         }
+        setupObservers()
     }
 
     private fun setupObservers() {
@@ -54,11 +50,11 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
                 }
 
                 is MovieDetailsViewModel.State.HideLoading -> {
-                    binding.progressBar.isVisible = false
+                    binding?.progressBar?.isVisible = false
                 }
 
                 is MovieDetailsViewModel.State.ShowLoading -> {
-                    binding.progressBar.isVisible = true
+                    binding?.progressBar?.isVisible = true
                 }
 
                 is MovieDetailsViewModel.State.ShowMovieDetails -> {
@@ -88,12 +84,11 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
         movieViewModel.getMovie(args.id)
     }
 
-    private fun saveMovie(movieItem: Movie) {
-        movieViewModel.saveMovie(movieItem)
-    }
+    private fun saveMovie(movieItem: Movie) = movieViewModel.saveMovie(movieItem)
+
 
     private fun bindMovie(movieDetails: MovieDetails) {
-        with(binding) {
+        binding?.apply {
             textviewTitle.text = movieDetails.title
             textviewDescription.text = movieDetails.overview
             if (movieDetails.tagline.isNotEmpty()) tagline.text =
@@ -120,26 +115,26 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
                 .load(IMAGE_URL + movieDetails.backdropPath)
                 .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.baseline_image_24)
-                .into(binding.imageview2)
+                .into(imageview2)
 
             saveButton.isVisible = true
             saveButton.setOnClickListener { saveMovie(movieDetails.toMovie()) }
         }
     }
-    private fun showWaitDialog() {
-        if (!this::waitDialog.isInitialized) {
-            waitDialog = Dialog(requireActivity())
-            waitDialog.setContentView(R.layout.wait_dialog)
-            waitDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            waitDialog.setCancelable(false)
-            waitDialog.setCanceledOnTouchOutside(false)
+    private fun showWaitDialog() {
+        if (waitDialog == null) {
+            waitDialog = Dialog(requireActivity()).apply {
+                setContentView(R.layout.wait_dialog)
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                setCancelable(false)
+                setCanceledOnTouchOutside(false)
+            }
         }
-        if (!waitDialog.isShowing) waitDialog.show()
+        if (waitDialog?.isShowing == false) waitDialog?.show()
     }
 
     private fun hideWaitDialog() {
-        if (this::waitDialog.isInitialized or waitDialog.isShowing) waitDialog.dismiss()
+        if (waitDialog != null || waitDialog?.isShowing == true) waitDialog?.dismiss()
     }
-
 }
