@@ -2,20 +2,21 @@ package com.example.okhttp.savedMovieList
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.models.Movie
-import com.example.okhttp.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class SavedMovieFragment : Fragment() {
@@ -50,47 +51,61 @@ class SavedMovieFragment : Fragment() {
         }
 
         movieAdapter.setDeleteMovieClickListener {deleteMovie(it)}
-        loadMovieList()
         return binding.root
     }
 
-    private fun loadMovieList() {
-        savedMovieListViewModel.savedMovieList.observe(viewLifecycleOwner, Observer {
-            movieList.clear()
-            binding.progressBar.isVisible = true
-            if (it!=null) {
-                binding.progressBar.isVisible = false
-                movieList.addAll(it)
-                movieAdapter.submitList(movieList.toMutableList())
-                binding.noSavedMovie.isVisible = movieList.isEmpty()
-            }
-        })
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupObservers()
     }
 
-    private fun deleteMovie(movieId: Int){
-        savedMovieListViewModel.deleteMovie(movieId)
-        savedMovieListViewModel.deleteMovieState.observe(viewLifecycleOwner, Observer {
-            when (it){
-                is Resource.Failure -> {
-                    hideWaitDialog()
+    private fun setupObservers() {
+        savedMovieListViewModel.state.onEach { state ->
+            when (state) {
+                is SavedMovieListViewModel.State.Error -> {
                     Toast.makeText(
-                        context, "Cannot delete movie!",
+                        context, "Something went wrong",
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                is Resource.Loading -> {
-                    showWaitDialog()
+
+                is SavedMovieListViewModel.State.HideLoading -> {
+                    binding.progressBar.isVisible = false
                 }
-                is Resource.Success ->{
-                    hideWaitDialog()
+
+                is SavedMovieListViewModel.State.ShowLoading -> {
+                    binding.progressBar.isVisible = true
+                }
+
+                is SavedMovieListViewModel.State.SavedMovieList -> {
+                    movieList.clear()
+                    if (state.movies!= null) {
+                        movieList.addAll(state.movies)
+                        movieAdapter.submitList(movieList.toMutableList())
+                        binding.noSavedMovie.isVisible = movieList.isEmpty()
+                    }
+                }
+
+                is SavedMovieListViewModel.State.MovieDeleted -> {
                     Toast.makeText(
                         context, "Movie deleted!",
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                else -> Unit
+
+                is SavedMovieListViewModel.State.ShowWaitDialog -> {
+                    showWaitDialog()
+                }
+
+                is SavedMovieListViewModel.State.HideWaitDialog -> {
+                    hideWaitDialog()
+                }
             }
-        })
+        }.launchIn(lifecycleScope)
+    }
+
+    private fun deleteMovie(movieId: Int){
+        savedMovieListViewModel.deleteMovie(movieId)
     }
 
     private lateinit var waitDialog: Dialog

@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
@@ -16,9 +15,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.models.Movie
-import com.example.okhttp.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -27,6 +27,8 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
     lateinit var movieAdapter: PagedMovieAdapter
 
     private val movieListViewModel: MovieListViewModel by viewModels()
+
+    private lateinit var waitDialog: Dialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentMovieListBinding.bind(view)
@@ -45,6 +47,9 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
                 saveMovie(it)
             }
         )
+
+        setupObserver()
+
         binding.listView.layoutManager = StaggeredGridLayoutManager(2,LinearLayoutManager.VERTICAL)
         binding.listView.adapter = movieAdapter.withLoadStateFooter(
             MovieLoadStateAdapter { movieAdapter.retry()}
@@ -91,33 +96,45 @@ class MovieListFragment: Fragment(R.layout.fragment_movie_list) {
         }
     }
 
-    private val saveMovie: (Movie) -> (Unit) = { movie ->
-        movieListViewModel.saveMovie(movie)
-        movieListViewModel.saveMovieState.observe(viewLifecycleOwner, Observer {
-            when (it){
-                is Resource.Failure -> {
-                    hideWaitDialog()
+    private fun setupObserver() {
+        movieListViewModel.state.onEach { state ->
+            when (state) {
+                is MovieListViewModel.State.Error -> {
                     Toast.makeText(
-                        context, "Cannot save movie!",
+                        context, "Something went wrong",
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                is Resource.Loading -> {
+
+                is MovieListViewModel.State.HideLoading -> {
+                    //binding.progressBar.isVisible = false
+                }
+
+                is MovieListViewModel.State.ShowLoading -> {
+                    //binding.progressBar.isVisible = true
+                }
+
+                is MovieListViewModel.State.MovieSaved -> {
+                    Toast.makeText(
+                        context, "Movie \"${state.movie.title}\" saved!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                is MovieListViewModel.State.ShowWaitDialog -> {
                     showWaitDialog()
                 }
-                is Resource.Success ->{
+
+                is MovieListViewModel.State.HideWaitDialog -> {
                     hideWaitDialog()
-                    Toast.makeText(
-                        context, "Movie \"${it.result.title}\" saved!",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
-                else -> Unit
             }
-        })
+        }.launchIn(lifecycleScope)
     }
 
-    private lateinit var waitDialog: Dialog
+    private val saveMovie: (Movie) -> (Unit) = { movie ->
+        movieListViewModel.saveMovie(movie)
+    }
     private fun showWaitDialog(){
         if (!this::waitDialog.isInitialized) {
             waitDialog = Dialog(requireActivity())

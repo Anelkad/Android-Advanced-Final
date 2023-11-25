@@ -1,11 +1,11 @@
 package com.example.okhttp.repository
 
 import com.example.okhttp.models.Movie
-import com.example.okhttp.utils.Resource
+import com.example.okhttp.utils.CommonResult
 import kotlinx.coroutines.flow.Flow
 
 interface SavedMovieRepository {
-    fun getSavedMovieList(): Flow<Resource<ArrayList<Movie>>>
-    suspend fun deleteMovie(movieId: Int): Resource<Int>
-    suspend fun saveMovie(movie: Movie): Resource<Movie>
+    fun getSavedMovieList(): Flow<CommonResult<ArrayList<Movie>>>
+    suspend fun deleteMovie(movieId: Int): Int
+    suspend fun saveMovie(movie: Movie): Movie
 }

@@ -4,6 +4,7 @@ import API_KEY
 import LANGUAGE
 import com.example.okhttp.models.MovieDetails
 import com.example.okhttp.models.MovieListResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -19,7 +20,7 @@ interface MovieApi {
         withGenres: String = "16,18",
         @Query("language")
         language: String = LANGUAGE
-    ): MovieListResponse
+    ): Response<MovieListResponse>
 
     @GET("movie/{movie_id}")
     suspend fun getMovie(
@@ -29,5 +30,5 @@ interface MovieApi {
         apiKey: String = API_KEY,
         @Query("language")
         language: String = LANGUAGE
-    ): MovieDetails
+    ): Response<MovieDetails>
 }

@@ -1,13 +1,11 @@
 package com.example.okhttp.savedMovieList
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.okhttp.models.Movie
-import com.example.okhttp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,44 +14,35 @@ class SavedMovieListViewModel @Inject constructor (
     private val savedMovieUseCase: SavedMovieUseCase
 ) : ViewModel() {
 
-    //todo заменить LiveData на StateFlow
-    private val _savedMovieList = MutableLiveData<ArrayList<Movie>?>(null)
-    val savedMovieList: LiveData<ArrayList<Movie>?> =_savedMovieList
-
-    private val _saveMovieState = MutableLiveData<Resource<Movie>>(null)
-    val saveMovieState: LiveData<Resource<Movie>> = _saveMovieState
-
-    private val _deleteMovieState = MutableLiveData<Resource<Int>>(null)
-    val deleteMovieState: LiveData<Resource<Int>> = _deleteMovieState
+    private var _state = MutableStateFlow<State>(State.ShowLoading)
+    val state: StateFlow<State> = _state
 
     init {
         getMovieList()
     }
 
     fun getMovieList() = viewModelScope.launch {
-        savedMovieUseCase.getSavedMovieList().collect{
-           when (it) {
-               is Resource.Success -> {
-                   _savedMovieList.value = it.result
-               }
-               is Resource.Failure -> {
-                   Log.d("product list view model", "error")
-               }
-               else -> Unit
-           }
+        savedMovieUseCase.getSavedMovieList().collect { response ->
+            response.result?.let { _state.value = State.SavedMovieList(it)}
+            response.error?.let { _state.value = State.Error(it) }
+            _state.value = State.HideLoading
        }
     }
 
 
     fun deleteMovie(movieId: Int) = viewModelScope.launch {
-        _deleteMovieState.value = Resource.Loading
-        val result = savedMovieUseCase.deleteMovie(movieId)
-        _deleteMovieState.value = result
+        _state.value = State.ShowWaitDialog
+        _state.value = State.MovieDeleted(savedMovieUseCase.deleteMovie(movieId))
+        _state.value = State.HideWaitDialog
     }
 
-    fun saveMovie(movie: Movie) = viewModelScope.launch {
-        _saveMovieState.value = Resource.Loading
-        val result = savedMovieUseCase.saveMovie(movie)
-        _saveMovieState.value = result
+    sealed class State {
+        object ShowLoading : State()
+        object HideLoading : State()
+        data class SavedMovieList(val movies: ArrayList<Movie>) : State()
+        data class MovieDeleted(val movieId: Int) : State()
+        object HideWaitDialog : State()
+        object ShowWaitDialog : State()
+        data class Error(val error: String) : State()
     }
 }
