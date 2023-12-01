@@ -1,20 +1,17 @@
-package com.example.okhttp.models
-
-import com.google.gson.annotations.SerializedName
-import com.example.okhttp.domain.Movie
+package com.example.okhttp.domain
 
 data class MovieDetails(
     val id: Int,
     val title: String,
+    val originalTitle: String,
     val overview: String,
-    @SerializedName("release_date")
     val releaseDate: String,
-    @SerializedName("poster_path")
     val posterPath: String,
-    @SerializedName("backdrop_path")
     val backdropPath: String,
-    @SerializedName("vote_average")
     val voteAverage: Float,
+    val voteCount: Int,
+    val productionCountries: List<ProductionCountry>,
+    val genres: List<Genre>,
     val tagline: String,
     val revenue: Int,
     val runtime: Int

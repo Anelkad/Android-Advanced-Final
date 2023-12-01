@@ -4,18 +4,19 @@ import com.example.okhttp.domain.Movie
 import com.google.gson.annotations.SerializedName
 
 data class MovieDTO(
-    var id: Int,
-    var title: String,
-    var overview: String?,
+    var id: Int = 0,
+    var title: String = "",
+    var overview: String? = null,
     @SerializedName("release_date")
-    var releaseDate: String?,
+    var releaseDate: String? = null,
     @SerializedName("poster_path")
-    var posterPath: String?,
+    var posterPath: String? = null,
     @SerializedName("backdrop_path")
-    var backdropPath: String?,
+    var backdropPath: String? = null,
     @SerializedName("vote_average")
-    var voteAverage: Float?
+    var voteAverage: Float? = null
 ){
+    //todo remove no-arg constructor
     fun toDomain(): Movie =
         Movie(
             id = id,

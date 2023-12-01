@@ -5,7 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.okhttp.api.MovieApi
 import com.example.okhttp.domain.ListItem
-import com.example.okhttp.models.MovieDetails
+import com.example.okhttp.domain.MovieDetails
 import com.example.okhttp.utils.CommonResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +18,7 @@ class MovieRepositoryImp @Inject constructor(
     override suspend fun getMovie(movieId: Int): CommonResult<MovieDetails> = withContext(Dispatchers.IO) {
         val response = api.getMovie(movieId)
         if (response.isSuccessful) {
-            CommonResult(result = response.body())
+            CommonResult(result = response.body()?.toDomain())
         } else {
             CommonResult(error = response.message())
         }

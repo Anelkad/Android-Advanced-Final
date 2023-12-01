@@ -1,6 +1,7 @@
 package com.example.okhttp.repository
 
 import MOVIES
+import com.example.okhttp.data.MovieDTO
 import com.example.okhttp.domain.Movie
 import com.example.okhttp.utils.CommonResult
 import com.google.firebase.database.DataSnapshot
@@ -24,9 +25,9 @@ class SavedMovieRepositoryImp @Inject constructor(
             override fun onDataChange(snapshot: DataSnapshot) {
                 movieList.clear()
                 for (ds in snapshot.children) {
-                    val movie = ds.getValue(Movie::class.java)
+                    val movie = ds.getValue(MovieDTO::class.java)
                     if (movie != null) {
-                        movieList.add(movie)
+                        movieList.add(movie.toDomain())
                     }
                 }
                 this@callbackFlow.trySendBlocking(CommonResult(result = movieList))

@@ -2,8 +2,8 @@ package com.example.okhttp.api
 
 import API_KEY
 import LANGUAGE
+import com.example.okhttp.data.MovieDetailsDTO
 import com.example.okhttp.data.MovieListResponseDTO
-import com.example.okhttp.models.MovieDetails
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -30,5 +30,5 @@ interface MovieApi {
         apiKey: String = API_KEY,
         @Query("language")
         language: String = LANGUAGE
-    ): Response<MovieDetails>
+    ): Response<MovieDetailsDTO>
 }

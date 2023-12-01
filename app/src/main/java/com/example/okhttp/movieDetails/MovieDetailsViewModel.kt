@@ -3,7 +3,7 @@ package com.example.okhttp.movieDetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.okhttp.domain.Movie
-import com.example.okhttp.models.MovieDetails
+import com.example.okhttp.domain.MovieDetails
 import com.example.okhttp.movieList.MovieUseCase
 import com.example.okhttp.savedMovieList.SavedMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

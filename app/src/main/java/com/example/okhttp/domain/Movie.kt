@@ -9,4 +9,4 @@ data class Movie(
     var backdropPath: String? = null,
     var voteAverage: Float? = null
 )
-
+//todo remove no-arg constructor
