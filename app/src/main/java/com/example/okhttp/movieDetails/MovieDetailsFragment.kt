@@ -15,7 +15,7 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentMovieDetailsBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
-import com.example.domain.model.MovieDetails
+import com.example.okhttp.domain.model.MovieDetails
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -85,7 +85,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
         }.launchIn(lifecycleScope)
     }
 
-    private fun bindMovie(movieDetails: com.example.domain.model.MovieDetails) {
+    private fun bindMovie(movieDetails: MovieDetails) {
         binding?.apply {
             textviewTitle.text = movieDetails.title
             textviewDescription.text = movieDetails.overview

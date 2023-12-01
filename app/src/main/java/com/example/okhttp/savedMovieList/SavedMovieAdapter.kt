@@ -11,12 +11,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.okhttp.R
 import com.example.okhttp.databinding.SavedItemBinding
-import com.example.domain.model.Movie
+import com.example.okhttp.domain.model.Movie
 
 class SavedMovieAdapter(
     private val onItemClickListener: (Int) -> Unit = {},
     private val deleteMovieListener: ((Int) -> Unit) = {},
-) : ListAdapter<com.example.domain.model.Movie, SavedMovieAdapter.HolderMovie>(DiffCallback()) {
+) : ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffCallback()) {
     class HolderMovie(binding: SavedItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.title
         val description = binding.description
@@ -25,9 +25,9 @@ class SavedMovieAdapter(
         val itemView = binding.itemView
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<com.example.domain.model.Movie>() {
-        override fun areItemsTheSame(oldItem: com.example.domain.model.Movie, newItem: com.example.domain.model.Movie) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: com.example.domain.model.Movie, newItem: com.example.domain.model.Movie) = oldItem == newItem
+    class DiffCallback : DiffUtil.ItemCallback<Movie>() {
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Movie, newItem: Movie) = oldItem == newItem
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderMovie {

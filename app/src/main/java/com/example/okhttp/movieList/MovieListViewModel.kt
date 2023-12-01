@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.domain.usecases.MovieUseCase
-import com.example.domain.usecases.SavedMovieUseCase
+import com.example.okhttp.domain.usecases.MovieUseCase
+import com.example.okhttp.domain.usecases.SavedMovieUseCase
+import com.example.okhttp.domain.model.ListItem
+import com.example.okhttp.domain.model.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,10 +26,10 @@ class MovieListViewModel @Inject constructor(
     private var _state = MutableStateFlow<State>(State.ShowLoading)
     val state: StateFlow<State> = _state
 
-    val pagedMovieList: Flow<PagingData<com.example.domain.model.ListItem>> =
+    val pagedMovieList: Flow<PagingData<ListItem>> =
         movieUseCase.getPagedMovieList().cachedIn(viewModelScope)
 
-    fun saveMovie(movie: com.example.domain.model.Movie) = viewModelScope.launch {
+    fun saveMovie(movie: Movie) = viewModelScope.launch {
         _state.value = State.ShowWaitDialog
         val isMovieSaved = withContext(Dispatchers.IO){
             savedMovieUseCase.saveMovie(movie)
@@ -39,7 +41,7 @@ class MovieListViewModel @Inject constructor(
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
-        data class MovieSaved(val movie: com.example.domain.model.Movie) : State()
+        data class MovieSaved(val movie: Movie) : State()
         object HideWaitDialog : State()
         object ShowWaitDialog : State()
         data class Error(val error: String) : State()

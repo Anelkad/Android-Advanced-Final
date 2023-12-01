@@ -1,8 +1,23 @@
 plugins {
-    id 'java-library'
-    id 'org.jetbrains.kotlin.jvm'
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+//    id 'org.jetbrains.kotlin.jvm'
     id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
     id 'com.google.gms.google-services'
+}
+
+android {
+    compileSdk 33
+
+    namespace 'com.example.okhttp.data'
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+    }
 }
 
 java {
@@ -15,10 +30,11 @@ dependencies {
     implementation project(':domain')
 
     //Dagger Hilt
-    implementation 'javax.inject:javax.inject:1'
-    implementation 'com.google.dagger:dagger:2.43.2'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.43.2'
-    annotationProcessor 'com.google.dagger:hilt-android-compiler:2.44'
+//    implementation 'javax.inject:javax.inject:1'
+//    implementation 'com.google.dagger:dagger:2.43.2'
+//    annotationProcessor 'com.google.dagger:dagger-compiler:2.43.2'
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt 'com.google.dagger:hilt-android-compiler:2.44'
 
     //OkHttp
     implementation "com.squareup.okhttp3:okhttp:4.9.0"

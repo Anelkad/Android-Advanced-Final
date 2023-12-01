@@ -9,19 +9,19 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.okhttp.R
 import com.example.okhttp.databinding.MovieItemBinding
-import com.example.domain.model.Movie
+import com.example.okhttp.domain.model.Movie
 
 class MovieViewHolder(
     private val movieItemBinding: MovieItemBinding,
     private val onMovieClickListener: (Int) -> Unit,
-    private val saveMovieListener: (com.example.domain.model.Movie) -> Unit
+    private val saveMovieListener: (Movie) -> Unit
 ) :
     RecyclerView.ViewHolder(movieItemBinding.root) {
     companion object {
         fun create(
             parent: ViewGroup,
             onMovieClickListener: ((Int) -> Unit),
-            saveMovieListener: ((com.example.domain.model.Movie) -> Unit)
+            saveMovieListener: ((Movie) -> Unit)
         ): MovieViewHolder {
             val binding = MovieItemBinding.inflate(
                 LayoutInflater
@@ -31,7 +31,7 @@ class MovieViewHolder(
         }
     }
 
-    fun bind(movie: com.example.domain.model.Movie) {
+    fun bind(movie: Movie) {
         movieItemBinding.title.text = movie.title
         movieItemBinding.description.text = movieItemBinding.description.context.getString(
             R.string.description,

@@ -2,7 +2,8 @@ package com.example.okhttp.savedMovieList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.usecases.SavedMovieUseCase
+import com.example.okhttp.domain.usecases.SavedMovieUseCase
+import com.example.okhttp.domain.model.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,7 +49,7 @@ class SavedMovieListViewModel @Inject constructor (
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
-        data class SavedMovieList(val movies: ArrayList<com.example.domain.model.Movie>) : State()
+        data class SavedMovieList(val movies: ArrayList<Movie>) : State()
         data class MovieDeleted(val movieId: Int) : State()
         object HideWaitDialog : State()
         object ShowWaitDialog : State()
