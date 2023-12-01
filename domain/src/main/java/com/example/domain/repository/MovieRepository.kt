@@ -1,12 +1,12 @@
-package com.example.okhttp.repository
+package com.example.domain.repository
 
 import androidx.paging.PagingData
+import com.example.core.utils.CommonResult
 import com.example.domain.model.ListItem
 import com.example.domain.model.MovieDetails
-import com.example.okhttp.utils.CommonResult
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
-    suspend fun getMovie(movieId: Int): CommonResult<com.example.domain.model.MovieDetails>
-    fun getPagedMovieList(): Flow<PagingData<com.example.domain.model.ListItem>>
+    suspend fun getMovie(movieId: Int): CommonResult<MovieDetails>
+    fun getPagedMovieList(): Flow<PagingData<ListItem>>
 }

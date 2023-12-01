@@ -1,14 +1,15 @@
-package com.example.okhttp.savedMovieList
+package com.example.domain.usecases
 
+import com.example.core.utils.CommonResult
+import com.example.domain.model.Movie
 import com.example.domain.repository.SavedMovieRepository
-import com.example.okhttp.utils.CommonResult
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SavedMovieUseCase @Inject constructor(
     private val savedMovieRepository: SavedMovieRepository,
 ) {
-    fun getSavedMovieList(): Flow<CommonResult<ArrayList<com.example.domain.model.Movie>>> = savedMovieRepository.getSavedMovieList()
+    fun getSavedMovieList(): Flow<CommonResult<ArrayList<Movie>>> = savedMovieRepository.getSavedMovieList()
 
     suspend fun deleteMovie(movieId: Int): Int = savedMovieRepository.deleteMovie(movieId)
 

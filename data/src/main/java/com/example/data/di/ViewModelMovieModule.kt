@@ -1,7 +1,7 @@
-package com.example.okhttp.di
+package com.example.data.di
 
-import com.example.okhttp.repository.SavedMovieRepository
-import com.example.okhttp.repository.SavedMovieRepositoryImp
+import com.example.data.repository.SavedMovieRepositoryImp
+import com.example.domain.repository.SavedMovieRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

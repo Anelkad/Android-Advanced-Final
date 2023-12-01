@@ -1,4 +1,4 @@
-package com.example.okhttp.domain
+package com.example.domain.model
 
 data class ProductionCountry(
     val iso_3166_1: String,

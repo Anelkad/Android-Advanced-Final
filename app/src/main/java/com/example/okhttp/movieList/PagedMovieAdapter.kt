@@ -5,20 +5,20 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.okhttp.R
-import com.example.okhttp.domain.ListItem
-import com.example.okhttp.domain.Movie
+import com.example.domain.model.ListItem
+import com.example.domain.model.Movie
 
 class PagedMovieAdapter(
     private val onMovieClickListener: ((Int) -> Unit),
-    private val saveMovieListener: ((Movie) -> Unit)
+    private val saveMovieListener: ((com.example.domain.model.Movie) -> Unit)
 ) :
-    PagingDataAdapter<ListItem, RecyclerView.ViewHolder>(
+    PagingDataAdapter<com.example.domain.model.ListItem, RecyclerView.ViewHolder>(
         DiffCallback()
     ) {
     override fun getItemViewType(position: Int): Int {
         return when (peek(position)) {
-            is ListItem.MovieItem -> R.layout.movie_item
-            is ListItem.AdItem -> R.layout.ad_item
+            is com.example.domain.model.ListItem.MovieItem -> R.layout.movie_item
+            is com.example.domain.model.ListItem.AdItem -> R.layout.ad_item
             null -> throw IllegalStateException("Unknown view")
         }
     }
@@ -39,30 +39,30 @@ class PagedMovieAdapter(
         val listItem = getItem(position)
         listItem.let {
             when (listItem) {
-                is ListItem.MovieItem -> {
+                is com.example.domain.model.ListItem.MovieItem -> {
                     val movieHolder = (holder as MovieViewHolder)
                     movieHolder.bind(listItem.movie)
                     //todo Item Decorator
                    }
-                is ListItem.AdItem -> (holder as AdViewHolder).bind(listItem.ad)
+                is com.example.domain.model.ListItem.AdItem -> (holder as AdViewHolder).bind(listItem.ad)
                 else -> {}
             }
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<ListItem>() {
-        override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
-            val isSameMovieItem = oldItem is ListItem.MovieItem
-                    && newItem is ListItem.MovieItem
+    class DiffCallback : DiffUtil.ItemCallback<com.example.domain.model.ListItem>() {
+        override fun areItemsTheSame(oldItem: com.example.domain.model.ListItem, newItem: com.example.domain.model.ListItem): Boolean {
+            val isSameMovieItem = oldItem is com.example.domain.model.ListItem.MovieItem
+                    && newItem is com.example.domain.model.ListItem.MovieItem
                     && oldItem.movie.id == newItem.movie.id
 
-            val isSameAdItem = oldItem is ListItem.AdItem
-                    && newItem is ListItem.AdItem
+            val isSameAdItem = oldItem is com.example.domain.model.ListItem.AdItem
+                    && newItem is com.example.domain.model.ListItem.AdItem
                     && oldItem.ad == newItem.ad
 
             return isSameMovieItem || isSameAdItem
         }
 
-        override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem) = oldItem == newItem
+        override fun areContentsTheSame(oldItem: com.example.domain.model.ListItem, newItem: com.example.domain.model.ListItem) = oldItem == newItem
     }
 }

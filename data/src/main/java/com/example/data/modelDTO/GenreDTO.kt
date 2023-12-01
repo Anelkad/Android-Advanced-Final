@@ -1,4 +1,4 @@
-package com.example.okhttp.data
+package com.example.data.modelDTO
 
 import com.example.okhttp.domain.Genre
 

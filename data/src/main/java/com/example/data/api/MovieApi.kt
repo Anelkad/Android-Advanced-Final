@@ -1,9 +1,9 @@
-package com.example.okhttp.api
+package com.example.data.api
 
 import API_KEY
 import LANGUAGE
-import com.example.okhttp.data.MovieDetailsDTO
-import com.example.okhttp.data.MovieListResponseDTO
+import com.example.data.modelDTO.MovieDetailsDTO
+import com.example.data.modelDTO.MovieListResponseDTO
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

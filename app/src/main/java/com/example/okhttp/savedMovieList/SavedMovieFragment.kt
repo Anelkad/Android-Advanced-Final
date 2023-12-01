@@ -12,7 +12,7 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
-import com.example.okhttp.domain.Movie
+import com.example.domain.model.Movie
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.onEach
 class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
     DialogDelegate by WaitDialogDelegate() {
 
-    private var movieList: ArrayList<Movie> = arrayListOf()
+    private var movieList: ArrayList<com.example.domain.model.Movie> = arrayListOf()
     private var binding: FragmentSavedMovieBinding? = null
     private var movieAdapter: SavedMovieAdapter? = null
     private val savedMovieListViewModel: SavedMovieListViewModel by viewModels()

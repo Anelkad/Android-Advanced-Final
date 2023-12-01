@@ -1,10 +1,7 @@
-package com.example.okhttp.repository
+package com.example.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.data.api.MovieApi
-import com.example.domain.model.Ad
-import com.example.domain.model.ListItem
 
 class MoviePagingSource(
     private val api: com.example.data.api.MovieApi

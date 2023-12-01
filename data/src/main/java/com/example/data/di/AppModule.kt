@@ -1,11 +1,10 @@
-package com.example.okhttp.di
+package com.example.data.di
 
 import BASE_URL
 import FIREBASE_URL
 import com.example.data.api.MovieApi
-import com.example.okhttp.repository.MovieRepository
-import com.example.okhttp.repository.MovieRepositoryImp
-import com.google.firebase.database.FirebaseDatabase
+import com.example.data.repository.MovieRepositoryImp
+import com.example.domain.repository.MovieRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
+import com.google.firebase.database.FirebaseDatabase
 
 @Module
 @InstallIn(SingletonComponent::class) //App lifecycle
@@ -50,12 +50,12 @@ object AppModule {
     @Named("MOVIE_API")
     fun provideMovieApi(
         retrofit: Retrofit
-    ): com.example.data.api.MovieApi = retrofit.create()
+    ): MovieApi = retrofit.create()
 
     @Provides
     @Singleton
     fun provideMovieRepository(
-        @Named("MOVIE_API") movieApi: com.example.data.api.MovieApi,
+        @Named("MOVIE_API") movieApi: MovieApi,
     ): MovieRepository = MovieRepositoryImp(movieApi)
 
 }

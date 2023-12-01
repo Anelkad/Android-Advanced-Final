@@ -1,9 +1,9 @@
-package com.example.okhttp.repository
+package com.example.data.repository
 
 import MOVIES
-import com.example.data.modelDTO.MovieDTO
+import com.example.core.utils.CommonResult
 import com.example.domain.model.Movie
-import com.example.okhttp.utils.CommonResult
+import com.example.domain.repository.SavedMovieRepository
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -18,8 +18,8 @@ import javax.inject.Inject
 class SavedMovieRepositoryImp @Inject constructor(
     private val firebase: FirebaseDatabase
 ) : SavedMovieRepository {
-    override fun getSavedMovieList(): Flow<CommonResult<ArrayList<com.example.domain.model.Movie>>> = callbackFlow {
-        val movieList = ArrayList<com.example.domain.model.Movie>()
+    override fun getSavedMovieList(): Flow<CommonResult<ArrayList<Movie>>> = callbackFlow {
+        val movieList = ArrayList<Movie>()
 
         val postListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -54,7 +54,7 @@ class SavedMovieRepositoryImp @Inject constructor(
         return movieId
     }
 
-    override suspend fun saveMovie(movie: com.example.domain.model.Movie): com.example.domain.model.Movie {
+    override suspend fun saveMovie(movie: Movie): Movie {
         val database = firebase.getReference(MOVIES)
         database.child(movie.id.toString())
             .setValue(movie)

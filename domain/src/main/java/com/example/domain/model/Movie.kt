@@ -1,4 +1,4 @@
-package com.example.okhttp.domain
+package com.example.domain.model
 
 data class Movie(
     var id: Int = 0,
