@@ -2,7 +2,7 @@ package com.example.okhttp.di
 
 import BASE_URL
 import FIREBASE_URL
-import com.example.okhttp.api.MovieApi
+import com.example.data.api.MovieApi
 import com.example.okhttp.repository.MovieRepository
 import com.example.okhttp.repository.MovieRepositoryImp
 import com.google.firebase.database.FirebaseDatabase
@@ -50,12 +50,12 @@ object AppModule {
     @Named("MOVIE_API")
     fun provideMovieApi(
         retrofit: Retrofit
-    ): MovieApi = retrofit.create()
+    ): com.example.data.api.MovieApi = retrofit.create()
 
     @Provides
     @Singleton
     fun provideMovieRepository(
-        @Named("MOVIE_API") movieApi: MovieApi,
+        @Named("MOVIE_API") movieApi: com.example.data.api.MovieApi,
     ): MovieRepository = MovieRepositoryImp(movieApi)
 
 }
