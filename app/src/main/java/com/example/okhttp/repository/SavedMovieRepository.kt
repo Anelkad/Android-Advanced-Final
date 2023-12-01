@@ -1,6 +1,6 @@
 package com.example.okhttp.repository
 
-import com.example.okhttp.models.Movie
+import com.example.okhttp.domain.Movie
 import com.example.okhttp.utils.CommonResult
 import kotlinx.coroutines.flow.Flow
 

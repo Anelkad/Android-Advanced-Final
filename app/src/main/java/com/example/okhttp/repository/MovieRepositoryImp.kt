@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.okhttp.api.MovieApi
-import com.example.okhttp.models.ListItem
+import com.example.okhttp.domain.ListItem
 import com.example.okhttp.models.MovieDetails
 import com.example.okhttp.utils.CommonResult
 import kotlinx.coroutines.Dispatchers

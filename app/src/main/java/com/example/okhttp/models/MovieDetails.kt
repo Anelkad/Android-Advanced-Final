@@ -1,7 +1,7 @@
 package com.example.okhttp.models
 
 import com.google.gson.annotations.SerializedName
-
+import com.example.okhttp.domain.Movie
 
 data class MovieDetails(
     val id: Int,

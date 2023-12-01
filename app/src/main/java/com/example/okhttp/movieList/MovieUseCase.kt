@@ -1,7 +1,7 @@
 package com.example.okhttp.movieList
 
 import androidx.paging.PagingData
-import com.example.okhttp.models.ListItem
+import com.example.okhttp.domain.ListItem
 import com.example.okhttp.models.MovieDetails
 import com.example.okhttp.repository.MovieRepository
 import com.example.okhttp.utils.CommonResult

@@ -8,7 +8,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.okhttp.R
 import com.example.okhttp.databinding.AdItemBinding
-import com.example.okhttp.models.Ad
+import com.example.okhttp.domain.Ad
 
 class AdViewHolder(private val adItemBinding: AdItemBinding):
     RecyclerView.ViewHolder(adItemBinding.root) {

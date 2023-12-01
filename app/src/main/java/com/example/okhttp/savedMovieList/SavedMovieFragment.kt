@@ -12,7 +12,7 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
-import com.example.okhttp.models.Movie
+import com.example.okhttp.domain.Movie
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

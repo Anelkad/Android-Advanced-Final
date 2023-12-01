@@ -3,8 +3,8 @@ package com.example.okhttp.repository
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.okhttp.api.MovieApi
-import com.example.okhttp.models.Ad
-import com.example.okhttp.models.ListItem
+import com.example.okhttp.domain.Ad
+import com.example.okhttp.domain.ListItem
 
 class MoviePagingSource(
     private val api: MovieApi
@@ -23,7 +23,7 @@ class MoviePagingSource(
             )
 
             val list = buildList {
-                addAll(movieListResponse.results.map { ListItem.MovieItem(it) })
+                addAll(movieListResponse.results.map { ListItem.MovieItem(it.toDomain()) })
                 //каждые 10 фильмов - реклама
                 add(10, ListItem.AdItem(ad))
                 add(21, ListItem.AdItem(ad))

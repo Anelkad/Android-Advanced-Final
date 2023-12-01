@@ -1,4 +1,4 @@
-package com.example.okhttp.models
+package com.example.okhttp.domain
 
 sealed class ListItem {
 

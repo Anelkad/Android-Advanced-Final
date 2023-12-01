@@ -5,8 +5,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.okhttp.R
-import com.example.okhttp.models.ListItem
-import com.example.okhttp.models.Movie
+import com.example.okhttp.domain.ListItem
+import com.example.okhttp.domain.Movie
 
 class PagedMovieAdapter(
     private val onMovieClickListener: ((Int) -> Unit),

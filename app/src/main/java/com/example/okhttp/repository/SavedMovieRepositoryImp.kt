@@ -1,7 +1,7 @@
 package com.example.okhttp.repository
 
 import MOVIES
-import com.example.okhttp.models.Movie
+import com.example.okhttp.domain.Movie
 import com.example.okhttp.utils.CommonResult
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

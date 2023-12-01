@@ -9,7 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.okhttp.R
 import com.example.okhttp.databinding.MovieItemBinding
-import com.example.okhttp.models.Movie
+import com.example.okhttp.domain.Movie
 
 class MovieViewHolder(
     private val movieItemBinding: MovieItemBinding,

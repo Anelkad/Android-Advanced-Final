@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.okhttp.models.ListItem
-import com.example.okhttp.models.Movie
+import com.example.okhttp.domain.ListItem
+import com.example.okhttp.domain.Movie
 import com.example.okhttp.savedMovieList.SavedMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

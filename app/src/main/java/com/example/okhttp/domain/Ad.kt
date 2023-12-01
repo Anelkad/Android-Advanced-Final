@@ -1,4 +1,4 @@
-package com.example.okhttp.models
+package com.example.okhttp.domain
 
 data class Ad(
     val title: String,
