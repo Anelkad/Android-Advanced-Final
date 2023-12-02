@@ -6,6 +6,7 @@ import com.example.okhttp.domain.usecases.SavedMovieUseCase
 import com.example.okhttp.domain.model.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,18 +21,25 @@ class SavedMovieListViewModel @Inject constructor (
     private var _state = MutableStateFlow<State>(State.ShowLoading)
     val state: StateFlow<State> = _state
 
+    private var movies: List<Movie> = emptyList()
+
     init {
         getMovieList()
     }
 
     fun getMovieList() = viewModelScope.launch {
-        _state.value = State.ShowLoading
-        val response = savedMovieUseCase.getSavedMovieList()
-        response.result?.let {
-            _state.value = State.SavedMovieList(it)
-        }
-        response.error?.let {
-            _state.value = State.Error(it)
+        if (movies.isEmpty()) {
+            val response = savedMovieUseCase.getSavedMovieList()
+            response.result?.let {
+                _state.value = State.SavedMovieList(it)
+                movies = it
+            }
+            response.error?.let {
+                _state.value = State.Error(it)
+            }
+        } else {
+            _state.value = State.SavedMovieList(movies)
+            delay(1L)
         }
         _state.value = State.HideLoading
     }

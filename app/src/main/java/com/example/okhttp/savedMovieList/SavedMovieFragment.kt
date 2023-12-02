@@ -33,6 +33,14 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
         setupObservers()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
     private fun bindViews() {
         movieAdapter = SavedMovieAdapter(
             onItemClickListener = ::navigateToDetails,
