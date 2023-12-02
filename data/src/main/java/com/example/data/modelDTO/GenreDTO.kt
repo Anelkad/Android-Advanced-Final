@@ -1,6 +1,6 @@
 package com.example.data.modelDTO
 
-import com.example.okhttp.domain.Genre
+import com.example.domain.model.Genre
 
 data class GenreDTO(
     val id: Int,

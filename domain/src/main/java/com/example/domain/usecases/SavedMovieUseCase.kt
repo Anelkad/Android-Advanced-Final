@@ -9,10 +9,10 @@ import javax.inject.Inject
 class SavedMovieUseCase @Inject constructor(
     private val savedMovieRepository: SavedMovieRepository,
 ) {
-    fun getSavedMovieList(): Flow<CommonResult<ArrayList<Movie>>> = savedMovieRepository.getSavedMovieList()
+    suspend fun getSavedMovieList(): CommonResult<List<Movie>> = savedMovieRepository.getSavedMovieList()
 
     suspend fun deleteMovie(movieId: Int): Int = savedMovieRepository.deleteMovie(movieId)
 
-    suspend fun saveMovie(movie: com.example.domain.model.Movie): com.example.domain.model.Movie = savedMovieRepository.saveMovie(movie)
+    suspend fun saveMovie(movie: Movie): Movie = savedMovieRepository.saveMovie(movie)
 
 }

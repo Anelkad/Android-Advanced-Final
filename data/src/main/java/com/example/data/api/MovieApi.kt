@@ -2,6 +2,7 @@ package com.example.data.api
 
 import API_KEY
 import LANGUAGE
+import SESSION_ID
 import com.example.data.modelDTO.MovieDetailsDTO
 import com.example.data.modelDTO.MovieListResponseDTO
 import retrofit2.Response
@@ -31,4 +32,12 @@ interface MovieApi {
         @Query("language")
         language: String = LANGUAGE
     ): Response<MovieDetailsDTO>
+
+    @GET("account/20775042/favorite/movies")
+    suspend fun getFavoriteMovieList(
+        @Query("api_key")
+        apiKey: String = API_KEY,
+        @Query("session_id")
+        sessionId: String = SESSION_ID,
+    ): Response<MovieListResponseDTO>
 }

@@ -1,6 +1,6 @@
 package com.example.data.modelDTO
 
-import com.example.okhttp.domain.ProductionCountry
+import com.example.domain.model.ProductionCountry
 
 
 data class ProductionCountryDTO(

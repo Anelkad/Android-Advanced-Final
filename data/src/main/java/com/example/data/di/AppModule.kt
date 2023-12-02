@@ -4,7 +4,9 @@ import BASE_URL
 import FIREBASE_URL
 import com.example.data.api.MovieApi
 import com.example.data.repository.MovieRepositoryImp
+import com.example.data.repository.SavedMovieRepositoryImp
 import com.example.domain.repository.MovieRepository
+import com.example.domain.repository.SavedMovieRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,15 +18,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
-import com.google.firebase.database.FirebaseDatabase
 
 @Module
 @InstallIn(SingletonComponent::class) //App lifecycle
 object AppModule {
-    @Provides
-    @Singleton
-    fun provideFirebaseDatabase(): FirebaseDatabase = FirebaseDatabase.getInstance(FIREBASE_URL)
-
     @Provides
     @Singleton
     fun provideRetrofit(
@@ -58,4 +55,9 @@ object AppModule {
         @Named("MOVIE_API") movieApi: MovieApi,
     ): MovieRepository = MovieRepositoryImp(movieApi)
 
+    @Provides
+    @Singleton
+    fun provideSavedMovieRepository(
+        @Named("MOVIE_API") movieApi: MovieApi
+    ): SavedMovieRepository = SavedMovieRepositoryImp(api = movieApi)
 }

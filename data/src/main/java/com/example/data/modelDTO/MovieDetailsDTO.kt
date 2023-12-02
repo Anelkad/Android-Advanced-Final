@@ -1,6 +1,6 @@
 package com.example.data.modelDTO
 
-import com.example.okhttp.domain.MovieDetails
+import com.example.domain.model.MovieDetails
 import com.google.gson.annotations.SerializedName
 
 data class MovieDetailsDTO(
