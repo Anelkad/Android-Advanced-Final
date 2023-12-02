@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
         android:layout_marginVertical="15dp"
-        android:indeterminateTint="@color/main_color" />
+        android:indeterminateTint="@color/main_color"
+        android:visibility="gone" />
 
 </FrameLayout>

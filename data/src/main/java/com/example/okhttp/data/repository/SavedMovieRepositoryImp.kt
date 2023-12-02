@@ -4,20 +4,19 @@ import com.example.core.utils.CommonResult
 import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.domain.model.Movie
 import com.example.okhttp.domain.repository.SavedMovieRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class SavedMovieRepositoryImp @Inject constructor(
     private val api: MovieApi
 ) : SavedMovieRepository {
-    override suspend fun getSavedMovieList(): CommonResult<List<Movie>> =
-        withContext(Dispatchers.IO) {
+    override fun getSavedMovieList(): Flow<CommonResult<List<Movie>>> = flow {
             val response = api.getFavoriteMovieList()
             if (response.isSuccessful) {
-                CommonResult(result = response.body()?.results?.map { it.toDomain() })
+                emit(CommonResult(result = response.body()?.results?.map { it.toDomain() }))
             } else {
-                CommonResult(error = response.message())
+                emit(CommonResult(error = response.message()))
             }
         }
 

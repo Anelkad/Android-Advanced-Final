@@ -27,18 +27,8 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentSavedMovieBinding.bind(view)
         registerWaitDialogDelegate(this)
-        savedMovieListViewModel.getMovieList()
-        movieAdapter?.currentList
         bindViews()
         setupObservers()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     private fun bindViews() {
@@ -88,6 +78,8 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
                 is SavedMovieListViewModel.State.HideWaitDialog -> {
                     hideWaitDialog()
                 }
+
+                else -> Unit
             }
         }.launchIn(lifecycleScope)
     }
