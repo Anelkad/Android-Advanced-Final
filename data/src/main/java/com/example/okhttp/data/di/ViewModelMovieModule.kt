@@ -15,7 +15,7 @@ abstract class ViewModelMovieModule {
 //    @ViewModelScoped //жизненный цикл ViewModelScope
 //    abstract fun bindsMovieRepository(imp: MovieRepositoryImp): MovieRepository
 
-    @Binds
-    @ViewModelScoped
-    abstract fun bindsSavedMovieRepository(imp: SavedMovieRepositoryImp): SavedMovieRepository
+//    @Binds
+//    @ViewModelScoped
+//    abstract fun bindsSavedMovieRepository(imp: SavedMovieRepositoryImp): SavedMovieRepository
 }

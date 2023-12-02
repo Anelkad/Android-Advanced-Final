@@ -4,7 +4,9 @@ import BASE_URL
 import FIREBASE_URL
 import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.data.repository.MovieRepositoryImp
+import com.example.okhttp.data.repository.SavedMovieRepositoryImp
 import com.example.okhttp.domain.repository.MovieRepository
+import com.example.okhttp.domain.repository.SavedMovieRepository
 import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
@@ -58,4 +60,10 @@ object AppModule {
         @Named("MOVIE_API") movieApi: MovieApi,
     ): MovieRepository = MovieRepositoryImp(movieApi)
 
+    @Provides
+    @Singleton
+    fun provideSavedMovieRepository(
+        @Named("MOVIE_API") movieApi: MovieApi,
+        firebaseDatabase: FirebaseDatabase
+    ): SavedMovieRepository = SavedMovieRepositoryImp(api = movieApi, firebase = firebaseDatabase)
 }

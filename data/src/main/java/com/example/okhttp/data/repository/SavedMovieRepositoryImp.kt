@@ -2,51 +2,29 @@ package com.example.okhttp.data.repository
 
 import MOVIES
 import com.example.core.utils.CommonResult
-import com.example.okhttp.data.modelDTO.MovieDTO
+import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.domain.model.Movie
 import com.example.okhttp.domain.repository.SavedMovieRepository
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SavedMovieRepositoryImp @Inject constructor(
-    private val firebase: FirebaseDatabase
+    private val firebase: FirebaseDatabase,
+    private val api: MovieApi
 ) : SavedMovieRepository {
-    override fun getSavedMovieList(): Flow<CommonResult<ArrayList<Movie>>> = callbackFlow {
-        val movieList = ArrayList<Movie>()
-
-        val postListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                movieList.clear()
-                for (ds in snapshot.children) {
-                    val movie = ds.getValue(MovieDTO::class.java)
-                    if (movie != null) {
-                        movieList.add(movie.toDomain())
-                    }
-                }
-                this@callbackFlow.trySendBlocking(CommonResult(result = movieList))
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                this@callbackFlow.trySendBlocking(CommonResult(error = "Error"))
+    override suspend fun getSavedMovieList(): CommonResult<List<Movie>> =
+        withContext(Dispatchers.IO) {
+            val response = api.getFavoriteMovieList()
+            if (response.isSuccessful) {
+                CommonResult(result = response.body()?.results?.map { it.toDomain() })
+            } else {
+                CommonResult(error = response.message())
             }
         }
 
-        firebase.getReference(MOVIES)
-            .addValueEventListener(postListener)
-
-        awaitClose {
-            firebase.getReference(MOVIES)
-                .removeEventListener(postListener)
-        }
-    }
 
     override suspend fun deleteMovie(movieId: Int): Int {
         firebase.getReference(MOVIES).child(movieId.toString())
