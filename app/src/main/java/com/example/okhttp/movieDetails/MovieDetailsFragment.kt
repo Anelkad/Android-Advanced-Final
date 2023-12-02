@@ -38,7 +38,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
     }
 
     private fun bindViews() {
-        binding?.backButton?.setOnClickListener {
+        binding?.btnBack?.setOnClickListener {
             findNavController().popBackStack()
         }
     }
@@ -87,35 +87,35 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
 
     private fun bindMovie(movieDetails: MovieDetails) {
         binding?.apply {
-            textviewTitle.text = movieDetails.title
-            textviewDescription.text = movieDetails.overview
-            if (movieDetails.tagline.isNotEmpty()) tagline.text =
+            tvTitle.text = movieDetails.title
+            tvDescription.text = movieDetails.overview
+            if (movieDetails.tagline.isNotEmpty()) tvTagline.text =
                 getString(R.string.tagline, movieDetails.tagline)
-            releaseDate.text = getString(R.string.premiere, movieDetails.releaseDate)
-            runtime.text = getString(
+            tvReleaseDate.text = getString(R.string.premiere, movieDetails.releaseDate)
+            tvRuntime.text = getString(
                 R.string.runtime,
                 movieDetails.runtime / 60,
                 movieDetails.runtime % 60
             )
-            if (movieDetails.revenue > 0) revenue.text =
+            if (movieDetails.revenue > 0) tvRevenue.text =
                 getString(R.string.revenue, movieDetails.revenue / 1000000)
 
             Glide
-                .with(imageview.context)
+                .with(ivPoster.context)
                 .load(IMAGE_URL + movieDetails.posterPath)
                 .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.baseline_image_24)
-                .into(imageview)
+                .into(ivPoster)
 
             Glide
-                .with(imageview.context)
+                .with(ivBackgroundPoster.context)
                 .load(IMAGE_URL + movieDetails.backdropPath)
                 .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.baseline_image_24)
-                .into(imageview2)
+                .into(ivBackgroundPoster)
 
-            saveButton.isVisible = true
-            saveButton.setOnClickListener { movieViewModel.saveMovie(movieDetails.toMovie()) }
+            btnSave.isVisible = true
+            btnSave.setOnClickListener { movieViewModel.saveMovie(movieDetails.toMovie()) }
         }
     }
 }

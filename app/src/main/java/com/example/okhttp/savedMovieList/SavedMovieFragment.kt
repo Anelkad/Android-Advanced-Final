@@ -36,7 +36,7 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
             onItemClickListener = ::navigateToDetails,
             deleteMovieListener = { savedMovieListViewModel.deleteMovie(it) }
         )
-        binding?.listView?.adapter = movieAdapter
+        binding?.rvMovies?.adapter = movieAdapter
     }
 
     private fun setupObservers() {
@@ -60,7 +60,7 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
 
                 is SavedMovieListViewModel.State.SavedMovieList -> {
                     movieAdapter?.submitList(state.movies)
-                    binding?.noSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
+                    binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
                 }
 
                 is SavedMovieListViewModel.State.MovieDeleted -> {

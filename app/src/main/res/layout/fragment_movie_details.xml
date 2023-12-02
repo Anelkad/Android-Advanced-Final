@@ -17,10 +17,10 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/textview_title"
+                android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/back_button"
+                android:layout_toEndOf="@+id/btn_back"
                 android:paddingVertical="5dp"
                 android:text=""
                 android:textColor="@color/black"
@@ -28,7 +28,7 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:id="@+id/back_button"
+                android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingVertical="10dp"
@@ -37,10 +37,10 @@
                 android:src="@drawable/baseline_arrow_back_ios_24" />
 
             <TextView
-                android:id="@+id/tagline"
+                android:id="@+id/tv_tagline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/release_date"
+                android:layout_below="@+id/tv_release_date"
                 android:layout_centerHorizontal="true"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="5dp"
@@ -50,10 +50,10 @@
                 android:textStyle="italic" />
 
             <TextView
-                android:id="@+id/release_date"
+                android:id="@+id/tv_release_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/textview_title"
+                android:layout_below="@+id/tv_title"
                 android:layout_alignParentEnd="true"
                 android:paddingHorizontal="10dp"
                 android:text=""
@@ -61,10 +61,10 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/runtime"
+                android:id="@+id/tv_runtime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/imageview"
+                android:layout_below="@+id/iv_poster"
                 android:paddingHorizontal="15dp"
                 android:text=""
                 android:textAlignment="textEnd"
@@ -73,10 +73,10 @@
                 android:textStyle="italic" />
 
             <TextView
-                android:id="@+id/revenue"
+                android:id="@+id/tv_revenue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/runtime"
+                android:layout_below="@+id/tv_runtime"
                 android:paddingHorizontal="15dp"
                 android:text=""
                 android:textAlignment="textEnd"
@@ -85,20 +85,20 @@
                 android:textStyle="italic" />
 
             <Button
-                android:id="@+id/saveButton"
+                android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/revenue"
+                android:layout_below="@+id/tv_revenue"
                 android:layout_alignParentEnd="true"
                 android:layout_marginHorizontal="10dp"
                 android:text="@string/save_movie"
                 android:visibility="gone" />
 
             <TextView
-                android:id="@+id/textview_description"
+                android:id="@+id/tv_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/saveButton"
+                android:layout_below="@+id/btn_save"
                 android:layout_centerHorizontal="true"
                 android:paddingHorizontal="20dp"
                 android:text=""
@@ -106,19 +106,19 @@
                 android:textSize="20sp" />
 
             <ImageView
-                android:id="@+id/imageview"
+                android:id="@+id/iv_poster"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tagline"
+                android:layout_below="@+id/tv_tagline"
                 android:layout_centerHorizontal="true"
                 android:adjustViewBounds="true"
                 android:padding="10dp" />
 
             <ImageView
-                android:id="@+id/imageview2"
+                android:id="@+id/iv_background_poster"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/textview_description"
+                android:layout_below="@+id/tv_description"
                 android:adjustViewBounds="true"
                 android:padding="10dp" />
 
@@ -130,7 +130,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:indeterminateTint="@color/main_color" />
+                android:indeterminateTint="@color/main_color"
+                android:visibility="gone" />
 
         </RelativeLayout>
     </ScrollView>

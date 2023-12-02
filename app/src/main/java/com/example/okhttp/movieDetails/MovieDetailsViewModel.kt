@@ -28,12 +28,12 @@ class MovieDetailsViewModel @Inject constructor(
             movieUseCase.getMovie(movieId)
         }
         response.result?.let {
-            _state.value = State.ShowMovieDetails(movie = it)
             _state.value = State.HideLoading
+            _state.value = State.ShowMovieDetails(movie = it)
         }
         response.error?.let {
-            _state.value = State.Error(it)
             _state.value = State.HideLoading
+            _state.value = State.Error(it)
         }
     }
 

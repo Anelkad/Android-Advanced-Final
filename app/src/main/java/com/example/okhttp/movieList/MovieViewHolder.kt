@@ -32,21 +32,21 @@ class MovieViewHolder(
     }
 
     fun bind(movie: Movie) {
-        movieItemBinding.title.text = movie.title
-        movieItemBinding.description.text = movieItemBinding.description.context.getString(
+        movieItemBinding.tvTitle.text = movie.title
+        movieItemBinding.tvDescription.text = movieItemBinding.tvDescription.context.getString(
             R.string.description,
             movie.voteAverage.toString(),
             movie.releaseDate
         )
         Glide
-            .with(movieItemBinding.imageView.context)
+            .with(movieItemBinding.ivPoster.context)
             .load(IMAGE_URL + movie.posterPath)
             .apply(RequestOptions.bitmapTransform(RoundedCorners(10)))
             .placeholder(R.drawable.progress_animation)
             .error(R.drawable.baseline_image_24)
-            .into(movieItemBinding.imageView)
+            .into(movieItemBinding.ivPoster)
 
         movieItemBinding.itemView.setOnClickListener { onMovieClickListener.invoke(movie.id) }
-        movieItemBinding.saveButton.setOnClickListener { saveMovieListener.invoke(movie) }
+        movieItemBinding.btnSave.setOnClickListener { saveMovieListener.invoke(movie) }
     }
 }

@@ -44,9 +44,9 @@ class MovieListFragment : Fragment(R.layout.fragment_movie_list),
             saveMovieListener = { movieListViewModel.saveMovie(it) }
         )
         binding?.apply {
-            listView.layoutManager =
+            rvMovies.layoutManager =
                 StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
-            listView.adapter = movieAdapter?.withLoadStateFooter(
+            rvMovies.adapter = movieAdapter?.withLoadStateFooter(
                 MovieLoadStateAdapter { movieAdapter?.retry() }
             )
             swipeRefresh.setOnRefreshListener {

@@ -18,10 +18,10 @@ class SavedMovieAdapter(
     private val deleteMovieListener: ((Int) -> Unit) = {},
 ) : ListAdapter<Movie, SavedMovieAdapter.HolderMovie>(DiffCallback()) {
     class HolderMovie(binding: SavedItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        val title = binding.title
-        val description = binding.description
-        val image = binding.imageView
-        val delete = binding.delete
+        val title = binding.tvTitle
+        val description = binding.tvDescription
+        val image = binding.ivPoster
+        val delete = binding.btnDelete
         val itemView = binding.itemView
     }
 
