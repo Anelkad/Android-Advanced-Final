@@ -1,6 +1,7 @@
 package com.example.okhttp.data.api
 
-import API_KEY
+import GENRE_ANIMATION
+import GENRE_DRAMA
 import LANGUAGE
 import SESSION_ID
 import com.example.okhttp.data.modelDTO.MovieDetailsDTO
@@ -15,10 +16,8 @@ interface MovieApi {
     suspend fun getMovieList(
         @Query("page")
         page: Int = 1,
-        @Query("api_key")
-        apiKey: String = API_KEY,
         @Query("with_genres")
-        withGenres: String = "16,18",
+        withGenres: String = "$GENRE_ANIMATION,$GENRE_DRAMA",
         @Query("language")
         language: String = LANGUAGE
     ): MovieListResponseDTO
@@ -27,16 +26,12 @@ interface MovieApi {
     suspend fun getMovie(
         @Path("movie_id")
         movieId: Int,
-        @Query("api_key")
-        apiKey: String = API_KEY,
         @Query("language")
         language: String = LANGUAGE
     ): Response<MovieDetailsDTO>
 
     @GET("account/20775042/favorite/movies")
     suspend fun getFavoriteMovieList(
-        @Query("api_key")
-        apiKey: String = API_KEY,
         @Query("session_id")
         sessionId: String = SESSION_ID,
     ): Response<MovieListResponseDTO>

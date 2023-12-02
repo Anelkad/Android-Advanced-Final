@@ -25,8 +25,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     fun getMovie(movieId: Int) = viewModelScope.launch {
         val response = withContext(Dispatchers.IO) {
-            val result = movieUseCase.getMovie(movieId)
-            result
+            movieUseCase.getMovie(movieId)
         }
         response.result?.let {
             _state.value = State.ShowMovieDetails(movie = it)

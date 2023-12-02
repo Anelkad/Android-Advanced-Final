@@ -12,7 +12,6 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
-import com.example.okhttp.domain.model.Movie
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -21,7 +20,6 @@ import kotlinx.coroutines.flow.onEach
 class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
     DialogDelegate by WaitDialogDelegate() {
 
-    private var movieList: ArrayList<Movie> = arrayListOf()
     private var binding: FragmentSavedMovieBinding? = null
     private var movieAdapter: SavedMovieAdapter? = null
     private val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
@@ -29,6 +27,8 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentSavedMovieBinding.bind(view)
         registerWaitDialogDelegate(this)
+        savedMovieListViewModel.getMovieList()
+        movieAdapter?.currentList
         bindViews()
         setupObservers()
     }
@@ -38,7 +38,6 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
             onItemClickListener = ::navigateToDetails,
             deleteMovieListener = { savedMovieListViewModel.deleteMovie(it) }
         )
-        savedMovieListViewModel.getMovieList()
         binding?.listView?.adapter = movieAdapter
     }
 
@@ -48,7 +47,7 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
                 is SavedMovieListViewModel.State.Error -> {
                     Toast.makeText(
                         context,
-                        requireContext().getString(R.string.smth_went_wrong),
+                        getString(R.string.smth_went_wrong),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -62,18 +61,14 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
                 }
 
                 is SavedMovieListViewModel.State.SavedMovieList -> {
-                    binding?.progressBar?.isVisible = false //todo Hideloading
-                    movieList.clear()
-                    movieList.addAll(state.movies)
-                    movieAdapter?.submitList(movieList.toMutableList())
-                    binding?.noSavedMovie?.isVisible = movieList.isEmpty()
-
+                    movieAdapter?.submitList(state.movies)
+                    binding?.noSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
                 }
 
                 is SavedMovieListViewModel.State.MovieDeleted -> {
                     Toast.makeText(
                         context,
-                        requireContext().getString(R.string.movie_deleted_title),
+                        getString(R.string.movie_deleted_title),
                         Toast.LENGTH_LONG
                     ).show()
                 }

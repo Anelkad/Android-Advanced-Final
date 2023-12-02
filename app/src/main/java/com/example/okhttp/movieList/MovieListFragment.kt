@@ -3,6 +3,7 @@ package com.example.okhttp.movieList
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -88,9 +89,9 @@ class MovieListFragment : Fragment(R.layout.fragment_movie_list),
     }
 
     private fun navigateToDetails(movieId: Int) {
-        val bundle = Bundle().apply {
-            putInt("id", movieId)
-        }
+        val bundle = bundleOf(
+            "id" to movieId
+        )
         findNavController().navigate(
             R.id.action_movieListFragment_to_movieDetailsFragment,
             bundle
@@ -103,7 +104,7 @@ class MovieListFragment : Fragment(R.layout.fragment_movie_list),
                 is MovieListViewModel.State.Error -> {
                     Toast.makeText(
                         context,
-                        requireContext().getString(R.string.smth_went_wrong),
+                        getString(R.string.smth_went_wrong),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -119,7 +120,7 @@ class MovieListFragment : Fragment(R.layout.fragment_movie_list),
                 is MovieListViewModel.State.MovieSaved -> {
                     Toast.makeText(
                         context,
-                        requireContext().getString(R.string.movie_saved_title, state.movie.title),
+                        getString(R.string.movie_saved_title, state.movie.title),
                         Toast.LENGTH_LONG
                     ).show()
                 }

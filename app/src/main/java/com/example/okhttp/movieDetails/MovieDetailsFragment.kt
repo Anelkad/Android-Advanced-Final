@@ -49,7 +49,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                 is MovieDetailsViewModel.State.Error -> {
                     Toast.makeText(
                         context,
-                        requireContext().getString(R.string.smth_went_wrong),
+                        getString(R.string.smth_went_wrong),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -69,7 +69,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                 is MovieDetailsViewModel.State.MovieSaved -> {
                     Toast.makeText(
                         context,
-                        requireContext().getString(R.string.movie_saved_title, state.movie.title),
+                        getString(R.string.movie_saved_title, state.movie.title),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -90,16 +90,15 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
             textviewTitle.text = movieDetails.title
             textviewDescription.text = movieDetails.overview
             if (movieDetails.tagline.isNotEmpty()) tagline.text =
-                tagline.context.getString(R.string.tagline, movieDetails.tagline)
-            releaseDate.text =
-                releaseDate.context.getString(R.string.premiere, movieDetails.releaseDate)
-            runtime.text = runtime.context.getString(
+                getString(R.string.tagline, movieDetails.tagline)
+            releaseDate.text = getString(R.string.premiere, movieDetails.releaseDate)
+            runtime.text = getString(
                 R.string.runtime,
                 movieDetails.runtime / 60,
                 movieDetails.runtime % 60
             )
             if (movieDetails.revenue > 0) revenue.text =
-                revenue.context.getString(R.string.revenue, movieDetails.revenue / 1000000)
+                getString(R.string.revenue, movieDetails.revenue / 1000000)
 
             Glide
                 .with(imageview.context)

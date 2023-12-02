@@ -25,6 +25,7 @@ class SavedMovieListViewModel @Inject constructor (
     }
 
     fun getMovieList() = viewModelScope.launch {
+        _state.value = State.ShowLoading
         val response = savedMovieUseCase.getSavedMovieList()
         response.result?.let {
             _state.value = State.SavedMovieList(it)
@@ -32,7 +33,7 @@ class SavedMovieListViewModel @Inject constructor (
         response.error?.let {
             _state.value = State.Error(it)
         }
-        _state.value = State.HideLoading //todo не доходит до HideLoading
+        _state.value = State.HideLoading
     }
 
 
