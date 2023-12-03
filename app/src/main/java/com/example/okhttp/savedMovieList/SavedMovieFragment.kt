@@ -1,8 +1,11 @@
 package com.example.okhttp.savedMovieList
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,7 +20,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
+class SavedMovieFragment : Fragment(),
     DialogDelegate by WaitDialogDelegate() {
 
     private var binding: FragmentSavedMovieBinding? = null
@@ -25,10 +28,18 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
     private val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding = FragmentSavedMovieBinding.bind(view)
         registerWaitDialogDelegate(this)
         bindViews()
         setupObservers()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSavedMovieBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     private fun bindViews() {
@@ -85,9 +96,7 @@ class SavedMovieFragment : Fragment(R.layout.fragment_saved_movie),
     }
 
     private fun navigateToDetails(movieId: Int) {
-        val bundle = Bundle().apply {
-            putInt("id", movieId)
-        }
+        val bundle = bundleOf("id" to movieId)
         findNavController().navigate(
             R.id.action_savedMovieFragment_to_movieDetailsFragment,
             bundle

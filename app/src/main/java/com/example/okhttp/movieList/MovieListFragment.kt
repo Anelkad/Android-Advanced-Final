@@ -1,7 +1,9 @@
 package com.example.okhttp.movieList
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -24,7 +26,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MovieListFragment : Fragment(R.layout.fragment_movie_list),
+class MovieListFragment : Fragment(),
     DialogDelegate by WaitDialogDelegate() {
 
     private var binding: FragmentMovieListBinding? = null
@@ -32,10 +34,18 @@ class MovieListFragment : Fragment(R.layout.fragment_movie_list),
     private val movieListViewModel: MovieListViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding = FragmentMovieListBinding.bind(view)
         registerWaitDialogDelegate(this)
         setupObserver()
         bindViews()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentMovieListBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     private fun bindViews() {
