@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SavedMovieListViewModel @Inject constructor (
+class SavedMovieListViewModel @Inject constructor(
     private val saveMovieUseCase: SaveMovieUseCase,
     private val getSavedMovieUseCase: GetSavedMovieUseCase
 ) : ViewModel() {
@@ -42,10 +42,16 @@ class SavedMovieListViewModel @Inject constructor (
 
     fun deleteMovie(movieId: Int) = viewModelScope.launch {
         _state.value = State.ShowWaitDialog
-        val isMovieDeleted = withContext(Dispatchers.IO) {
+        val response = withContext(Dispatchers.IO) {
             saveMovieUseCase.deleteMovie(movieId)
         }
-        _state.value = State.MovieDeleted(isMovieDeleted)
+        response.result?.let {
+            _state.value = State.MovieDeleted(
+                success = it.success,
+                movieId = movieId
+            )
+        }
+        response.error?.let { _state.value = State.Error(it) }
         _state.value = State.HideWaitDialog
     }
 
@@ -53,7 +59,7 @@ class SavedMovieListViewModel @Inject constructor (
         object ShowLoading : State()
         object HideLoading : State()
         data class SavedMovieList(val movies: List<Movie>) : State()
-        data class MovieDeleted(val movieId: Int) : State()
+        data class MovieDeleted(val success: Boolean, val movieId: Int) : State()
         object HideWaitDialog : State()
         object ShowWaitDialog : State()
         data class Error(val error: String) : State()

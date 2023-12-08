@@ -43,13 +43,16 @@ class SavedMovieFragment : Fragment(),
     }
 
     private fun bindViews() {
-        //todo swipe refresh
+        binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
         //todo add crashlytics
         movieAdapter = SavedMovieAdapter(
             onItemClickListener = ::navigateToDetails,
             deleteMovieListener = { savedMovieListViewModel.deleteMovie(it) }
         )
         binding?.rvMovies?.adapter = movieAdapter
+        binding?.swipeRefresh?.setOnRefreshListener {
+            savedMovieListViewModel.getMovieList()
+        }
     }
 
     private fun setupObservers() {
@@ -65,23 +68,34 @@ class SavedMovieFragment : Fragment(),
 
                 is SavedMovieListViewModel.State.HideLoading -> {
                     binding?.progressBar?.isVisible = false
+                    binding?.swipeRefresh?.isRefreshing = false
                 }
 
                 is SavedMovieListViewModel.State.ShowLoading -> {
-                    binding?.progressBar?.isVisible = true
+                    binding?.apply {
+                        if (!swipeRefresh.isRefreshing) progressBar.isVisible = true
+                    }
                 }
 
                 is SavedMovieListViewModel.State.SavedMovieList -> {
                     movieAdapter?.submitList(state.movies)
-                    binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
+                    binding?.tvNoSavedMovie?.isVisible = state.movies.isEmpty()
                 }
 
                 is SavedMovieListViewModel.State.MovieDeleted -> {
+                    //todo after delete, last state changes
                     Toast.makeText(
                         context,
                         getString(R.string.movie_deleted_title),
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
+                    movieAdapter?.deleteMovie(
+                        movieId = state.movieId,
+                        update = {
+                            binding?.tvNoSavedMovie?.isVisible =
+                                movieAdapter?.currentList?.isEmpty() == true
+                        }
+                    )
                 }
 
                 is SavedMovieListViewModel.State.ShowWaitDialog -> {
@@ -90,6 +104,7 @@ class SavedMovieFragment : Fragment(),
 
                 is SavedMovieListViewModel.State.HideWaitDialog -> {
                     hideWaitDialog()
+                    binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
                 }
 
                 else -> Unit

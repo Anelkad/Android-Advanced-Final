@@ -14,14 +14,14 @@ import com.example.okhttp.domain.model.Movie
 class MovieViewHolder(
     private val movieItemBinding: MovieItemBinding,
     private val onMovieClickListener: (Int) -> Unit,
-    private val saveMovieListener: (Movie) -> Unit
+    private val saveMovieListener: (Int) -> Unit
 ) :
     RecyclerView.ViewHolder(movieItemBinding.root) {
     companion object {
         fun create(
             parent: ViewGroup,
             onMovieClickListener: ((Int) -> Unit),
-            saveMovieListener: ((Movie) -> Unit)
+            saveMovieListener: ((Int) -> Unit)
         ): MovieViewHolder {
             val binding = MovieItemBinding.inflate(
                 LayoutInflater
@@ -47,6 +47,6 @@ class MovieViewHolder(
             .into(movieItemBinding.ivPoster)
 
         movieItemBinding.itemView.setOnClickListener { onMovieClickListener.invoke(movie.id) }
-        movieItemBinding.btnSave.setOnClickListener { saveMovieListener.invoke(movie) }
+        movieItemBinding.btnSave.setOnClickListener { saveMovieListener.invoke(movie.id) }
     }
 }

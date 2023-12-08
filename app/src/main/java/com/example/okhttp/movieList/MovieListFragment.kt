@@ -115,7 +115,7 @@ class MovieListFragment : Fragment(),
                     Toast.makeText(
                         context,
                         getString(R.string.smth_went_wrong),
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
@@ -130,8 +130,8 @@ class MovieListFragment : Fragment(),
                 is MovieListViewModel.State.MovieSaved -> {
                     Toast.makeText(
                         context,
-                        getString(R.string.movie_saved_title, state.movie.title),
-                        Toast.LENGTH_LONG
+                        getString(R.string.movie_saved_title),
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 

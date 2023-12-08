@@ -6,7 +6,7 @@
     <string name="description">★ %s\nПремьера: %s</string>
     <string name="revenue">Кассовые сборы: %d млн $</string>
     <string name="smth_went_wrong">Что-то пошло не так</string>
-    <string name="movie_saved_title">Фильм \"%s\" сохранен!</string>
+    <string name="movie_saved_title">Фильм сохранен!</string>
     <string name="movie_deleted_title">Фильм удален!</string>
     <string name="retry">Повторить</string>
     <string name="error_message">Ошибка</string>

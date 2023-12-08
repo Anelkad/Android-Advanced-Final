@@ -6,7 +6,7 @@
     <string name="description">★ %s\nPremiere: %s</string>
     <string name="revenue">Box office: %d mln $</string>
     <string name="smth_went_wrong">Something went wrong</string>
-    <string name="movie_saved_title">Movie \"%s\" saved!</string>
+    <string name="movie_saved_title">Movie saved!</string>
     <string name="movie_deleted_title">Movie deleted!</string>
     <string name="retry">Retry</string>
     <string name="error_message">Error message</string>

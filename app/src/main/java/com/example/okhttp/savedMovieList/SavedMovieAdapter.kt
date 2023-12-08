@@ -30,6 +30,15 @@ class SavedMovieAdapter(
         override fun areContentsTheSame(oldItem: Movie, newItem: Movie) = oldItem == newItem
     }
 
+    fun deleteMovie(movieId: Int, update: () -> Unit) {
+        val item = currentList.find { it.id == movieId }
+        val newList = currentList.toMutableList()
+        newList.remove(item)
+        submitList(newList) {
+            update.invoke()
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderMovie {
         val binding = SavedItemBinding.inflate(
             LayoutInflater

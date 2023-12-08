@@ -50,7 +50,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                     Toast.makeText(
                         context,
                         getString(R.string.smth_went_wrong),
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
@@ -69,8 +69,8 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                 is MovieDetailsViewModel.State.MovieSaved -> {
                     Toast.makeText(
                         context,
-                        getString(R.string.movie_saved_title, state.movie.title),
-                        Toast.LENGTH_LONG
+                        getString(R.string.movie_saved_title),
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
@@ -115,7 +115,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                 .into(ivBackgroundPoster)
 
             btnSave.isVisible = true
-            btnSave.setOnClickListener { movieViewModel.saveMovie(movieDetails.toMovie()) }
+            btnSave.setOnClickListener { movieViewModel.saveMovie(movieDetails.id) }
         }
     }
 }

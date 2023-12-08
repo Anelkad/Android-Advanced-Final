@@ -2,10 +2,9 @@ package com.example.okhttp.movieDetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.okhttp.domain.model.MovieDetails
 import com.example.okhttp.domain.usecases.GetMovieUseCase
 import com.example.okhttp.domain.usecases.SaveMovieUseCase
-import com.example.okhttp.domain.model.Movie
-import com.example.okhttp.domain.model.MovieDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,19 +36,20 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    fun saveMovie(movie: Movie) = viewModelScope.launch {
+    fun saveMovie(movieId: Int) = viewModelScope.launch {
         _state.value = State.ShowWaitDialog
-        val isMovieSaved = withContext(Dispatchers.IO){
-            saveMovieUseCase.saveMovie(movie)
+        val response = withContext(Dispatchers.IO){
+            saveMovieUseCase.saveMovie(movieId)
         }
-        _state.value = State.MovieSaved(isMovieSaved)
+        response.result?.let { _state.value = State.MovieSaved(it.success) }
+        response.error?.let { _state.value = State.Error(it) }
         _state.value = State.HideWaitDialog
     }
 
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
-        data class MovieSaved(val movie: Movie) : State()
+        data class MovieSaved(val success: Boolean) : State()
         data class ShowMovieDetails(val movie: MovieDetails) : State()
         object HideWaitDialog : State()
         object ShowWaitDialog : State()
