@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premiere">Premiere: %s</string>
+    <string name="tagline">"%s"</string>
+    <string name="runtime">%d h %d min</string>
+    <string name="description">★ %s\nPremiere: %s</string>
+    <string name="revenue">Box office: %d mln $</string>
+    <string name="smth_went_wrong">Something went wrong</string>
+    <string name="movie_saved_title">Movie \"%s\" saved!</string>
+    <string name="movie_deleted_title">Movie deleted!</string>
+    <string name="retry">Retry</string>
+    <string name="error_message">Error message</string>
+    <string name="no_saved_movie">No saved movie</string>
+    <string name="save_movie">Save movie</string>
+</resources>

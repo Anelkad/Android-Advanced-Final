@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/savedMovieFragment"
-        android:name="com.example.okhttp.fragments.SavedMovieFragment"
+        android:name="com.example.okhttp.savedMovieList.SavedMovieFragment"
         android:label="fragment_saved_movie"
         tools:layout="@layout/fragment_saved_movie" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/movieDetailsFragment"
-        android:name="com.example.okhttp.fragments.MovieDetailsFragment"
+        android:name="com.example.okhttp.movieDetails.MovieDetailsFragment"
         android:label="fragment_movie_details"
         tools:layout="@layout/fragment_movie_details" >
         <argument
