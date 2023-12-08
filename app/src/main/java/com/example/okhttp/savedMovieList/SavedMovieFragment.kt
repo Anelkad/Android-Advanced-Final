@@ -43,6 +43,8 @@ class SavedMovieFragment : Fragment(),
     }
 
     private fun bindViews() {
+        //todo swipe refresh
+        //todo add crashlytics
         movieAdapter = SavedMovieAdapter(
             onItemClickListener = ::navigateToDetails,
             deleteMovieListener = { savedMovieListViewModel.deleteMovie(it) }

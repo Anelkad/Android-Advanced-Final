@@ -8,7 +8,7 @@ import com.example.okhttp.domain.model.ListItem
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class MovieUseCase @Inject constructor(
+class GetMovieUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
 ) {
 

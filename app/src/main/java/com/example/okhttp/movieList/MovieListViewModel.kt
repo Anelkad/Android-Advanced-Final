@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.okhttp.domain.usecases.MovieUseCase
-import com.example.okhttp.domain.usecases.SavedMovieUseCase
+import com.example.okhttp.domain.usecases.GetMovieUseCase
+import com.example.okhttp.domain.usecases.SaveMovieUseCase
 import com.example.okhttp.domain.model.ListItem
 import com.example.okhttp.domain.model.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,20 +19,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
-    private val movieUseCase: MovieUseCase,
-    private val savedMovieUseCase: SavedMovieUseCase
+    private val getMovieUseCase: GetMovieUseCase,
+    private val saveMovieUseCase: SaveMovieUseCase
 ) : ViewModel() {
 
     private var _state = MutableStateFlow<State>(State.ShowLoading)
     val state: StateFlow<State> = _state
 
     val pagedMovieList: Flow<PagingData<ListItem>> =
-        movieUseCase.getPagedMovieList().cachedIn(viewModelScope)
+        getMovieUseCase.getPagedMovieList().cachedIn(viewModelScope)
 
     fun saveMovie(movie: Movie) = viewModelScope.launch {
         _state.value = State.ShowWaitDialog
         val isMovieSaved = withContext(Dispatchers.IO){
-            savedMovieUseCase.saveMovie(movie)
+            saveMovieUseCase.saveMovie(movie)
         }
         _state.value = State.MovieSaved(isMovieSaved)
         _state.value = State.HideWaitDialog

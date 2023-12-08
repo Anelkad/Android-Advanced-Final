@@ -3,7 +3,8 @@ package com.example.okhttp.savedMovieList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.okhttp.domain.model.Movie
-import com.example.okhttp.domain.usecases.SavedMovieUseCase
+import com.example.okhttp.domain.usecases.GetSavedMovieUseCase
+import com.example.okhttp.domain.usecases.SaveMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavedMovieListViewModel @Inject constructor (
-    private val savedMovieUseCase: SavedMovieUseCase
+    private val saveMovieUseCase: SaveMovieUseCase,
+    private val getSavedMovieUseCase: GetSavedMovieUseCase
 ) : ViewModel() {
 
     private var _state = MutableStateFlow<State?>(null)
@@ -26,7 +28,7 @@ class SavedMovieListViewModel @Inject constructor (
 
     fun getMovieList() = viewModelScope.launch {
         _state.value = State.ShowLoading
-        savedMovieUseCase.getSavedMovieList().collect { response ->
+        getSavedMovieUseCase.getSavedMovieList().collect { response ->
             _state.value = State.HideLoading
             response.result?.let {
                 _state.value = State.SavedMovieList(it)
@@ -41,7 +43,7 @@ class SavedMovieListViewModel @Inject constructor (
     fun deleteMovie(movieId: Int) = viewModelScope.launch {
         _state.value = State.ShowWaitDialog
         val isMovieDeleted = withContext(Dispatchers.IO) {
-            savedMovieUseCase.deleteMovie(movieId)
+            saveMovieUseCase.deleteMovie(movieId)
         }
         _state.value = State.MovieDeleted(isMovieDeleted)
         _state.value = State.HideWaitDialog
