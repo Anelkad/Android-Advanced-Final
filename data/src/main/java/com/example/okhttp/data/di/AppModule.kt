@@ -2,9 +2,13 @@ package com.example.okhttp.data.di
 
 import API_KEY
 import BASE_URL
+import ENCRYPTED_SHARED_PREFERENCES
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import com.example.okhttp.data.BuildConfig
 import com.example.okhttp.data.api.MovieApi
+import com.example.okhttp.data.local.SharedPreferencesFactory
 import com.example.okhttp.data.repository.MovieRepositoryImp
 import com.example.okhttp.data.repository.SavedMovieRepositoryImp
 import com.example.okhttp.domain.repository.MovieRepository
@@ -12,6 +16,7 @@ import com.example.okhttp.domain.repository.SavedMovieRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -25,7 +30,7 @@ import javax.inject.Singleton
 
 
 @Module
-@InstallIn(SingletonComponent::class) //App lifecycle
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Provides
@@ -37,6 +42,15 @@ object AppModule {
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
+    @Provides
+    @Singleton
+    @Named(ENCRYPTED_SHARED_PREFERENCES)
+    fun provideSecureSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
+        SharedPreferencesFactory.getSharedPreferences(
+            SharedPreferencesFactory.Type.ENCRYPTED,
+            context
+        )
 
     @Provides
     @Singleton

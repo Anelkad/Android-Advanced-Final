@@ -18,6 +18,7 @@ import com.example.okhttp.delegates.WaitDialogDelegate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SavedMovieFragment : Fragment(),
@@ -82,34 +83,46 @@ class SavedMovieFragment : Fragment(),
                     binding?.tvNoSavedMovie?.isVisible = state.movies.isEmpty()
                 }
 
-                is SavedMovieListViewModel.State.MovieDeleted -> {
-                    //todo after delete, last state changes
-                    Toast.makeText(
-                        context,
-                        getString(R.string.movie_deleted_title),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    movieAdapter?.deleteMovie(
-                        movieId = state.movieId,
-                        update = {
-                            binding?.tvNoSavedMovie?.isVisible =
-                                movieAdapter?.currentList?.isEmpty() == true
-                        }
-                    )
-                }
-
-                is SavedMovieListViewModel.State.ShowWaitDialog -> {
-                    showWaitDialog()
-                }
-
-                is SavedMovieListViewModel.State.HideWaitDialog -> {
-                    hideWaitDialog()
-                    binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
-                }
-
                 else -> Unit
             }
         }.launchIn(lifecycleScope)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            savedMovieListViewModel.effect.collect { effect ->
+                when (effect) {
+                    is SavedMovieListViewModel.Effect.ShowToast -> {
+                        Toast.makeText(
+                            context,
+                            effect.text,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    SavedMovieListViewModel.Effect.ShowWaitDialog -> {
+                        showWaitDialog()
+                    }
+
+                    SavedMovieListViewModel.Effect.HideWaitDialog -> {
+                        hideWaitDialog()
+                    }
+
+                    is SavedMovieListViewModel.Effect.MovieDeleted -> {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.movie_deleted_title),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        movieAdapter?.deleteMovie(
+                            movieId = effect.movieId,
+                            update = {
+                                binding?.tvNoSavedMovie?.isVisible =
+                                    movieAdapter?.currentList?.isEmpty() == true
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun navigateToDetails(movieId: Int) {
