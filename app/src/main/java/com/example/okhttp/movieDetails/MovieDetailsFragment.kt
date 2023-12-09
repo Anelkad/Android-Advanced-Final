@@ -19,6 +19,7 @@ import com.example.okhttp.domain.model.MovieDetails
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
@@ -65,24 +66,38 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                 is MovieDetailsViewModel.State.ShowMovieDetails -> {
                     bindMovie(state.movie)
                 }
-
-                is MovieDetailsViewModel.State.MovieSaved -> {
-                    Toast.makeText(
-                        context,
-                        getString(R.string.movie_saved_title),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                is MovieDetailsViewModel.State.ShowWaitDialog -> {
-                    showWaitDialog()
-                }
-
-                is MovieDetailsViewModel.State.HideWaitDialog -> {
-                    hideWaitDialog()
-                }
             }
         }.launchIn(lifecycleScope)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            movieViewModel.effect.collect {
+                when (it) {
+                    is MovieDetailsViewModel.Effect.ShowToast -> {
+                        Toast.makeText(
+                            context,
+                            it.text,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    MovieDetailsViewModel.Effect.ShowWaitDialog -> {
+                        showWaitDialog()
+                    }
+
+                    MovieDetailsViewModel.Effect.HideWaitDialog -> {
+                        hideWaitDialog()
+                    }
+
+                    MovieDetailsViewModel.Effect.MovieSaved -> {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.movie_saved_title),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
     }
 
     private fun bindMovie(movieDetails: MovieDetails) {
