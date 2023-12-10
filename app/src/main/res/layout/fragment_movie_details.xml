@@ -47,7 +47,8 @@
                 android:text=""
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_release_date"
@@ -82,16 +83,17 @@
                 android:textAlignment="textEnd"
                 android:textColor="@color/text_color"
                 android:textSize="20sp"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:visibility="gone" />
 
-            <Button
+            <ImageView
                 android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_revenue"
                 android:layout_alignParentEnd="true"
                 android:layout_marginHorizontal="10dp"
-                android:text="@string/save_movie"
+                android:src="@drawable/baseline_favorite_border_24"
                 android:visibility="gone" />
 
             <TextView
