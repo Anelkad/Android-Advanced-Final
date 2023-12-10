@@ -11,13 +11,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.example.okhttp.data.BuildConfig
+import com.example.okhttp.data.api.AuthApi
 import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.data.local.SessionManager
 import com.example.okhttp.data.local.SharedPreferencesFactory
 import com.example.okhttp.data.modelDTO.RatingDTO
 import com.example.okhttp.data.modelDTO.RatingDeserializer
+import com.example.okhttp.data.repository.AuthRepositoryImp
 import com.example.okhttp.data.repository.MovieRepositoryImp
 import com.example.okhttp.data.repository.SavedMovieRepositoryImp
+import com.example.okhttp.domain.repository.AuthRepository
 import com.example.okhttp.domain.repository.MovieRepository
 import com.example.okhttp.domain.repository.SavedMovieRepository
 import com.google.gson.GsonBuilder
@@ -149,7 +152,7 @@ object AppModule {
     @Named("AUTH_API")
     fun provideAuthApi(
         @Named("AUTH_RETROFIT") retrofit: Retrofit
-    ): MovieApi = retrofit.create()
+    ): AuthApi = retrofit.create()
 
     @Provides
     @Singleton
@@ -162,4 +165,16 @@ object AppModule {
     fun provideSavedMovieRepository(
         @Named("MOVIE_API") movieApi: MovieApi
     ): SavedMovieRepository = SavedMovieRepositoryImp(api = movieApi)
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        @Named("MOVIE_API") movieApi: MovieApi,
+        @Named("AUTH_API") authApi: AuthApi,
+        sessionManager: SessionManager
+    ): AuthRepository = AuthRepositoryImp(
+        movieApi = movieApi,
+        authApi = authApi,
+        sessionManager = sessionManager
+    )
 }

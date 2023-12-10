@@ -19,3 +19,9 @@ const val MOVIE_CLIENT = "MOVIE_CLIENT"
 const val AUTH_CLIENT = "AUTH_CLIENT"
 const val KEY_INTERCEPTOR = "KEY_INTERCEPTOR"
 const val LOGGING_INTERCEPTOR = "LOGGING_INTERCEPTOR"
+
+object Screen {
+    const val SCREEN = "SCREEN"
+    const val AUTH = "AUTH"
+    const val SPLASH = "SPLASH"
+}

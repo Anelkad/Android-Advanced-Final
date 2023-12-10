@@ -16,7 +16,6 @@ import javax.inject.Named
 class SessionManager @Inject constructor(
     @Named(ENCRYPTED_SHARED_PREFERENCES) val sharedPreferences: SharedPreferences
 ) {
-
     var token: String = ""
         get() {
             return field.ifEmpty { sharedPreferences.getString(ARG_TOKEN, "") ?: "" }
@@ -36,7 +35,7 @@ class SessionManager @Inject constructor(
             sharedPreferences.edit().putString(ARG_UID, value).apply()
         }
 
-    var session: String = SESSION_ID
+    var session: String = "" //SESSION_ID
         get() {
             return field.ifEmpty { sharedPreferences.getString(ARG_SESSION, "") ?: "" }
         }
@@ -57,8 +56,8 @@ class SessionManager @Inject constructor(
     private val _loggedOut = MutableStateFlow(false)
     val loggedOut: StateFlow<Boolean> = _loggedOut
 
-    fun isAccessSessionEmpty(): Boolean = session.isEmpty() // || uid.isEmpty()
-
+    fun isAccessSessionEmpty(): Boolean = session.isEmpty()
+    fun isAccessTokenEmpty(): Boolean = token.isEmpty()
     fun saveUser(username: String?, id: String?) {
         if (username.isNullOrEmpty() || id.isNullOrEmpty()) return
         this.username = username

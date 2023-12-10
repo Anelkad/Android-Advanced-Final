@@ -1,11 +1,11 @@
 package com.example.okhttp.data.repository
 
-import android.content.SharedPreferences
 import com.example.core.utils.CommonResult
 import com.example.okhttp.data.api.AuthApi
 import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.data.local.SessionManager
-import com.example.okhttp.data.modelDTO.LoginRequest
+import com.example.okhttp.data.modelDTO.LoginRequestBody
+import com.example.okhttp.data.modelDTO.SessionRequestBody
 import com.example.okhttp.domain.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,20 +13,18 @@ import kotlinx.coroutines.withContext
 
 class AuthRepositoryImp(
     private val sessionManager: SessionManager,
-    private val sharedPrefs: SharedPreferences,
     private val authApi: AuthApi,
     private val movieApi: MovieApi
 ) : AuthRepository {
 
     override suspend fun login(username: String, password: String): CommonResult<Boolean>? =
         withContext(Dispatchers.IO) {
-            val newTokenResponse = getNewToken()
-            newTokenResponse.result?.let { token ->
+            if (!sessionManager.isAccessTokenEmpty()) {
                 val response = authApi.login(
-                    body = LoginRequest(
-                        user = username,
+                    body = LoginRequestBody(
+                        username = username,
                         password = password,
-                        token = token
+                        token = sessionManager.token
                     )
                 )
                 if (response.isSuccessful) {
@@ -42,6 +40,10 @@ class AuthRepositoryImp(
                         error = response.message()
                     )
                 }
+            } else {
+                CommonResult(
+                    error = "Empty token"
+                )
             }
         }
 
@@ -75,7 +77,9 @@ class AuthRepositoryImp(
         }
 
     override suspend fun getNewSession(): CommonResult<String> = withContext(Dispatchers.IO) {
-        val response = authApi.getNewSession()
+        val response = authApi.getNewSession(
+            body = SessionRequestBody(token = sessionManager.token)
+        )
         if (response.isSuccessful) {
             sessionManager.saveSession(response.body()?.session)
             CommonResult(
@@ -95,6 +99,7 @@ class AuthRepositoryImp(
     override fun getSession(): String = sessionManager.session
 
     override fun isAccessTokenEmpty(): Boolean = sessionManager.isAccessSessionEmpty()
+    override fun isAccessSessionEmpty(): Boolean = sessionManager.isAccessSessionEmpty()
 
     override fun clearSession() {
         sessionManager.clearSession()

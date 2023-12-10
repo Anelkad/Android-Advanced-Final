@@ -12,5 +12,6 @@ interface AuthRepository {
     fun getUsername(): String
     fun getSession(): String
     fun isAccessTokenEmpty(): Boolean
+    fun isAccessSessionEmpty(): Boolean
     fun clearSession()
 }
