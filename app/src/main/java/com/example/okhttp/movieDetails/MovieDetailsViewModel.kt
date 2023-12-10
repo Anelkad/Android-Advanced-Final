@@ -49,6 +49,20 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
+    fun getIsMovieSaved(movieId: Int) = viewModelScope.launch {
+        val response = withContext(Dispatchers.IO) {
+            getMovieUseCase.getIsMovieSaved(movieId)
+        }
+        setState(State.HideLoading)
+        response.result?.let {
+            setState(State.IsMovieSaved(isSaved = it.favorite))
+        }
+        response.error?.let {
+            setState(State.Error(it))
+            setEffect(Effect.ShowToast(it))
+        }
+    }
+
     fun saveMovie(movieId: Int) = viewModelScope.launch {
         setEffect(Effect.ShowWaitDialog)
         val response = withContext(Dispatchers.IO) {
@@ -66,6 +80,7 @@ class MovieDetailsViewModel @Inject constructor(
         object ShowLoading : State()
         object HideLoading : State()
         data class ShowMovieDetails(val movie: MovieDetails) : State()
+        data class IsMovieSaved(val isSaved: Boolean) : State()
         data class Error(val error: String) : State()
     }
 

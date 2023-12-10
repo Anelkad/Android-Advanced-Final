@@ -9,10 +9,13 @@ import android.util.Log
 import com.example.okhttp.data.BuildConfig
 import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.data.local.SharedPreferencesFactory
+import com.example.okhttp.data.modelDTO.RatingDTO
+import com.example.okhttp.data.modelDTO.RatingDeserializer
 import com.example.okhttp.data.repository.MovieRepositoryImp
 import com.example.okhttp.data.repository.SavedMovieRepositoryImp
 import com.example.okhttp.domain.repository.MovieRepository
 import com.example.okhttp.domain.repository.SavedMovieRepository
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,6 +36,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(RatingDTO::class.java, RatingDeserializer())
+        .create()
+
     @Provides
     @Singleton
     fun provideRetrofit(
@@ -40,7 +47,7 @@ object AppModule {
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
     @Provides

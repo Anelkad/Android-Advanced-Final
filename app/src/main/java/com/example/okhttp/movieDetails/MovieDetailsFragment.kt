@@ -33,6 +33,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMovieDetailsBinding.bind(view)
         movieViewModel.getMovie(args.id)
+        movieViewModel.getIsMovieSaved(args.id)
         bindViews()
         setupObservers()
         registerWaitDialogDelegate(this)
@@ -65,6 +66,10 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
 
                 is MovieDetailsViewModel.State.ShowMovieDetails -> {
                     bindMovie(state.movie)
+                }
+
+                is MovieDetailsViewModel.State.IsMovieSaved -> {
+
                 }
             }
         }.launchIn(lifecycleScope)

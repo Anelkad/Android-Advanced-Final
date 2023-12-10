@@ -7,6 +7,7 @@ import SESSION_ID
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieRequest
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieResponseDTO
 import com.example.okhttp.data.modelDTO.MovieDetailsDTO
+import com.example.okhttp.data.modelDTO.MovieIsSavedDTO
 import com.example.okhttp.data.modelDTO.MovieListResponseDTO
 import retrofit2.Response
 import retrofit2.http.Body
@@ -48,4 +49,12 @@ interface MovieApi {
         sessionId: String = SESSION_ID,
         @Body body: AddFavoriteMovieRequest
     ): Response<AddFavoriteMovieResponseDTO>
+
+    @GET("movie/{movie_id}/account_states")
+    suspend fun getMovieIsSaved(
+        @Path("movie_id")
+        movieId: Int,
+        @Query("session_id")
+        sessionId: String = SESSION_ID,
+    ): Response<MovieIsSavedDTO>
 }
