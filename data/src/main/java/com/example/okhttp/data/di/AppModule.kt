@@ -3,6 +3,7 @@ package com.example.okhttp.data.di
 import API_KEY
 import BASE_URL
 import ENCRYPTED_SHARED_PREFERENCES
+import SESSION_ID
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -91,6 +92,7 @@ object AppModule {
             val originalHttpUrl: HttpUrl = original.url
             val url = originalHttpUrl.newBuilder()
                 .addQueryParameter("api_key", API_KEY)
+                .addQueryParameter("session_id", SESSION_ID)
                 .build()
             val request = original.newBuilder()
                 .url(url)

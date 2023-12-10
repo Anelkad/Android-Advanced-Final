@@ -3,7 +3,6 @@ package com.example.okhttp.data.api
 import GENRE_ANIMATION
 import GENRE_DRAMA
 import LANGUAGE
-import SESSION_ID
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieRequest
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieResponseDTO
 import com.example.okhttp.data.modelDTO.MovieDetailsDTO
@@ -37,24 +36,18 @@ interface MovieApi {
 
     @GET("account/20775042/favorite/movies")
     suspend fun getFavoriteMovieList(
-        @Query("session_id")
-        sessionId: String = SESSION_ID,
         @Query("language")
         language: String? = LANGUAGE
     ): Response<MovieListResponseDTO>
     //todo add shared prefs for current session
     @POST("account/20775042/favorite")
     suspend fun addFavoriteMovie(
-        @Query("session_id")
-        sessionId: String = SESSION_ID,
         @Body body: AddFavoriteMovieRequest
     ): Response<AddFavoriteMovieResponseDTO>
 
     @GET("movie/{movie_id}/account_states")
     suspend fun getMovieIsSaved(
         @Path("movie_id")
-        movieId: Int,
-        @Query("session_id")
-        sessionId: String = SESSION_ID,
+        movieId: Int
     ): Response<MovieIsSavedDTO>
 }
