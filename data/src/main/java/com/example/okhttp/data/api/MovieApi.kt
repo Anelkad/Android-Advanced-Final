@@ -8,6 +8,7 @@ import com.example.okhttp.data.modelDTO.AddFavoriteMovieResponseDTO
 import com.example.okhttp.data.modelDTO.MovieDetailsDTO
 import com.example.okhttp.data.modelDTO.MovieIsSavedDTO
 import com.example.okhttp.data.modelDTO.MovieListResponseDTO
+import com.example.okhttp.data.modelDTO.UserDetailsResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -16,6 +17,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MovieApi {
+    @GET("account")
+    suspend fun getUserId(): Response<UserDetailsResponse>
+
     @GET("discover/movie")
     suspend fun getMovieList(
         @Query("page")

@@ -3,6 +3,7 @@ package com.example.okhttp.data.repository
 import android.content.SharedPreferences
 import com.example.core.utils.CommonResult
 import com.example.okhttp.data.api.AuthApi
+import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.data.local.SessionManager
 import com.example.okhttp.data.modelDTO.LoginRequest
 import com.example.okhttp.domain.repository.AuthRepository
@@ -13,14 +14,15 @@ import kotlinx.coroutines.withContext
 class AuthRepositoryImp(
     private val sessionManager: SessionManager,
     private val sharedPrefs: SharedPreferences,
-    private val api: AuthApi
+    private val authApi: AuthApi,
+    private val movieApi: MovieApi
 ) : AuthRepository {
 
     override suspend fun login(username: String, password: String): CommonResult<Boolean>? =
         withContext(Dispatchers.IO) {
             val newTokenResponse = getNewToken()
             newTokenResponse.result?.let { token ->
-                val response = api.login(
+                val response = authApi.login(
                     body = LoginRequest(
                         user = username,
                         password = password,
@@ -28,11 +30,13 @@ class AuthRepositoryImp(
                     )
                 )
                 if (response.isSuccessful) {
-//            sessionManager.updateSession(token, uid)
-                    sessionManager.saveUsername(username)
-                    CommonResult(
-                        result = response.body()?.success
-                    )
+                    val getSessionResponse = getNewSession()
+                    getSessionResponse.result?.let {
+                        getUserId()
+                        CommonResult(
+                            result = response.body()?.success
+                        )
+                    }
                 } else {
                     CommonResult(
                         error = response.message()
@@ -43,7 +47,7 @@ class AuthRepositoryImp(
 
     override suspend fun getNewToken(): CommonResult<String> =
         withContext(Dispatchers.IO) {
-            val response = api.getNewToken()
+            val response = authApi.getNewToken()
             if (response.isSuccessful) {
                 sessionManager.saveToken(response.body()?.token)
                 CommonResult(
@@ -54,8 +58,24 @@ class AuthRepositoryImp(
             }
         }
 
+    override suspend fun getUserId(): CommonResult<String> =
+        withContext(Dispatchers.IO) {
+            val response = movieApi.getUserId()
+            if (response.isSuccessful) {
+                sessionManager.saveUser(
+                    username = response.body()?.username,
+                    id = response.body()?.id
+                )
+                CommonResult(
+                    result = response.body()?.id
+                )
+            } else {
+                CommonResult(error = response.message())
+            }
+        }
+
     override suspend fun getNewSession(): CommonResult<String> = withContext(Dispatchers.IO) {
-        val response = api.getNewSession()
+        val response = authApi.getNewSession()
         if (response.isSuccessful) {
             sessionManager.saveSession(response.body()?.session)
             CommonResult(

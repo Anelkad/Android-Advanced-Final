@@ -59,7 +59,8 @@ class SessionManager @Inject constructor(
 
     fun isAccessSessionEmpty(): Boolean = session.isEmpty() // || uid.isEmpty()
 
-    fun saveUsername(username: String) {
+    fun saveUser(username: String?, id: String?) {
+        if (username.isNullOrEmpty() || id.isNullOrEmpty()) return
         this.username = username
     }
 
@@ -71,13 +72,6 @@ class SessionManager @Inject constructor(
     fun saveSession(session: String?) {
         if (session.isNullOrEmpty()) return
         this.session = session
-    }
-
-    fun updateSession(token: String? = null, id: String? = null) {
-        if (token != null && id != null) {
-            this.token = token
-            this.uid = id
-        }
     }
 
     fun clearSession() {
