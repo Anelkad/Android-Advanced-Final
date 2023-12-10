@@ -5,6 +5,7 @@ import ARG_TOKEN
 import ARG_UID
 import ARG_USERNAME
 import ENCRYPTED_SHARED_PREFERENCES
+import SESSION_ID
 import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +36,7 @@ class SessionManager @Inject constructor(
             sharedPreferences.edit().putString(ARG_UID, value).apply()
         }
 
-    var session: String = ""
+    var session: String = SESSION_ID
         get() {
             return field.ifEmpty { sharedPreferences.getString(ARG_SESSION, "") ?: "" }
         }
@@ -56,10 +57,20 @@ class SessionManager @Inject constructor(
     private val _loggedOut = MutableStateFlow(false)
     val loggedOut: StateFlow<Boolean> = _loggedOut
 
-    fun isAccessTokenEmpty(): Boolean = token.isEmpty() || uid.isEmpty()
+    fun isAccessSessionEmpty(): Boolean = session.isEmpty() // || uid.isEmpty()
 
     fun saveUsername(username: String) {
         this.username = username
+    }
+
+    fun saveToken(token: String?) {
+        if (token.isNullOrEmpty()) return
+        this.token = token
+    }
+
+    fun saveSession(session: String?) {
+        if (session.isNullOrEmpty()) return
+        this.session = session
     }
 
     fun updateSession(token: String? = null, id: String? = null) {
@@ -75,5 +86,4 @@ class SessionManager @Inject constructor(
         username = ""
         _loggedOut.value = true
     }
-
 }

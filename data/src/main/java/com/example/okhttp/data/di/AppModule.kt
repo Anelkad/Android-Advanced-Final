@@ -7,8 +7,6 @@ import ENCRYPTED_SHARED_PREFERENCES
 import KEY_INTERCEPTOR
 import LOGGING_INTERCEPTOR
 import MOVIE_CLIENT
-import SESSION_ID
-import SESSION_INTERCEPTOR
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -87,7 +85,7 @@ object AppModule {
     @Singleton
     @Named(MOVIE_CLIENT)
     fun provideMovieOkHttpClient(
-        @Named(SESSION_INTERCEPTOR) apiKeyInterceptor: Interceptor,
+        apiKeyInterceptor: AuthInterceptor,
         @Named(LOGGING_INTERCEPTOR) httpLoggingInterceptor: Interceptor
     ): OkHttpClient {
         val client = OkHttpClient.Builder()
@@ -131,24 +129,6 @@ object AppModule {
             val originalHttpUrl: HttpUrl = original.url
             val url = originalHttpUrl.newBuilder()
                 .addQueryParameter("api_key", API_KEY)
-                .build()
-            val request = original.newBuilder()
-                .url(url)
-                .build()
-            chain.proceed(request)
-        }
-    }
-
-    @Provides
-    @Singleton
-    @Named(SESSION_INTERCEPTOR)
-    fun provideSessionInterceptor(): Interceptor {
-        return Interceptor { chain: Interceptor.Chain ->
-            val original = chain.request()
-            val originalHttpUrl: HttpUrl = original.url
-            val url = originalHttpUrl.newBuilder()
-                .addQueryParameter("api_key", API_KEY)
-                .addQueryParameter("session_id", SESSION_ID)
                 .build()
             val request = original.newBuilder()
                 .url(url)
