@@ -38,14 +38,18 @@ interface MovieApi {
         language: String? = LANGUAGE
     ): Response<MovieDetailsDTO>
 
-    @GET("account/20775042/favorite/movies")
+    @GET("account/{user_id}/favorite/movies")
     suspend fun getFavoriteMovieList(
+        @Path("user_id")
+        userId: Int,
         @Query("language")
         language: String? = LANGUAGE
     ): Response<MovieListResponseDTO>
     //todo add shared prefs for current session
-    @POST("account/20775042/favorite")
+    @POST("account/{user_id}/favorite")
     suspend fun addFavoriteMovie(
+        @Path("user_id")
+        userId: Int,
         @Body body: AddFavoriteMovieRequest
     ): Response<AddFavoriteMovieResponseDTO>
 

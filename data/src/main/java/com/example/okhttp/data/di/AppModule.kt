@@ -163,8 +163,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSavedMovieRepository(
-        @Named("MOVIE_API") movieApi: MovieApi
-    ): SavedMovieRepository = SavedMovieRepositoryImp(api = movieApi)
+        @Named("MOVIE_API") movieApi: MovieApi,
+        sessionManager: SessionManager
+    ): SavedMovieRepository = SavedMovieRepositoryImp(
+        api = movieApi,
+        sessionManager = sessionManager
+    )
 
     @Provides
     @Singleton

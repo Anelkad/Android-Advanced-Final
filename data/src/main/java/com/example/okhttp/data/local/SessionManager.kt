@@ -5,7 +5,6 @@ import ARG_TOKEN
 import ARG_UID
 import ARG_USERNAME
 import ENCRYPTED_SHARED_PREFERENCES
-import SESSION_ID
 import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -61,6 +60,7 @@ class SessionManager @Inject constructor(
     fun saveUser(username: String?, id: String?) {
         if (username.isNullOrEmpty() || id.isNullOrEmpty()) return
         this.username = username
+        this.uid = id
     }
 
     fun saveToken(token: String?) {
@@ -77,6 +77,7 @@ class SessionManager @Inject constructor(
         token = ""
         uid = ""
         username = ""
+        session = ""
         _loggedOut.value = true
     }
 }

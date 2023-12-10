@@ -29,7 +29,8 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSplashBinding.bind(view)
         setupObservers()
-        viewModel.getNewToken()
+        if (sessionManager.isAccessTokenEmpty()) viewModel.getNewToken()
+        else goToMain()
     }
 
     private fun setupObservers() {
@@ -53,6 +54,8 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
                 is SplashViewModel.State.NewToken -> {
                     navigateNext()
                 }
+
+                else -> Unit
 
             }
         }.launchIn(lifecycleScope)

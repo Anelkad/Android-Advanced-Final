@@ -2,6 +2,7 @@ package com.example.okhttp.data.repository
 
 import com.example.core.utils.CommonResult
 import com.example.okhttp.data.api.MovieApi
+import com.example.okhttp.data.local.SessionManager
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieRequest
 import com.example.okhttp.domain.model.Movie
 import com.example.okhttp.domain.repository.SavedMovieRepository
@@ -12,10 +13,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SavedMovieRepositoryImp @Inject constructor(
-    private val api: MovieApi
+    private val api: MovieApi,
+    private val sessionManager: SessionManager
 ) : SavedMovieRepository {
     override fun getSavedMovieList(): Flow<CommonResult<List<Movie>>> = flow {
-        val response = api.getFavoriteMovieList()
+        val response = api.getFavoriteMovieList(userId = sessionManager.uid.toInt())
         if (response.isSuccessful) {
             emit(CommonResult(result = response.body()?.results?.map { it.toDomain() }))
         } else {
@@ -29,7 +31,8 @@ class SavedMovieRepositoryImp @Inject constructor(
             body = AddFavoriteMovieRequest(
                 movieId = movieId,
                 isFavorite = false
-            )
+            ),
+            userId = sessionManager.uid.toInt()
         )
         if (response.isSuccessful) {
             CommonResult(result = response.body()?.toDomain())
@@ -43,7 +46,8 @@ class SavedMovieRepositoryImp @Inject constructor(
             body = AddFavoriteMovieRequest(
                 movieId = movieId,
                 isFavorite = true
-            )
+            ),
+            userId = sessionManager.uid.toInt()
         )
         if (response.isSuccessful) {
             CommonResult(result = response.body()?.toDomain())
