@@ -86,13 +86,14 @@
                 android:textStyle="italic"
                 android:visibility="gone" />
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_revenue"
                 android:layout_alignParentEnd="true"
                 android:layout_marginHorizontal="15dp"
+                android:backgroundTint="@color/white"
                 android:src="@drawable/baseline_favorite_border_24"
                 android:visibility="gone" />
 

@@ -1,6 +1,6 @@
 package com.example.okhttp.data.local
 
-import ARG_EXPIRES_AT
+import ARG_SESSION
 import ARG_TOKEN
 import ARG_UID
 import ARG_USERNAME
@@ -35,6 +35,15 @@ class SessionManager @Inject constructor(
             sharedPreferences.edit().putString(ARG_UID, value).apply()
         }
 
+    var session: String = ""
+        get() {
+            return field.ifEmpty { sharedPreferences.getString(ARG_SESSION, "") ?: "" }
+        }
+        set(value) {
+            field = value
+            sharedPreferences.edit().putString(ARG_SESSION, value).apply()
+        }
+
     var username: String = ""
         get() {
             return field.ifEmpty { sharedPreferences.getString(ARG_USERNAME, "") ?: "" }
@@ -43,10 +52,6 @@ class SessionManager @Inject constructor(
             field = value
             sharedPreferences.edit().putString(ARG_USERNAME, value).apply()
         }
-
-    var expiresAt: Long
-        get() = sharedPreferences.getLong(ARG_EXPIRES_AT, 0L)
-        set(value) = sharedPreferences.edit().putLong(ARG_EXPIRES_AT, value).apply()
 
     private val _loggedOut = MutableStateFlow(false)
     val loggedOut: StateFlow<Boolean> = _loggedOut
@@ -62,15 +67,12 @@ class SessionManager @Inject constructor(
             this.token = token
             this.uid = id
         }
-        val timeInSecs = Calendar.getInstance().timeInMillis
-        expiresAt = timeInSecs + (3600 * 10000)
     }
 
     fun clearSession() {
         token = ""
         uid = ""
         username = ""
-        expiresAt = 0L
         _loggedOut.value = true
     }
 

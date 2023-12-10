@@ -1,14 +1,20 @@
 package com.example.okhttp.data.di
 
 import API_KEY
+import AUTH_CLIENT
 import BASE_URL
 import ENCRYPTED_SHARED_PREFERENCES
+import KEY_INTERCEPTOR
+import LOGGING_INTERCEPTOR
+import MOVIE_CLIENT
 import SESSION_ID
+import SESSION_INTERCEPTOR
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.example.okhttp.data.BuildConfig
 import com.example.okhttp.data.api.MovieApi
+import com.example.okhttp.data.local.SessionManager
 import com.example.okhttp.data.local.SharedPreferencesFactory
 import com.example.okhttp.data.modelDTO.RatingDTO
 import com.example.okhttp.data.modelDTO.RatingDeserializer
@@ -32,7 +38,6 @@ import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -43,8 +48,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient
+    @Named("MOVIE_RETROFIT")
+    fun provideMovieRetrofit(
+        @Named(MOVIE_CLIENT) okHttpClient: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    @Provides
+    @Singleton
+    @Named("AUTH_RETROFIT")
+    fun provideAuthRetrofit(
+        @Named(AUTH_CLIENT) okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
@@ -62,9 +79,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(
-        @Named("KEY_INTERCEPTOR") apiKeyInterceptor: Interceptor,
-        @Named("LOGGING_INTERCEPTOR") httpLoggingInterceptor: Interceptor
+    fun provideSessionManager(
+        @Named(ENCRYPTED_SHARED_PREFERENCES) sharedPreferences: SharedPreferences
+    ): SessionManager = SessionManager(sharedPreferences)
+
+    @Provides
+    @Singleton
+    @Named(MOVIE_CLIENT)
+    fun provideMovieOkHttpClient(
+        @Named(SESSION_INTERCEPTOR) apiKeyInterceptor: Interceptor,
+        @Named(LOGGING_INTERCEPTOR) httpLoggingInterceptor: Interceptor
     ): OkHttpClient {
         val client = OkHttpClient.Builder()
             .addInterceptor(apiKeyInterceptor)
@@ -76,7 +100,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    @Named("LOGGING_INTERCEPTOR")
+    @Named(AUTH_CLIENT)
+    fun provideAuthOkHttpClient(
+        @Named(KEY_INTERCEPTOR) apiKeyInterceptor: Interceptor,
+        @Named(LOGGING_INTERCEPTOR) httpLoggingInterceptor: Interceptor
+    ): OkHttpClient {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(apiKeyInterceptor)
+        if (BuildConfig.DEBUG) {
+            client.addInterceptor(httpLoggingInterceptor)
+        }
+        return client.build()
+    }
+
+    @Provides
+    @Singleton
+    @Named(LOGGING_INTERCEPTOR)
     fun provideLoggingInterceptor(): Interceptor {
         return HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }.apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -85,8 +124,25 @@ object AppModule {
 
     @Provides
     @Singleton
-    @Named("KEY_INTERCEPTOR")
+    @Named(KEY_INTERCEPTOR)
     fun provideKeyInterceptor(): Interceptor {
+        return Interceptor { chain: Interceptor.Chain ->
+            val original = chain.request()
+            val originalHttpUrl: HttpUrl = original.url
+            val url = originalHttpUrl.newBuilder()
+                .addQueryParameter("api_key", API_KEY)
+                .build()
+            val request = original.newBuilder()
+                .url(url)
+                .build()
+            chain.proceed(request)
+        }
+    }
+
+    @Provides
+    @Singleton
+    @Named(SESSION_INTERCEPTOR)
+    fun provideSessionInterceptor(): Interceptor {
         return Interceptor { chain: Interceptor.Chain ->
             val original = chain.request()
             val originalHttpUrl: HttpUrl = original.url
@@ -105,7 +161,14 @@ object AppModule {
     @Singleton
     @Named("MOVIE_API")
     fun provideMovieApi(
-        retrofit: Retrofit
+        @Named("MOVIE_RETROFIT") retrofit: Retrofit
+    ): MovieApi = retrofit.create()
+
+    @Provides
+    @Singleton
+    @Named("AUTH_API")
+    fun provideAuthApi(
+        @Named("AUTH_RETROFIT") retrofit: Retrofit
     ): MovieApi = retrofit.create()
 
     @Provides
