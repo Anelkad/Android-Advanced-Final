@@ -12,4 +12,6 @@
     <string name="error_message">Error message</string>
     <string name="no_saved_movie">No saved movie</string>
     <string name="save_movie">Save movie</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
 </resources>

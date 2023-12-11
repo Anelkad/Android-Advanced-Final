@@ -42,7 +42,7 @@ interface MovieApi {
         @Query("language")
         language: String? = LANGUAGE
     ): Response<MovieListResponseDTO>
-    //todo add shared prefs for current session
+
     @POST("account/20775042/favorite")
     suspend fun addFavoriteMovie(
         @Query("session_id")

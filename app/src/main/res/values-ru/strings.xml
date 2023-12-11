@@ -12,4 +12,6 @@
     <string name="error_message">Ошибка</string>
     <string name="no_saved_movie">Нету сохраненных фильмов</string>
     <string name="save_movie">Сохранить фильм</string>
+    <string name="login">Войти</string>
+    <string name="logout">Выйти</string>
 </resources>
