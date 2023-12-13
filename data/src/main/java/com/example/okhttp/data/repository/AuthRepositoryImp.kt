@@ -5,8 +5,11 @@ import com.example.okhttp.data.api.AuthApi
 import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.data.local.SessionManager
 import com.example.okhttp.data.modelDTO.LoginRequestBody
+import com.example.okhttp.data.modelDTO.LoginResponse
 import com.example.okhttp.data.modelDTO.SessionRequestBody
 import com.example.okhttp.domain.repository.AuthRepository
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -36,9 +39,10 @@ class AuthRepositoryImp(
                     )
                 }
             } else {
-                CommonResult(
-                    error = response.message()
-                )
+                val gson = Gson()
+                val type = object : TypeToken<LoginResponse>() {}.type
+                val errorResponse: LoginResponse? = gson.fromJson(response.errorBody()?.charStream(), type)
+                CommonResult(error = errorResponse?.statusMessage)
             }
         }
 

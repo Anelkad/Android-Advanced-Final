@@ -19,8 +19,8 @@ class SplashViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<State?>(null)
-    val state: StateFlow<State?> get() = _state
+    private val _state = MutableStateFlow<State>(State.Empty)
+    val state: StateFlow<State> get() = _state
 
     private val _effect: Channel<Effect> = Channel()
     val effect = _effect.receiveAsFlow()
@@ -58,6 +58,7 @@ class SplashViewModel @Inject constructor(
 
 
     sealed class State {
+        object Empty : State()
         object GoToAuth : State()
         object GoToMain : State()
         data class Error(val error: String) : State()

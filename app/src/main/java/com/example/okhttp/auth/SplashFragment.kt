@@ -56,7 +56,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
                         Toast.makeText(
                             context,
                             it.text,
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_LONG
                         ).show()
                     }
                 }

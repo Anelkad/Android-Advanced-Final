@@ -10,12 +10,16 @@ import androidx.lifecycle.lifecycleScope
 import com.example.okhttp.MainActivity
 import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentAuthBinding
+import com.example.okhttp.delegates.DialogDelegate
+import com.example.okhttp.delegates.WaitDialogDelegate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AuthFragment : Fragment(R.layout.fragment_auth) {
+class AuthFragment : Fragment(R.layout.fragment_auth),
+    DialogDelegate by WaitDialogDelegate() {
 
     private var binding: FragmentAuthBinding? = null
     private val viewModel: AuthViewModel by viewModels()
@@ -25,6 +29,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         binding = FragmentAuthBinding.bind(view)
         bindViews()
         setupObservers()
+        registerWaitDialogDelegate(this)
     }
 
     private fun bindViews() {
@@ -36,31 +41,40 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private fun setupObservers() {
         viewModel.state.onEach { state ->
             when (state) {
-                is AuthViewModel.State.HideLoading -> {}
 
-                is AuthViewModel.State.ShowLoading -> {}
-
-                is AuthViewModel.State.Error -> {
-                        Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
-                }
-
-                is AuthViewModel.State.LoggedIn -> {
-                    if (state.loggedIn) {
-                        goToMain()
-                    }
+                is AuthViewModel.State.GoToMain -> {
+                    goToMain()
                 }
 
                 else -> {}
             }
         }.launchIn(lifecycleScope)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.effect.collect {
+                when (it) {
+                    is AuthViewModel.Effect.ShowToast -> {
+                        Toast.makeText(
+                            context,
+                            it.text,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    AuthViewModel.Effect.ShowWaitDialog -> {
+                        showWaitDialog()
+                    }
+                    AuthViewModel.Effect.HideWaitDialog -> {
+                        hideWaitDialog()
+                    }
+                }
+            }
+        }
     }
 
     private fun login() {
         val username = binding?.etUsername?.text.toString()
         val password = binding?.etPassword?.text.toString()
-        if (password.isNotEmpty() && username.isNotEmpty()) {
-            viewModel.login(username, password)
-        }
+        viewModel.login(username, password)
     }
 
     private fun goToMain() {
@@ -68,5 +82,4 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         startActivity(intent)
         activity?.finish()
     }
-
 }
