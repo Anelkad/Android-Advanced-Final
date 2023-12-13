@@ -2,7 +2,6 @@ package com.example.okhttp.data.api
 
 import GENRE_ANIMATION
 import GENRE_DRAMA
-import LANGUAGE
 import SESSION_ID
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieRequest
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieResponseDTO
@@ -22,25 +21,19 @@ interface MovieApi {
         @Query("page")
         page: Int = 1,
         @Query("with_genres")
-        withGenres: String = "$GENRE_ANIMATION,$GENRE_DRAMA",
-        @Query("language")
-        language: String? = LANGUAGE
+        withGenres: String = "$GENRE_ANIMATION,$GENRE_DRAMA"
     ): MovieListResponseDTO
 
     @GET("movie/{movie_id}")
     suspend fun getMovie(
         @Path("movie_id")
-        movieId: Int,
-        @Query("language")
-        language: String? = LANGUAGE
+        movieId: Int
     ): Response<MovieDetailsDTO>
 
     @GET("account/20775042/favorite/movies")
     suspend fun getFavoriteMovieList(
         @Query("session_id")
-        sessionId: String = SESSION_ID,
-        @Query("language")
-        language: String? = LANGUAGE
+        sessionId: String = SESSION_ID
     ): Response<MovieListResponseDTO>
 
     @POST("account/20775042/favorite")
