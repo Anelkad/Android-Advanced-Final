@@ -16,4 +16,6 @@
     <string name="logout">Logout</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="session_id" translatable="false">session_id:</string>
+    <string name="id" translatable="false">id:</string>
 </resources>

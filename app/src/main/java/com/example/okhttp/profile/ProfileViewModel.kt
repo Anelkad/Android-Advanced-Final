@@ -14,21 +14,29 @@ class ProfileViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase
 ) : ViewModel(){
 
-    private val _state = MutableStateFlow<State>(State.ShowLoading)
+    private val _state = MutableStateFlow<State>(State.Empty)
     val state: StateFlow<State> get() = _state
 
+    private fun setState(newState: State) {
+        _state.value = newState
+    }
     fun logout() {
         logoutUseCase.logout()
-        _state.value = State.LoggedOut
+        setState(State.LoggedOut)
+    }
+
+    fun getProfile() {
+        setState(State.Profile(
+            id = getUserPrefsUseCase.getUid(),
+            username = getUserPrefsUseCase.getUsername(),
+            session = getUserPrefsUseCase.getSession()
+        ))
     }
 
 
     sealed class State {
-        object ShowLoading : State()
-        object HideLoading : State()
-        data class NewToken(val token: String) : State()
-        data class Error(val error: String) : State()
-        data class LoggedIn(val loggedIn: Boolean) : State()
+        object Empty : State()
+        data class Profile( val id: String, val username: String, val session: String) : State()
         object LoggedOut : State()
     }
 }
