@@ -1,5 +1,6 @@
 package com.example.okhttp.auth
 
+import Screen
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -9,63 +10,57 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.okhttp.MainActivity
 import com.example.okhttp.R
-import com.example.okhttp.data.local.SessionManager
 import com.example.okhttp.databinding.FragmentSplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
     private var binding: FragmentSplashBinding? = null
-
-    @Inject
-    lateinit var sessionManager: SessionManager
     private val viewModel: SplashViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSplashBinding.bind(view)
         setupObservers()
-        if (sessionManager.isAccessTokenEmpty()) viewModel.getNewToken()
-        else goToMain()
+        viewModel.checkAccessToken()
     }
 
     private fun setupObservers() {
-
         viewModel.state.onEach { state ->
             when (state) {
-                is SplashViewModel.State.HideLoading -> {}
+                SplashViewModel.State.GoToAuth -> {
+                    goToAuth()
+                }
 
-                is SplashViewModel.State.ShowLoading -> {}
+                SplashViewModel.State.GoToMain -> {
+                    goToMain()
+                }
 
                 is SplashViewModel.State.Error -> {
                     Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
-                }
-
-                is SplashViewModel.State.LoggedIn -> {
-                    if (state.loggedIn) {
-                        goToMain()
-                    }
-                }
-
-                is SplashViewModel.State.NewToken -> {
-                    navigateNext()
                 }
 
                 else -> Unit
 
             }
         }.launchIn(lifecycleScope)
-    }
 
-    private fun navigateNext() {
-        if (sessionManager.isAccessSessionEmpty()) {
-            goToAuth()
-        } else {
-            goToMain()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.effect.collect {
+                when (it) {
+                    is SplashViewModel.Effect.ShowToast -> {
+                        Toast.makeText(
+                            context,
+                            it.text,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
@@ -81,5 +76,4 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         startActivity(intent)
         activity?.finish()
     }
-
 }

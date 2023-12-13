@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.okhttp.domain.usecases.GetUserPrefsUseCase
 import com.example.okhttp.domain.usecases.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,43 +17,53 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val getUserPrefsUseCase: GetUserPrefsUseCase,
     private val loginUseCase: LoginUseCase,
-) : ViewModel(){
+) : ViewModel() {
 
-    private val _state = MutableStateFlow<State>(State.ShowLoading)
-    val state: StateFlow<State> get() = _state
+    private val _state = MutableStateFlow<State?>(null)
+    val state: StateFlow<State?> get() = _state
 
-    fun getNewToken() {
-        viewModelScope.launch {
-            val response = loginUseCase.getNewToken()
-            response.error?.let {
-                _state.value = State.Error(it)
+    private val _effect: Channel<Effect> = Channel()
+    val effect = _effect.receiveAsFlow()
+
+    private fun setState(newState: State) {
+        _state.value = newState
+    }
+
+    private fun setEffect(effectValue: Effect) {
+        viewModelScope.launch { _effect.send(effectValue) }
+    }
+    fun checkAccessToken() = viewModelScope.launch {
+        if (getUserPrefsUseCase.isAccessTokenEmpty()) {
+            getNewToken()
+        } else {
+            delay(1500L)
+            if (getUserPrefsUseCase.isAccessSessionEmpty()) {
+                setState(State.GoToAuth)
+            } else {
+                setState(State.GoToMain)
             }
-            response.result?.let {
-                _state.value = State.NewToken(it)
-            }
-            _state.value = State.HideLoading
         }
     }
 
-    fun login(username: String, password: String) {
-        viewModelScope.launch {
-            val response = loginUseCase.login(username, password)
-            response?.error?.let {
-                _state.value = State.Error(it)
-            }
-            response?.result?.let {
-                _state.value = State.LoggedIn(it && !getUserPrefsUseCase.isAccessTokenEmpty())
-            }
-            _state.value = State.HideLoading
+    private fun getNewToken() = viewModelScope.launch {
+        val response = loginUseCase.getNewToken()
+        response.error?.let {
+            setState(State.Error(it))
+            setEffect(Effect.ShowToast(it))
+        }
+        response.result?.let {
+            setState(State.GoToAuth)
         }
     }
 
 
     sealed class State {
-        object ShowLoading : State()
-        object HideLoading : State()
-        data class NewToken(val token: String) : State()
+        object GoToAuth : State()
+        object GoToMain : State()
         data class Error(val error: String) : State()
-        data class LoggedIn(val loggedIn: Boolean) : State()
+    }
+
+    sealed interface Effect {
+        data class ShowToast(var text: String) : Effect
     }
 }

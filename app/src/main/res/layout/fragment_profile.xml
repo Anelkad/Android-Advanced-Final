@@ -26,23 +26,32 @@
             <TextView
                 android:id="@+id/tv_username"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="anelkad" />
 
             <TextView
                 android:id="@+id/tv_id"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/dark_color"
+                android:textSize="18sp"
+                tools:text="id" />
 
             <TextView
                 android:id="@+id/tv_session"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                tools:text="session" />
 
             <Button
                 android:id="@+id/btn_logout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/background"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
                 android:text="@string/logout" />
 
         </LinearLayout>
