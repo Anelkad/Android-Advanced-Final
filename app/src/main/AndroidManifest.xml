@@ -17,7 +17,8 @@
         <activity
             android:name=".auth.AuthActivity"
             android:exported="true"
-            android:theme="@style/Theme.OkHttp.NoActionBar">
+            android:theme="@style/Theme.OkHttp.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
