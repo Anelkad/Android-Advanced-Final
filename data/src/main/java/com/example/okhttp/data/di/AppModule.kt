@@ -1,17 +1,34 @@
 package com.example.okhttp.data.di
 
 import API_KEY
+import AUTH_CLIENT
 import BASE_URL
+import ENCRYPTED_SHARED_PREFERENCES
+import KEY_INTERCEPTOR
+import LANGUAGE
+import LOGGING_INTERCEPTOR
+import MOVIE_CLIENT
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import com.example.okhttp.data.BuildConfig
+import com.example.okhttp.data.api.AuthApi
 import com.example.okhttp.data.api.MovieApi
+import com.example.okhttp.data.local.SessionManager
+import com.example.okhttp.data.local.SharedPreferencesFactory
+import com.example.okhttp.data.modelDTO.RatingDTO
+import com.example.okhttp.data.modelDTO.RatingDeserializer
+import com.example.okhttp.data.repository.AuthRepositoryImp
 import com.example.okhttp.data.repository.MovieRepositoryImp
 import com.example.okhttp.data.repository.SavedMovieRepositoryImp
+import com.example.okhttp.domain.repository.AuthRepository
 import com.example.okhttp.domain.repository.MovieRepository
 import com.example.okhttp.domain.repository.SavedMovieRepository
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -23,26 +40,57 @@ import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
 
-
 @Module
-@InstallIn(SingletonComponent::class) //App lifecycle
+@InstallIn(SingletonComponent::class)
 object AppModule {
+
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(RatingDTO::class.java, RatingDeserializer())
+        .create()
 
     @Provides
     @Singleton
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient
+    @Named("MOVIE_RETROFIT")
+    fun provideMovieRetrofit(
+        @Named(MOVIE_CLIENT) okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(
-        @Named("KEY_INTERCEPTOR") apiKeyInterceptor: Interceptor,
-        @Named("LOGGING_INTERCEPTOR") httpLoggingInterceptor: Interceptor
+    @Named("AUTH_RETROFIT")
+    fun provideAuthRetrofit(
+        @Named(AUTH_CLIENT) okHttpClient: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    @Provides
+    @Singleton
+    @Named(ENCRYPTED_SHARED_PREFERENCES)
+    fun provideSecureSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
+        SharedPreferencesFactory.getSharedPreferences(
+            SharedPreferencesFactory.Type.ENCRYPTED,
+            context
+        )
+
+    @Provides
+    @Singleton
+    fun provideSessionManager(
+        @Named(ENCRYPTED_SHARED_PREFERENCES) sharedPreferences: SharedPreferences
+    ): SessionManager = SessionManager(sharedPreferences)
+
+    @Provides
+    @Singleton
+    @Named(MOVIE_CLIENT)
+    fun provideMovieOkHttpClient(
+        apiKeyInterceptor: AuthInterceptor,
+        @Named(LOGGING_INTERCEPTOR) httpLoggingInterceptor: Interceptor
     ): OkHttpClient {
         val client = OkHttpClient.Builder()
             .addInterceptor(apiKeyInterceptor)
@@ -54,7 +102,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    @Named("LOGGING_INTERCEPTOR")
+    @Named(AUTH_CLIENT)
+    fun provideAuthOkHttpClient(
+        @Named(KEY_INTERCEPTOR) apiKeyInterceptor: Interceptor,
+        @Named(LOGGING_INTERCEPTOR) httpLoggingInterceptor: Interceptor
+    ): OkHttpClient {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(apiKeyInterceptor)
+        if (BuildConfig.DEBUG) {
+            client.addInterceptor(httpLoggingInterceptor)
+        }
+        return client.build()
+    }
+
+    @Provides
+    @Singleton
+    @Named(LOGGING_INTERCEPTOR)
     fun provideLoggingInterceptor(): Interceptor {
         return HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }.apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -63,13 +126,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    @Named("KEY_INTERCEPTOR")
+    @Named(KEY_INTERCEPTOR)
     fun provideKeyInterceptor(): Interceptor {
         return Interceptor { chain: Interceptor.Chain ->
             val original = chain.request()
             val originalHttpUrl: HttpUrl = original.url
             val url = originalHttpUrl.newBuilder()
                 .addQueryParameter("api_key", API_KEY)
+                .addQueryParameter("language", LANGUAGE)
                 .build()
             val request = original.newBuilder()
                 .url(url)
@@ -82,8 +146,15 @@ object AppModule {
     @Singleton
     @Named("MOVIE_API")
     fun provideMovieApi(
-        retrofit: Retrofit
+        @Named("MOVIE_RETROFIT") retrofit: Retrofit
     ): MovieApi = retrofit.create()
+
+    @Provides
+    @Singleton
+    @Named("AUTH_API")
+    fun provideAuthApi(
+        @Named("AUTH_RETROFIT") retrofit: Retrofit
+    ): AuthApi = retrofit.create()
 
     @Provides
     @Singleton
@@ -94,6 +165,22 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSavedMovieRepository(
-        @Named("MOVIE_API") movieApi: MovieApi
-    ): SavedMovieRepository = SavedMovieRepositoryImp(api = movieApi)
+        @Named("MOVIE_API") movieApi: MovieApi,
+        sessionManager: SessionManager
+    ): SavedMovieRepository = SavedMovieRepositoryImp(
+        api = movieApi,
+        sessionManager = sessionManager
+    )
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        @Named("MOVIE_API") movieApi: MovieApi,
+        @Named("AUTH_API") authApi: AuthApi,
+        sessionManager: SessionManager
+    ): AuthRepository = AuthRepositoryImp(
+        movieApi = movieApi,
+        authApi = authApi,
+        sessionManager = sessionManager
+    )
 }

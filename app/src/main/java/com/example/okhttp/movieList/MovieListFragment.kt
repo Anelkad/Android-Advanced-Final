@@ -115,7 +115,7 @@ class MovieListFragment : Fragment(),
                     Toast.makeText(
                         context,
                         getString(R.string.smth_went_wrong),
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
@@ -126,23 +126,34 @@ class MovieListFragment : Fragment(),
                 is MovieListViewModel.State.ShowLoading -> {
                     //binding.progressBar.isVisible = true
                 }
-
-                is MovieListViewModel.State.MovieSaved -> {
-                    Toast.makeText(
-                        context,
-                        getString(R.string.movie_saved_title, state.movie.title),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-
-                is MovieListViewModel.State.ShowWaitDialog -> {
-                    showWaitDialog()
-                }
-
-                is MovieListViewModel.State.HideWaitDialog -> {
-                    hideWaitDialog()
-                }
             }
         }.launchIn(lifecycleScope)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            movieListViewModel.effect.collect {
+                when (it) {
+                    is MovieListViewModel.Effect.ShowToast -> {
+                        Toast.makeText(
+                            context,
+                            it.text,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    MovieListViewModel.Effect.ShowWaitDialog -> {
+                        showWaitDialog()
+                    }
+                    MovieListViewModel.Effect.HideWaitDialog -> {
+                        hideWaitDialog()
+                    }
+                    MovieListViewModel.Effect.MovieSaved -> {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.movie_saved_title),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
     }
 }

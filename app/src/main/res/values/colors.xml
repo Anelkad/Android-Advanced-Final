@@ -11,5 +11,6 @@
     
     <color name="bottom_nav_selected_item">#5959E1</color>
     <color name="bottom_nav_item">#2E2D43</color>
+    <color name="favorite_color">#44498B</color>
     <color name="transparent">#00000000</color>
 </resources>

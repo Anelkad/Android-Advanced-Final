@@ -18,6 +18,7 @@ import com.example.okhttp.delegates.WaitDialogDelegate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SavedMovieFragment : Fragment(),
@@ -43,13 +44,16 @@ class SavedMovieFragment : Fragment(),
     }
 
     private fun bindViews() {
-        //todo swipe refresh
+        binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
         //todo add crashlytics
         movieAdapter = SavedMovieAdapter(
             onItemClickListener = ::navigateToDetails,
             deleteMovieListener = { savedMovieListViewModel.deleteMovie(it) }
         )
         binding?.rvMovies?.adapter = movieAdapter
+        binding?.swipeRefresh?.setOnRefreshListener {
+            savedMovieListViewModel.getMovieList()
+        }
     }
 
     private fun setupObservers() {
@@ -65,36 +69,60 @@ class SavedMovieFragment : Fragment(),
 
                 is SavedMovieListViewModel.State.HideLoading -> {
                     binding?.progressBar?.isVisible = false
+                    binding?.swipeRefresh?.isRefreshing = false
                 }
 
                 is SavedMovieListViewModel.State.ShowLoading -> {
-                    binding?.progressBar?.isVisible = true
+                    binding?.apply {
+                        if (!swipeRefresh.isRefreshing) progressBar.isVisible = true
+                    }
                 }
 
                 is SavedMovieListViewModel.State.SavedMovieList -> {
                     movieAdapter?.submitList(state.movies)
-                    binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
-                }
-
-                is SavedMovieListViewModel.State.MovieDeleted -> {
-                    Toast.makeText(
-                        context,
-                        getString(R.string.movie_deleted_title),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-
-                is SavedMovieListViewModel.State.ShowWaitDialog -> {
-                    showWaitDialog()
-                }
-
-                is SavedMovieListViewModel.State.HideWaitDialog -> {
-                    hideWaitDialog()
+                    binding?.tvNoSavedMovie?.isVisible = state.movies.isEmpty()
                 }
 
                 else -> Unit
             }
         }.launchIn(lifecycleScope)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            savedMovieListViewModel.effect.collect { effect ->
+                when (effect) {
+                    is SavedMovieListViewModel.Effect.ShowToast -> {
+                        Toast.makeText(
+                            context,
+                            effect.text,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    SavedMovieListViewModel.Effect.ShowWaitDialog -> {
+                        showWaitDialog()
+                    }
+
+                    SavedMovieListViewModel.Effect.HideWaitDialog -> {
+                        hideWaitDialog()
+                    }
+
+                    is SavedMovieListViewModel.Effect.MovieDeleted -> {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.movie_deleted_title),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        movieAdapter?.deleteMovie(
+                            movieId = effect.movieId,
+                            update = {
+                                binding?.tvNoSavedMovie?.isVisible =
+                                    movieAdapter?.currentList?.isEmpty() == true
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun navigateToDetails(movieId: Int) {

@@ -6,5 +6,6 @@
 
     <include app:graph="@navigation/movie_list_graph" />
     <include app:graph="@navigation/saved_movie_list_graph" />
+    <include app:graph="@navigation/profile_graph" />
 
 </navigation>

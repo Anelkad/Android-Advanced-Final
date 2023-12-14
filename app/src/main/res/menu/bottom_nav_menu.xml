@@ -9,4 +9,9 @@
         android:id="@+id/saved_movie_list_graph"
         android:icon="@drawable/baseline_favorite_24"
         android:title="Saved" />
+
+    <item
+        android:id="@+id/profile_graph"
+        android:icon="@drawable/baseline_account_circle_24"
+        android:title="Profile" />
 </menu>

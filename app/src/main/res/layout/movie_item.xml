@@ -56,7 +56,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/white"
-                android:src="@drawable/baseline_bookmark_add_24" />
+                android:src="@drawable/baseline_bookmark_add_24"
+                app:tint="@color/favorite_color" />
 
         </LinearLayout>
 

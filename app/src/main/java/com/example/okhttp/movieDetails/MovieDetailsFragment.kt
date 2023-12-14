@@ -19,6 +19,7 @@ import com.example.okhttp.domain.model.MovieDetails
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
@@ -32,6 +33,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMovieDetailsBinding.bind(view)
         movieViewModel.getMovie(args.id)
+        movieViewModel.getIsMovieSaved(args.id)
         bindViews()
         setupObservers()
         registerWaitDialogDelegate(this)
@@ -50,7 +52,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                     Toast.makeText(
                         context,
                         getString(R.string.smth_went_wrong),
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
@@ -66,40 +68,80 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                     bindMovie(state.movie)
                 }
 
-                is MovieDetailsViewModel.State.MovieSaved -> {
-                    Toast.makeText(
-                        context,
-                        getString(R.string.movie_saved_title, state.movie.title),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-
-                is MovieDetailsViewModel.State.ShowWaitDialog -> {
-                    showWaitDialog()
-                }
-
-                is MovieDetailsViewModel.State.HideWaitDialog -> {
-                    hideWaitDialog()
+                is MovieDetailsViewModel.State.IsMovieSaved -> {
+                    binding?.btnSave?.apply {
+                        if (state.details.favorite) {
+                            setImageResource(R.drawable.baseline_favorite_24)
+                            setOnClickListener { movieViewModel.deleteMovie(state.details.id) }
+                        } else {
+                            setImageResource(R.drawable.baseline_favorite_border_24)
+                            setOnClickListener { movieViewModel.saveMovie(state.details.id) }
+                        }
+                    }
                 }
             }
         }.launchIn(lifecycleScope)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            movieViewModel.effect.collect {
+                when (it) {
+                    is MovieDetailsViewModel.Effect.ShowToast -> {
+                        Toast.makeText(
+                            context,
+                            it.text,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    MovieDetailsViewModel.Effect.ShowWaitDialog -> {
+                        showWaitDialog()
+                    }
+
+                    MovieDetailsViewModel.Effect.HideWaitDialog -> {
+                        hideWaitDialog()
+                    }
+
+                    MovieDetailsViewModel.Effect.MovieSaved -> {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.movie_saved_title),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        movieViewModel.getIsMovieSaved(args.id)
+                    }
+
+                    MovieDetailsViewModel.Effect.MovieDeleted -> {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.movie_deleted_title),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        movieViewModel.getIsMovieSaved(args.id)
+                    }
+                }
+            }
+        }
     }
 
     private fun bindMovie(movieDetails: MovieDetails) {
         binding?.apply {
             tvTitle.text = movieDetails.title
             tvDescription.text = movieDetails.overview
-            if (movieDetails.tagline.isNotEmpty()) tvTagline.text =
-                getString(R.string.tagline, movieDetails.tagline)
+            btnSave.visibility = View.VISIBLE
+            if (movieDetails.tagline.isNotEmpty()) {
+                tvTagline.visibility = View.VISIBLE
+                tvTagline.text = getString(R.string.tagline, movieDetails.tagline)
+            }
             tvReleaseDate.text = getString(R.string.premiere, movieDetails.releaseDate)
             tvRuntime.text = getString(
                 R.string.runtime,
                 movieDetails.runtime / 60,
                 movieDetails.runtime % 60
             )
-            if (movieDetails.revenue > 0) tvRevenue.text =
-                getString(R.string.revenue, movieDetails.revenue / 1000000)
-
+            if (movieDetails.revenue > 0) {
+                tvRevenue.visibility = View.VISIBLE
+                tvRevenue.text = getString(R.string.revenue, movieDetails.revenue / 1000000)
+            }
             Glide
                 .with(ivPoster.context)
                 .load(IMAGE_URL + movieDetails.posterPath)
@@ -113,9 +155,6 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                 .placeholder(R.drawable.progress_animation)
                 .error(R.drawable.baseline_image_24)
                 .into(ivBackgroundPoster)
-
-            btnSave.isVisible = true
-            btnSave.setOnClickListener { movieViewModel.saveMovie(movieDetails.toMovie()) }
         }
     }
 }

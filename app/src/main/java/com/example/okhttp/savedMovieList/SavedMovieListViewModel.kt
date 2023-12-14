@@ -7,14 +7,16 @@ import com.example.okhttp.domain.usecases.GetSavedMovieUseCase
 import com.example.okhttp.domain.usecases.SaveMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SavedMovieListViewModel @Inject constructor (
+class SavedMovieListViewModel @Inject constructor(
     private val saveMovieUseCase: SaveMovieUseCase,
     private val getSavedMovieUseCase: GetSavedMovieUseCase
 ) : ViewModel() {
@@ -22,40 +24,70 @@ class SavedMovieListViewModel @Inject constructor (
     private var _state = MutableStateFlow<State?>(null)
     val state: StateFlow<State?> = _state
 
+    private val _effect: Channel<Effect> = Channel()
+    val effect = _effect.receiveAsFlow()
+
     init {
         getMovieList()
     }
 
+    private fun setState(newState: State) {
+        _state.value = newState
+    }
+
+    private fun setEffect(effectValue: Effect) {
+        viewModelScope.launch { _effect.send(effectValue) }
+    }
+
     fun getMovieList() = viewModelScope.launch {
-        _state.value = State.ShowLoading
+        setState(State.ShowLoading)
         getSavedMovieUseCase.getSavedMovieList().collect { response ->
-            _state.value = State.HideLoading
+            setState(State.HideLoading)
             response.result?.let {
-                _state.value = State.SavedMovieList(it)
+                setState(State.SavedMovieList(it))
             }
             response.error?.let {
-                _state.value = State.Error(it)
+                setEffect(Effect.ShowToast(it))
+                setState(State.Error(it))
             }
         }
     }
 
-
     fun deleteMovie(movieId: Int) = viewModelScope.launch {
-        _state.value = State.ShowWaitDialog
-        val isMovieDeleted = withContext(Dispatchers.IO) {
+        setEffect(Effect.ShowWaitDialog)
+        val response = withContext(Dispatchers.IO) {
             saveMovieUseCase.deleteMovie(movieId)
         }
-        _state.value = State.MovieDeleted(isMovieDeleted)
-        _state.value = State.HideWaitDialog
+        response.result?.let {
+            setEffect(
+                Effect.MovieDeleted(
+                    success = it.success,
+                    movieId = movieId
+                )
+            )
+            val newList = (state.value as State.SavedMovieList).movies.toMutableList()
+            val deletedMovie = newList.find { it.id == movieId }
+            newList.remove(deletedMovie)
+            setState(State.SavedMovieList(newList))
+        }
+        response.error?.let {
+            setEffect(Effect.ShowToast(it))
+            setState(State.Error(it))
+        }
+        setEffect(Effect.HideWaitDialog)
     }
 
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
         data class SavedMovieList(val movies: List<Movie>) : State()
-        data class MovieDeleted(val movieId: Int) : State()
-        object HideWaitDialog : State()
-        object ShowWaitDialog : State()
         data class Error(val error: String) : State()
+    }
+
+    sealed interface Effect {
+        object ShowWaitDialog : Effect
+        data class MovieDeleted(val success: Boolean, val movieId: Int) : Effect
+        data class ShowToast(var text: String) : Effect
+        object HideWaitDialog : Effect
     }
 }

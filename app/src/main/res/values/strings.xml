@@ -6,10 +6,16 @@
     <string name="description">★ %s\nPremiere: %s</string>
     <string name="revenue">Box office: %d mln $</string>
     <string name="smth_went_wrong">Something went wrong</string>
-    <string name="movie_saved_title">Movie \"%s\" saved!</string>
+    <string name="movie_saved_title">Movie saved!</string>
     <string name="movie_deleted_title">Movie deleted!</string>
     <string name="retry">Retry</string>
     <string name="error_message">Error message</string>
     <string name="no_saved_movie">No saved movie</string>
     <string name="save_movie">Save movie</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="session_id" translatable="false">session_id:</string>
+    <string name="id" translatable="false">id:</string>
 </resources>

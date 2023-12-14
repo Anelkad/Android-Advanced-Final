@@ -6,11 +6,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.okhttp.R
 import com.example.okhttp.domain.model.ListItem
-import com.example.okhttp.domain.model.Movie
 
 class PagedMovieAdapter(
     private val onMovieClickListener: ((Int) -> Unit),
-    private val saveMovieListener: ((Movie) -> Unit)
+    private val saveMovieListener: ((Int) -> Unit)
 ) :
     PagingDataAdapter<ListItem, RecyclerView.ViewHolder>(
         DiffCallback()
