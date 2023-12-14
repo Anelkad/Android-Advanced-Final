@@ -5,7 +5,6 @@ import AUTH_CLIENT
 import BASE_URL
 import ENCRYPTED_SHARED_PREFERENCES
 import KEY_INTERCEPTOR
-import LANGUAGE
 import LOGGING_INTERCEPTOR
 import MOVIE_CLIENT
 import android.content.Context
@@ -133,7 +132,6 @@ object AppModule {
             val originalHttpUrl: HttpUrl = original.url
             val url = originalHttpUrl.newBuilder()
                 .addQueryParameter("api_key", API_KEY)
-                .addQueryParameter("language", LANGUAGE)
                 .build()
             val request = original.newBuilder()
                 .url(url)

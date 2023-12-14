@@ -1,6 +1,7 @@
 package com.example.okhttp.data.di
 
 import API_KEY
+import LANGUAGE
 import com.example.okhttp.data.local.SessionManager
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -22,6 +23,7 @@ class AuthInterceptor @Inject constructor(
         val originalHttpUrl: HttpUrl = original.url
         val url = originalHttpUrl.newBuilder()
             .addQueryParameter("api_key", API_KEY)
+            .addQueryParameter("language", LANGUAGE)
             .addQueryParameter("session_id", getSession())
             .build()
         val request = original.newBuilder()
