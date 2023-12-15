@@ -16,4 +16,5 @@
     <string name="logout">Выйти</string>
     <string name="username">Имя пользователя</string>
     <string name="password">Пароль</string>
+    <string name="rate_movie">Оценить фильм</string>
 </resources>

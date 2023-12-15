@@ -5,11 +5,9 @@ import com.example.okhttp.domain.model.AddMovieResponse
 import com.example.okhttp.domain.repository.SavedMovieRepository
 import javax.inject.Inject
 
-class SaveMovieUseCase @Inject constructor(
+class RateMovieUseCase @Inject constructor(
     private val savedMovieRepository: SavedMovieRepository,
 ) {
-    suspend fun deleteMovie(movieId: Int): CommonResult<AddMovieResponse> = savedMovieRepository.deleteMovie(movieId)
-
-    suspend fun saveMovie(movieId: Int): CommonResult<AddMovieResponse> = savedMovieRepository.saveMovie(movieId)
-
+    suspend fun rateMovie(movieId: Int, rating: Double): CommonResult<AddMovieResponse> =
+        savedMovieRepository.rateMovie(movieId = movieId, rating = rating)
 }

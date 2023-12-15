@@ -19,4 +19,5 @@
     <string name="session_id" translatable="false">session_id:</string>
     <string name="id" translatable="false">id:</string>
     <string name="rating" translatable="false">★ %.3f</string>
+    <string name="rate_movie">Rate Movie</string>
 </resources>

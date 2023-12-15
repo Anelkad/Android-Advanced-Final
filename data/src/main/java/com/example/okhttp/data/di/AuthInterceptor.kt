@@ -1,7 +1,7 @@
 package com.example.okhttp.data.di
 
-import API_KEY
-import LANGUAGE
+import com.example.core.utils.ApiConstants.API_KEY
+import com.example.core.utils.LanguageConstants.LANGUAGE
 import com.example.okhttp.data.local.SessionManager
 import okhttp3.HttpUrl
 import okhttp3.Interceptor

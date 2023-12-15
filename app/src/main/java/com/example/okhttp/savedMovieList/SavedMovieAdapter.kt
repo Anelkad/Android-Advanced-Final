@@ -1,6 +1,6 @@
 package com.example.okhttp.savedMovieList
 
-import IMAGE_URL
+import com.example.core.utils.ApiConstants.IMAGE_URL
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil

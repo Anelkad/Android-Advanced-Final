@@ -1,6 +1,8 @@
 package com.example.okhttp.movieDetails
 
-import IMAGE_URL
+import com.example.core.utils.ApiConstants.IMAGE_URL
+import com.example.core.utils.IntentConstants.MOVIE_ID
+import com.example.core.utils.IntentConstants.RATING
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -86,6 +88,22 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                             setOnClickListener { movieViewModel.saveMovie(state.details.id) }
                         }
                     }
+                    binding?.apply {
+                        if (state.details.rated != null) {
+                            btnRate.setImageResource(R.drawable.baseline_star_rate_24)
+                            val rating = state.details.rated?.value
+                            tvRate.text = rating.toString()
+                            btnRate.setOnClickListener {
+                                showRateMovieDialog(rating)
+                            }
+                        } else {
+                            btnRate.setImageResource(R.drawable.baseline_star_border_24)
+                            tvRate.text = ""
+                            btnRate.setOnClickListener {
+                                showRateMovieDialog(0.0)
+                            }
+                        }
+                    }
                 }
             }
         }.launchIn(lifecycleScope)
@@ -131,10 +149,32 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
         }
     }
 
+    private fun showRateMovieDialog(rating: Double? = 0.0) {
+        if (rating == null) return
+        val dialog = RateMovieDialogFragment(::updateRating)
+        val bundle = Bundle()
+        bundle.putInt(MOVIE_ID, args.id)
+        bundle.putDouble(RATING, rating)
+        dialog.arguments = bundle
+        dialog.show(childFragmentManager, dialog.tag)
+    }
+
+    private fun updateRating(rating: Double?) {
+        binding?.apply {
+            if (rating == 0.0 || rating == null) {
+                btnRate.setImageResource(R.drawable.baseline_star_border_24)
+                tvRate.text = ""
+            } else {
+                tvRate.text = rating.toString()
+                btnRate.setImageResource(R.drawable.baseline_star_rate_24)
+            }
+        }
+    }
+
     private fun bindMovie(movieDetails: MovieDetails) {
         binding?.apply {
             llMovieDetails.visibility = View.VISIBLE
-            tvTitle.text =  movieDetails.title
+            tvTitle.text = movieDetails.title
             tvDescription.text = movieDetails.overview
             tvRating.text = getString(R.string.rating, movieDetails.voteAverage)
             if (movieDetails.tagline.isNotEmpty()) {
