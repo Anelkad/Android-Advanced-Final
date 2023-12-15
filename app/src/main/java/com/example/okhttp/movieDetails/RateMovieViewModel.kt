@@ -17,14 +17,18 @@ class RateMovieViewModel @Inject constructor(
     private var _state = MutableStateFlow<State>(State.HideLoading)
     val state: StateFlow<State> = _state
 
+    private fun setState(newState: State) {
+        _state.value = newState
+    }
+
     fun rateMovie(movieId: Int, rating: Double) = viewModelScope.launch {
-            _state.value = State.ShowLoading
+            setState(State.ShowLoading)
             val response = rateMovieUseCase.rateMovie(
                 movieId = movieId,
                 rating = rating
             )
-            response.result?.let { _state.value = State.RatedMovie(rating) }
-            response.error?.let { _state.value = State.Error(it) }
+            response.result?.let { setState(State.RatedMovie(rating)) }
+            response.error?.let { setState(State.Error(it)) }
             _state.value = State.HideLoading
         }
 
