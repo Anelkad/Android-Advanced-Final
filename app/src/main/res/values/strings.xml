@@ -18,4 +18,5 @@
     <string name="password">Password</string>
     <string name="session_id" translatable="false">session_id:</string>
     <string name="id" translatable="false">id:</string>
+    <string name="rating" translatable="false">★ %.3f</string>
 </resources>

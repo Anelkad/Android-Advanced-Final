@@ -40,8 +40,15 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
     }
 
     private fun bindViews() {
-        binding?.btnBack?.setOnClickListener {
-            findNavController().popBackStack()
+        binding?.apply {
+            llMovieDetails.visibility = View.GONE
+            toolbar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+            srl.setOnRefreshListener {
+                movieViewModel.getMovie(args.id)
+                movieViewModel.getIsMovieSaved(args.id)
+            }
         }
     }
 
@@ -58,6 +65,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
 
                 is MovieDetailsViewModel.State.HideLoading -> {
                     binding?.progressBar?.isVisible = false
+                    binding?.srl?.isRefreshing = false
                 }
 
                 is MovieDetailsViewModel.State.ShowLoading -> {
@@ -125,9 +133,10 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
 
     private fun bindMovie(movieDetails: MovieDetails) {
         binding?.apply {
-            tvTitle.text = movieDetails.title
+            llMovieDetails.visibility = View.VISIBLE
+            tvTitle.text =  movieDetails.title
             tvDescription.text = movieDetails.overview
-            btnSave.visibility = View.VISIBLE
+            tvRating.text = getString(R.string.rating, movieDetails.voteAverage)
             if (movieDetails.tagline.isNotEmpty()) {
                 tvTagline.visibility = View.VISIBLE
                 tvTagline.text = getString(R.string.tagline, movieDetails.tagline)
