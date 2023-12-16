@@ -1,12 +1,11 @@
 package com.example.okhttp.domain.model
 
 data class Movie(
-    var id: Int = 0,
-    var title: String = "",
-    var overview: String? = null,
-    var releaseDate: String? = null,
-    var posterPath: String? = null,
-    var backdropPath: String? = null,
-    var voteAverage: Float? = null
+    var id: Int,
+    var title: String,
+    var overview: String?,
+    var releaseDate: String?,
+    var posterPath: String?,
+    var backdropPath: String?,
+    var voteAverage: Float?
 )
-//todo remove no-arg constructor

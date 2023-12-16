@@ -41,7 +41,6 @@ class PagedMovieAdapter(
                 is ListItem.MovieItem -> {
                     val movieHolder = (holder as MovieViewHolder)
                     movieHolder.bind(listItem.movie)
-                    //todo Item Decorator
                    }
                 is ListItem.AdItem -> (holder as AdViewHolder).bind(listItem.ad)
                 else -> {}

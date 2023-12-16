@@ -80,7 +80,7 @@ class MovieDetailsViewModel @Inject constructor(
         val response = withContext(Dispatchers.IO) {
             saveMovieUseCase.saveMovie(movieId)
         }
-        response.result?.let { setEffect(Effect.MovieSaved) }
+        response.result?.let { setEffect(Effect.MovieSaved(movieId)) }
         response.error?.let {
             setState(State.Error(it))
             setEffect(Effect.ShowToast(it))
@@ -93,7 +93,7 @@ class MovieDetailsViewModel @Inject constructor(
         val response = withContext(Dispatchers.IO) {
             saveMovieUseCase.deleteMovie(movieId)
         }
-        response.result?.let { setEffect(Effect.MovieDeleted) }
+        response.result?.let { setEffect(Effect.MovieDeleted(movieId)) }
         response.error?.let {
             setState(State.Error(it))
             setEffect(Effect.ShowToast(it))
@@ -111,8 +111,8 @@ class MovieDetailsViewModel @Inject constructor(
 
     sealed interface Effect {
         object ShowWaitDialog : Effect
-        object MovieSaved : Effect
-        object MovieDeleted : Effect
+        data class MovieSaved(val movieId: Int) : Effect
+        data class MovieDeleted(val movieId: Int) : Effect
         data class ShowToast(var text: String) : Effect
         object HideWaitDialog : Effect
     }

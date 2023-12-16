@@ -12,6 +12,7 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentAuthBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
+import com.example.okhttp.firebase.EventManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,8 +42,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth),
     private fun setupObservers() {
         viewModel.state.onEach { state ->
             when (state) {
-
                 is AuthViewModel.State.GoToMain -> {
+                    EventManager.logEvent("loginSuccess")
                     goToMain()
                 }
 

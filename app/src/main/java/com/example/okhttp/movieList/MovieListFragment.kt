@@ -19,6 +19,7 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
+import com.example.okhttp.firebase.EventManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
@@ -145,7 +146,11 @@ class MovieListFragment : Fragment(),
                     MovieListViewModel.Effect.HideWaitDialog -> {
                         hideWaitDialog()
                     }
-                    MovieListViewModel.Effect.MovieSaved -> {
+                    is MovieListViewModel.Effect.MovieSaved -> {
+                        EventManager.logEvent(
+                            eventName = "movie_saved",
+                            bundle = bundleOf("movieId" to it.movieId)
+                        )
                         Toast.makeText(
                             context,
                             getString(R.string.movie_saved_title),

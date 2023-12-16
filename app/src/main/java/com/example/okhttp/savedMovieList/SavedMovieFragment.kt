@@ -15,6 +15,7 @@ import com.example.okhttp.R
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
+import com.example.okhttp.firebase.EventManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -45,7 +46,6 @@ class SavedMovieFragment : Fragment(),
 
     private fun bindViews() {
         binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
-        //todo add crashlytics
         movieAdapter = SavedMovieAdapter(
             onItemClickListener = ::navigateToDetails,
             deleteMovieListener = { savedMovieListViewModel.deleteMovie(it) }
@@ -107,6 +107,10 @@ class SavedMovieFragment : Fragment(),
                     }
 
                     is SavedMovieListViewModel.Effect.MovieDeleted -> {
+                        EventManager.logEvent(
+                            eventName = "movieDeleted",
+                            bundle = bundleOf("movieId" to effect.movieId)
+                        )
                         Toast.makeText(
                             context,
                             getString(R.string.movie_deleted_title),

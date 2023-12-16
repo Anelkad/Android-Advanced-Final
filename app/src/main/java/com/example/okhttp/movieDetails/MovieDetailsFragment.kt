@@ -6,6 +6,7 @@ import com.example.core.utils.IntentConstants.RATING
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +19,7 @@ import com.example.okhttp.databinding.FragmentMovieDetailsBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
 import com.example.okhttp.domain.model.MovieDetails
+import com.example.okhttp.firebase.EventManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -110,22 +112,30 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                         hideWaitDialog()
                     }
 
-                    MovieDetailsViewModel.Effect.MovieSaved -> {
+                    is MovieDetailsViewModel.Effect.MovieSaved -> {
+                        EventManager.logEvent(
+                            eventName = "movieSaved",
+                            bundle = bundleOf("movieId" to it.movieId)
+                        )
                         Toast.makeText(
                             context,
                             getString(R.string.movie_saved_title),
                             Toast.LENGTH_SHORT
                         ).show()
-                        movieViewModel.getIsMovieSaved(args.id)
+                        movieViewModel.getIsMovieSaved(it.movieId)
                     }
 
-                    MovieDetailsViewModel.Effect.MovieDeleted -> {
+                    is MovieDetailsViewModel.Effect.MovieDeleted -> {
+                        EventManager.logEvent(
+                            eventName = "movieDeleted",
+                            bundle = bundleOf("movieId" to it.movieId)
+                        )
                         Toast.makeText(
                             context,
                             getString(R.string.movie_deleted_title),
                             Toast.LENGTH_SHORT
                         ).show()
-                        movieViewModel.getIsMovieSaved(args.id)
+                        movieViewModel.getIsMovieSaved(it.movieId)
                     }
                 }
             }

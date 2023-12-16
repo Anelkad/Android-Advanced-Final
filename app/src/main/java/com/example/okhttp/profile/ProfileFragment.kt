@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.okhttp.R
 import com.example.okhttp.auth.AuthActivity
 import com.example.okhttp.databinding.FragmentProfileBinding
+import com.example.okhttp.firebase.EventManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -49,6 +50,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 }
 
                 is ProfileViewModel.State.LoggedOut -> {
+                    EventManager.logEvent("logoutSuccess")
                     goToAuth()
                 }
 

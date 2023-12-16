@@ -46,7 +46,7 @@ class MovieListViewModel @Inject constructor(
         val response = withContext(Dispatchers.IO) {
             saveMovieUseCase.saveMovie(movieId)
         }
-        response.result?.let { setEffect(Effect.MovieSaved)  }
+        response.result?.let { setEffect(Effect.MovieSaved(movieId))  }
         response.error?.let {
             setState(State.Error(it))
             setEffect(Effect.ShowToast(it))
@@ -62,7 +62,7 @@ class MovieListViewModel @Inject constructor(
 
     sealed interface Effect {
         object ShowWaitDialog : Effect
-        object MovieSaved : Effect
+        data class MovieSaved(val movieId: Int) : Effect
         data class ShowToast(var text: String) : Effect
         object HideWaitDialog : Effect
     }

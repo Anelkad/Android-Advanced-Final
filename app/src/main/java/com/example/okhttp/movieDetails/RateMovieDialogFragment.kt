@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.okhttp.R
 import com.example.okhttp.databinding.LayoutBottomSheetRateMovieBinding
+import com.example.okhttp.firebase.EventManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -65,6 +67,10 @@ class RateMovieDialogFragment(
                 }
 
                 is RateMovieViewModel.State.RatedMovie -> {
+                    EventManager.logEvent(
+                        eventName = "movieRated",
+                        bundle = bundleOf("movieId" to arguments?.getInt(MOVIE_ID))
+                    )
                     saveRating(binding?.rating?.rating?.toDouble())
                     dismiss()
                 }
