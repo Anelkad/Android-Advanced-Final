@@ -5,6 +5,7 @@ import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.data.local.SessionManager
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieRequest
 import com.example.okhttp.domain.model.Movie
+import com.example.okhttp.domain.model.Rating
 import com.example.okhttp.domain.repository.SavedMovieRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -49,6 +50,24 @@ class SavedMovieRepositoryImp @Inject constructor(
             ),
             userId = sessionManager.uid.toInt()
         )
+        if (response.isSuccessful) {
+            CommonResult(result = response.body()?.toDomain())
+        } else {
+            CommonResult(error = response.message())
+        }
+    }
+
+    override suspend fun rateMovie(movieId: Int, rating: Double) = withContext(Dispatchers.IO) {
+        val response = if (rating == 0.0) {
+            api.deleteRatingMovie(movieId)
+        } else {
+            api.addRatingMovie(
+                body = Rating(
+                    value = rating
+                ),
+                movieId = movieId
+            )
+        }
         if (response.isSuccessful) {
             CommonResult(result = response.body()?.toDomain())
         } else {

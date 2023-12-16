@@ -1,6 +1,6 @@
 package com.example.okhttp.auth
 
-import Screen
+import com.example.core.utils.Screen
 import android.content.Intent
 import android.os.Bundle
 import android.view.View

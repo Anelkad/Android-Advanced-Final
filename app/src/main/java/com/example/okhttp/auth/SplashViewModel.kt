@@ -36,7 +36,6 @@ class SplashViewModel @Inject constructor(
         if (getUserPrefsUseCase.isAccessTokenEmpty()) {
             getNewToken()
         } else {
-            delay(1500L)
             if (getUserPrefsUseCase.isAccessSessionEmpty()) {
                 setState(State.GoToAuth)
             } else {

@@ -1,6 +1,8 @@
 package com.example.okhttp.movieDetails
 
-import IMAGE_URL
+import com.example.core.utils.ApiConstants.IMAGE_URL
+import com.example.core.utils.IntentConstants.MOVIE_ID
+import com.example.core.utils.IntentConstants.RATING
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -32,16 +34,21 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMovieDetailsBinding.bind(view)
-        movieViewModel.getMovie(args.id)
-        movieViewModel.getIsMovieSaved(args.id)
+        movieViewModel.getMovieDetails(args.id)
         bindViews()
         setupObservers()
         registerWaitDialogDelegate(this)
     }
 
     private fun bindViews() {
-        binding?.btnBack?.setOnClickListener {
-            findNavController().popBackStack()
+        binding?.apply {
+            llMovieDetails.visibility = View.GONE
+            toolbar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+            srl.setOnRefreshListener {
+                movieViewModel.getMovieDetails(args.id)
+            }
         }
     }
 
@@ -58,6 +65,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
 
                 is MovieDetailsViewModel.State.HideLoading -> {
                     binding?.progressBar?.isVisible = false
+                    binding?.srl?.isRefreshing = false
                 }
 
                 is MovieDetailsViewModel.State.ShowLoading -> {
@@ -78,6 +86,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                             setOnClickListener { movieViewModel.saveMovie(state.details.id) }
                         }
                     }
+                    updateRating(state.details.rated?.value)
                 }
             }
         }.launchIn(lifecycleScope)
@@ -123,11 +132,40 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
         }
     }
 
+    private fun showRateMovieDialog(rating: Double? = 0.0) {
+        if (rating == null) return
+        val dialog = RateMovieDialogFragment(::updateRating)
+        val bundle = Bundle()
+        bundle.putInt(MOVIE_ID, args.id)
+        bundle.putDouble(RATING, rating)
+        dialog.arguments = bundle
+        dialog.show(childFragmentManager, dialog.tag)
+    }
+
+    private fun updateRating(rating: Double?) {
+        binding?.apply {
+            if (rating == 0.0 || rating == null) {
+                btnRate.setImageResource(R.drawable.baseline_star_border_24)
+                tvRate.text = ""
+                btnRate.setOnClickListener {
+                    showRateMovieDialog(0.0)
+                }
+            } else {
+                btnRate.setOnClickListener {
+                    showRateMovieDialog(rating)
+                }
+                tvRate.text = rating.toString()
+                btnRate.setImageResource(R.drawable.baseline_star_rate_24)
+            }
+        }
+    }
+
     private fun bindMovie(movieDetails: MovieDetails) {
         binding?.apply {
+            llMovieDetails.visibility = View.VISIBLE
             tvTitle.text = movieDetails.title
             tvDescription.text = movieDetails.overview
-            btnSave.visibility = View.VISIBLE
+            tvRating.text = getString(R.string.rating, movieDetails.voteAverage)
             if (movieDetails.tagline.isNotEmpty()) {
                 tvTagline.visibility = View.VISIBLE
                 tvTagline.text = getString(R.string.tagline, movieDetails.tagline)

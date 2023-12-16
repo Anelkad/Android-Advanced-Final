@@ -35,7 +35,6 @@ class MovieRepositoryImp @Inject constructor(
             } else {
                 CommonResult(error = response.message())
             }
-
     }
 
     override fun getPagedMovieList(): Flow<PagingData<ListItem>> {

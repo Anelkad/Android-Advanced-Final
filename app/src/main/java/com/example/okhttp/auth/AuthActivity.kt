@@ -2,6 +2,7 @@ package com.example.okhttp.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.core.utils.Screen
 import com.example.okhttp.R
 import dagger.hilt.android.AndroidEntryPoint
 

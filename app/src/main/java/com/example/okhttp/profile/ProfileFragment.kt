@@ -1,6 +1,6 @@
 package com.example.okhttp.profile
 
-import Screen
+import com.example.core.utils.Screen
 import android.content.Intent
 import android.os.Bundle
 import android.view.View

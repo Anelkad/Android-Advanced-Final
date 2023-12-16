@@ -1,10 +1,10 @@
 package com.example.okhttp.data.local
 
-import ARG_SESSION
-import ARG_TOKEN
-import ARG_UID
-import ARG_USERNAME
-import ENCRYPTED_SHARED_PREFERENCES
+import com.example.core.utils.SharedPrefsConstants.ARG_SESSION
+import com.example.core.utils.SharedPrefsConstants.ARG_TOKEN
+import com.example.core.utils.SharedPrefsConstants.ARG_UID
+import com.example.core.utils.SharedPrefsConstants.ARG_USERNAME
+import com.example.core.utils.SharedPrefsConstants.ENCRYPTED_SHARED_PREFERENCES
 import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

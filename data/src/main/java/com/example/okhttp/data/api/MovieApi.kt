@@ -1,15 +1,17 @@
 package com.example.okhttp.data.api
 
-import GENRE_ANIMATION
-import GENRE_DRAMA
+import com.example.core.utils.ApiConstants.GENRE_ANIMATION
+import com.example.core.utils.ApiConstants.GENRE_DRAMA
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieRequest
-import com.example.okhttp.data.modelDTO.AddFavoriteMovieResponseDTO
+import com.example.okhttp.data.modelDTO.AddMovieResponseDTO
 import com.example.okhttp.data.modelDTO.MovieDetailsDTO
 import com.example.okhttp.data.modelDTO.MovieIsSavedDTO
 import com.example.okhttp.data.modelDTO.MovieListResponseDTO
 import com.example.okhttp.data.modelDTO.UserDetailsResponse
+import com.example.okhttp.domain.model.Rating
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -44,11 +46,24 @@ interface MovieApi {
         @Path("user_id")
         userId: Int,
         @Body body: AddFavoriteMovieRequest
-    ): Response<AddFavoriteMovieResponseDTO>
+    ): Response<AddMovieResponseDTO>
 
     @GET("movie/{movie_id}/account_states")
     suspend fun getMovieIsSaved(
         @Path("movie_id")
         movieId: Int
     ): Response<MovieIsSavedDTO>
+
+    @POST("movie/{movie_id}/rating")
+    suspend fun addRatingMovie(
+        @Path("movie_id")
+        movieId: Int,
+        @Body body: Rating
+    ): Response<AddMovieResponseDTO>
+
+    @DELETE("movie/{movie_id}/rating")
+    suspend fun deleteRatingMovie(
+        @Path("movie_id")
+        movieId: Int
+    ): Response<AddMovieResponseDTO>
 }

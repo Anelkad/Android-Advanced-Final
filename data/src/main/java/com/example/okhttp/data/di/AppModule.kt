@@ -1,12 +1,12 @@
 package com.example.okhttp.data.di
 
-import API_KEY
-import AUTH_CLIENT
-import BASE_URL
-import ENCRYPTED_SHARED_PREFERENCES
-import KEY_INTERCEPTOR
-import LOGGING_INTERCEPTOR
-import MOVIE_CLIENT
+import com.example.core.utils.ApiConstants.API_KEY
+import com.example.core.utils.ApiConstants.BASE_URL
+import com.example.core.utils.AppModuleConstants.AUTH_CLIENT
+import com.example.core.utils.AppModuleConstants.KEY_INTERCEPTOR
+import com.example.core.utils.AppModuleConstants.LOGGING_INTERCEPTOR
+import com.example.core.utils.AppModuleConstants.MOVIE_CLIENT
+import com.example.core.utils.SharedPrefsConstants.ENCRYPTED_SHARED_PREFERENCES
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log

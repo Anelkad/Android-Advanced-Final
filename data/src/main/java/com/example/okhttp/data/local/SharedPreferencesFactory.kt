@@ -1,7 +1,7 @@
 package com.example.okhttp.data.local
 
-import ENCRYPTED_SHARED_PREFERENCES
-import REGULAR_SHARED_PREFERENCES
+import com.example.core.utils.SharedPrefsConstants.ENCRYPTED_SHARED_PREFERENCES
+import com.example.core.utils.SharedPrefsConstants.REGULAR_SHARED_PREFERENCES
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences

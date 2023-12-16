@@ -1,6 +1,6 @@
 package com.example.okhttp.domain.model
 
-class AddFavoriteMovieResponse(
+class AddMovieResponse(
     val success: Boolean,
     val statusCode: Int,
     val statusMessage: String
