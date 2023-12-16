@@ -34,8 +34,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMovieDetailsBinding.bind(view)
-        movieViewModel.getMovie(args.id)
-        movieViewModel.getIsMovieSaved(args.id)
+        movieViewModel.getMovieDetails(args.id)
         bindViews()
         setupObservers()
         registerWaitDialogDelegate(this)
@@ -48,8 +47,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                 findNavController().popBackStack()
             }
             srl.setOnRefreshListener {
-                movieViewModel.getMovie(args.id)
-                movieViewModel.getIsMovieSaved(args.id)
+                movieViewModel.getMovieDetails(args.id)
             }
         }
     }
@@ -88,22 +86,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                             setOnClickListener { movieViewModel.saveMovie(state.details.id) }
                         }
                     }
-                    binding?.apply {
-                        if (state.details.rated != null) {
-                            btnRate.setImageResource(R.drawable.baseline_star_rate_24)
-                            val rating = state.details.rated?.value
-                            tvRate.text = rating.toString()
-                            btnRate.setOnClickListener {
-                                showRateMovieDialog(rating)
-                            }
-                        } else {
-                            btnRate.setImageResource(R.drawable.baseline_star_border_24)
-                            tvRate.text = ""
-                            btnRate.setOnClickListener {
-                                showRateMovieDialog(0.0)
-                            }
-                        }
-                    }
+                    updateRating(state.details.rated?.value)
                 }
             }
         }.launchIn(lifecycleScope)
@@ -164,7 +147,13 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
             if (rating == 0.0 || rating == null) {
                 btnRate.setImageResource(R.drawable.baseline_star_border_24)
                 tvRate.text = ""
+                btnRate.setOnClickListener {
+                    showRateMovieDialog(0.0)
+                }
             } else {
+                btnRate.setOnClickListener {
+                    showRateMovieDialog(rating)
+                }
                 tvRate.text = rating.toString()
                 btnRate.setImageResource(R.drawable.baseline_star_rate_24)
             }

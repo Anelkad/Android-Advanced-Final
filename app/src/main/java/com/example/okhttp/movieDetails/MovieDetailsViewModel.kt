@@ -8,6 +8,7 @@ import com.example.okhttp.domain.usecases.GetMovieUseCase
 import com.example.okhttp.domain.usecases.SaveMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,18 +37,28 @@ class MovieDetailsViewModel @Inject constructor(
         viewModelScope.launch { _effect.send(effectValue) }
     }
 
-    fun getMovie(movieId: Int) = viewModelScope.launch {
-        val response = withContext(Dispatchers.IO) {
-            getMovieUseCase.getMovie(movieId)
-        }
+    fun getMovieDetails(movieId: Int) = viewModelScope.launch {
+        val movie = async { getMovieUseCase.getMovie(movieId) }.await()
+        val isSaved = async { getMovieUseCase.getIsMovieSaved(movieId) }.await()
         setState(State.HideLoading)
-        response.result?.let {
-            setState(State.ShowMovieDetails(movie = it))
-        }
-        response.error?.let {
-            setState(State.Error(it))
-            setEffect(Effect.ShowToast(it))
-        }
+        async {
+            movie.result?.let {
+                setState(State.ShowMovieDetails(movie = it))
+            }
+            movie.error?.let {
+                setState(State.Error(it))
+                setEffect(Effect.ShowToast(it))
+            }
+        }.await()
+        async {
+            isSaved.result?.let {
+                setState(State.IsMovieSaved(details = it))
+            }
+            isSaved.error?.let {
+                setState(State.Error(it))
+                setEffect(Effect.ShowToast(it))
+            }
+        }.await()
     }
 
     fun getIsMovieSaved(movieId: Int) = viewModelScope.launch {
@@ -74,7 +85,7 @@ class MovieDetailsViewModel @Inject constructor(
             setState(State.Error(it))
             setEffect(Effect.ShowToast(it))
         }
-       setEffect(Effect.HideWaitDialog)
+        setEffect(Effect.HideWaitDialog)
     }
 
     fun deleteMovie(movieId: Int) = viewModelScope.launch {
