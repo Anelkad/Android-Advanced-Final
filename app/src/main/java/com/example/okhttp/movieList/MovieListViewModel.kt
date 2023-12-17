@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.okhttp.domain.model.ListItem
 import com.example.okhttp.domain.usecases.GetMovieUseCase
+import com.example.okhttp.domain.usecases.GetUserPrefsUseCase
 import com.example.okhttp.domain.usecases.SaveMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
     private val getMovieUseCase: GetMovieUseCase,
-    private val saveMovieUseCase: SaveMovieUseCase
+    private val saveMovieUseCase: SaveMovieUseCase,
+    private val getUserPrefsUseCase: GetUserPrefsUseCase
 ) : ViewModel() {
 
     private var _state = MutableStateFlow<State>(State.ShowLoading)
@@ -42,6 +44,10 @@ class MovieListViewModel @Inject constructor(
     }
 
     fun saveMovie(movieId: Int) = viewModelScope.launch {
+        if (getUserPrefsUseCase.isAccessSessionEmpty()) {
+            setEffect(Effect.NoAccess)
+            return@launch
+        }
         setEffect(Effect.ShowWaitDialog)
         val response = withContext(Dispatchers.IO) {
             saveMovieUseCase.saveMovie(movieId)
@@ -61,6 +67,7 @@ class MovieListViewModel @Inject constructor(
     }
 
     sealed interface Effect {
+        object NoAccess : Effect
         object ShowWaitDialog : Effect
         data class MovieSaved(val movieId: Int) : Effect
         data class ShowToast(var text: String) : Effect

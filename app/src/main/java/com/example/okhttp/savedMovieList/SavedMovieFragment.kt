@@ -1,5 +1,6 @@
 package com.example.okhttp.savedMovieList
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.core.utils.Screen
 import com.example.okhttp.R
+import com.example.okhttp.alert.LimitationAlert
+import com.example.okhttp.auth.AuthActivity
 import com.example.okhttp.databinding.FragmentSavedMovieBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
@@ -90,6 +94,13 @@ class SavedMovieFragment : Fragment(),
         viewLifecycleOwner.lifecycleScope.launch {
             savedMovieListViewModel.effect.collect { effect ->
                 when (effect) {
+                    SavedMovieListViewModel.Effect.NoAccess -> {
+                        LimitationAlert(
+                            context = requireContext(),
+                            onDismissAction = { goToLogin() }
+                        ).show()
+                    }
+
                     is SavedMovieListViewModel.Effect.ShowToast -> {
                         Toast.makeText(
                             context,
@@ -135,5 +146,12 @@ class SavedMovieFragment : Fragment(),
             R.id.action_savedMovieFragment_to_movieDetailsFragment,
             bundle
         )
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(context, AuthActivity::class.java)
+        intent.putExtra(Screen.SCREEN, Screen.SPLASH)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 }

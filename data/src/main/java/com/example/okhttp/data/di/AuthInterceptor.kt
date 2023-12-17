@@ -14,8 +14,9 @@ class AuthInterceptor @Inject constructor(
     private val sessionManager: SessionManager
 ): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        return if (!sessionManager.isAccessSessionEmpty()) makeRequest(chain)
-        else chain.proceedDeletingTokenOnError(chain.request())
+        return makeRequest(chain)
+//        return if (!sessionManager.isAccessSessionEmpty()) makeRequest(chain)
+//        else chain.proceedDeletingTokenOnError(chain.request())
     }
 
     private fun makeRequest(chain: Interceptor.Chain): Response {

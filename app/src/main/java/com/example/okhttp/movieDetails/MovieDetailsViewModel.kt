@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.okhttp.domain.model.MovieDetails
 import com.example.okhttp.domain.model.MovieIsSaved
 import com.example.okhttp.domain.usecases.GetMovieUseCase
+import com.example.okhttp.domain.usecases.GetUserPrefsUseCase
 import com.example.okhttp.domain.usecases.SaveMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     private val getMovieUseCase: GetMovieUseCase,
-    private val saveMovieUseCase: SaveMovieUseCase
+    private val saveMovieUseCase: SaveMovieUseCase,
+    private val getUserPrefsUseCase: GetUserPrefsUseCase
 ) : ViewModel() {
 
     private var _state = MutableStateFlow<State>(State.ShowLoading)
@@ -50,6 +52,10 @@ class MovieDetailsViewModel @Inject constructor(
                 setEffect(Effect.ShowToast(it))
             }
         }.await()
+        if (getUserPrefsUseCase.isAccessSessionEmpty()){
+            setEffect(Effect.NoAccess)
+            return@launch
+        }
         async {
             isSaved.result?.let {
                 setState(State.IsMovieSaved(details = it))
@@ -110,6 +116,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     sealed interface Effect {
+        object NoAccess : Effect
         object ShowWaitDialog : Effect
         data class MovieSaved(val movieId: Int) : Effect
         data class MovieDeleted(val movieId: Int) : Effect

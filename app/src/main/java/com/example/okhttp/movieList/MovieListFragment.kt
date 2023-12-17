@@ -1,5 +1,6 @@
 package com.example.okhttp.movieList
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,10 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.core.utils.Screen
 import com.example.okhttp.R
+import com.example.okhttp.alert.LimitationAlert
+import com.example.okhttp.auth.AuthActivity
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
@@ -178,8 +182,22 @@ class MovieListFragment : Fragment(),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+
+                    MovieListViewModel.Effect.NoAccess -> {
+                        LimitationAlert(
+                            context = requireContext(),
+                            onDismissAction = { goToLogin() }
+                        ).show()
+                    }
                 }
             }
         }
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(context, AuthActivity::class.java)
+        intent.putExtra(Screen.SCREEN, Screen.SPLASH)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 }

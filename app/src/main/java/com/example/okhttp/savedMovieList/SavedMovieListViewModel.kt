@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.okhttp.domain.model.Movie
 import com.example.okhttp.domain.usecases.GetSavedMovieUseCase
+import com.example.okhttp.domain.usecases.GetUserPrefsUseCase
 import com.example.okhttp.domain.usecases.SaveMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,11 +19,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SavedMovieListViewModel @Inject constructor(
     private val saveMovieUseCase: SaveMovieUseCase,
-    private val getSavedMovieUseCase: GetSavedMovieUseCase
+    private val getSavedMovieUseCase: GetSavedMovieUseCase,
+    private val getUserPrefsUseCase: GetUserPrefsUseCase
 ) : ViewModel() {
 
-    private var _state = MutableStateFlow<State?>(null)
-    val state: StateFlow<State?> = _state
+    private var _state = MutableStateFlow<State>(State.Empty)
+    val state: StateFlow<State> = _state
 
     private val _effect: Channel<Effect> = Channel()
     val effect = _effect.receiveAsFlow()
@@ -40,6 +42,10 @@ class SavedMovieListViewModel @Inject constructor(
     }
 
     fun getMovieList() = viewModelScope.launch {
+        if (getUserPrefsUseCase.isAccessSessionEmpty()) {
+            setEffect(Effect.NoAccess)
+            return@launch
+        }
         setState(State.ShowLoading)
         getSavedMovieUseCase.getSavedMovieList().collect { response ->
             setState(State.HideLoading)
@@ -78,6 +84,7 @@ class SavedMovieListViewModel @Inject constructor(
     }
 
     sealed class State {
+        object Empty : State()
         object ShowLoading : State()
         object HideLoading : State()
         data class SavedMovieList(val movies: List<Movie>) : State()
@@ -85,6 +92,7 @@ class SavedMovieListViewModel @Inject constructor(
     }
 
     sealed interface Effect {
+        object NoAccess : Effect
         object ShowWaitDialog : Effect
         data class MovieDeleted(val success: Boolean, val movieId: Int) : Effect
         data class ShowToast(var text: String) : Effect

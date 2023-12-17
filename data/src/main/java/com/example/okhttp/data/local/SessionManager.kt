@@ -1,13 +1,11 @@
 package com.example.okhttp.data.local
 
+import android.content.SharedPreferences
 import com.example.core.utils.SharedPrefsConstants.ARG_SESSION
 import com.example.core.utils.SharedPrefsConstants.ARG_TOKEN
 import com.example.core.utils.SharedPrefsConstants.ARG_UID
 import com.example.core.utils.SharedPrefsConstants.ARG_USERNAME
 import com.example.core.utils.SharedPrefsConstants.ENCRYPTED_SHARED_PREFERENCES
-import android.content.SharedPreferences
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -21,7 +19,6 @@ class SessionManager @Inject constructor(
         }
         set(value) {
             field = value
-            _loggedOut.value = false
             sharedPreferences.edit().putString(ARG_TOKEN, value).apply()
         }
 
@@ -52,9 +49,6 @@ class SessionManager @Inject constructor(
             sharedPreferences.edit().putString(ARG_USERNAME, value).apply()
         }
 
-    private val _loggedOut = MutableStateFlow(false)
-    val loggedOut: StateFlow<Boolean> = _loggedOut
-
     fun isAccessSessionEmpty(): Boolean = session.isEmpty()
     fun isAccessTokenEmpty(): Boolean = token.isEmpty()
     fun saveUser(username: String?, id: String?) {
@@ -78,6 +72,5 @@ class SessionManager @Inject constructor(
         uid = ""
         username = ""
         session = ""
-        _loggedOut.value = true
     }
 }

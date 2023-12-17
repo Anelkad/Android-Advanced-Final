@@ -19,4 +19,5 @@
     <string name="rate_movie">Оценить фильм</string>
     <string name="search">Поиск</string>
     <string name="no_movie_found">Фильм не найден</string>
+    <string name="access">Войдите в свой аккаунт чтобы пользоваться приложением!</string>
 </resources>

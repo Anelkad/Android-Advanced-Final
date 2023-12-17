@@ -26,6 +26,10 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun getProfile() {
+        if (getUserPrefsUseCase.isAccessSessionEmpty()){
+            setState(State.NoAccess)
+            return
+        }
         setState(State.Profile(
             id = getUserPrefsUseCase.getUid(),
             username = getUserPrefsUseCase.getUsername(),
@@ -36,6 +40,7 @@ class ProfileViewModel @Inject constructor(
 
     sealed class State {
         object Empty : State()
+        object NoAccess : State()
         data class Profile( val id: String, val username: String, val session: String) : State()
         object LoggedOut : State()
     }
