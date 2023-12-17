@@ -12,8 +12,9 @@ MovieApp final project <br>
 - MVVM, MVI
 - Navigation Component
 - Bottom Navigation View
-- Retrofit
+- Retrofit, Gson
 - DI Hilt
 - Use Cases
 - Coroutines
 - Kotlin Flow
+- Glide
