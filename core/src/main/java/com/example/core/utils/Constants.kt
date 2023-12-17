@@ -11,9 +11,15 @@ object ApiConstants {
     const val BASE_URL = "https://api.themoviedb.org/3/"
     const val IMAGE_URL = "https://image.tmdb.org/t/p/original"
     const val SESSION_ID = "fcec897e35139947ca9e165fb5c153b91b24c060"
+    const val KEYWORD_ANIME = "210024"
 
     const val GENRE_ANIMATION = "16"
     const val GENRE_DRAMA = "18"
+    const val GENRE_ROMANCE = "10749"
+    const val GENRE_ADVENTURE = "12"
+    const val GENRE_ACTION = "28"
+    const val GENRE_FANTASY = "14"
+    const val GENRE_FAMILY = "10751"
 }
 
 object SharedPrefsConstants {

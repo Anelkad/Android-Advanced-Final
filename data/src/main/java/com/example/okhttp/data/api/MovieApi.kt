@@ -1,7 +1,10 @@
 package com.example.okhttp.data.api
 
-import com.example.core.utils.ApiConstants.GENRE_ANIMATION
 import com.example.core.utils.ApiConstants.GENRE_DRAMA
+import com.example.core.utils.ApiConstants.GENRE_FAMILY
+import com.example.core.utils.ApiConstants.GENRE_FANTASY
+import com.example.core.utils.ApiConstants.GENRE_ROMANCE
+import com.example.core.utils.ApiConstants.KEYWORD_ANIME
 import com.example.okhttp.data.modelDTO.AddFavoriteMovieRequest
 import com.example.okhttp.data.modelDTO.AddMovieResponseDTO
 import com.example.okhttp.data.modelDTO.MovieDetailsDTO
@@ -26,7 +29,9 @@ interface MovieApi {
         @Query("page")
         page: Int = 1,
         @Query("with_genres")
-        withGenres: String = "$GENRE_ANIMATION,$GENRE_DRAMA"
+        withGenres: String = "$GENRE_DRAMA|$GENRE_ROMANCE|$GENRE_FAMILY|$GENRE_FANTASY",
+        @Query("with_keywords")
+        withKeywords: String = KEYWORD_ANIME
     ): MovieListResponseDTO
 
     @GET("movie/{movie_id}")
