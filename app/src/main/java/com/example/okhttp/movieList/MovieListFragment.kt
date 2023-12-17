@@ -72,6 +72,7 @@ class MovieListFragment : Fragment(),
             progressBar.isVisible = true
             ilSearch.setEndIconOnClickListener {
                 navigateToSearch(etSearch.text.toString())
+                etSearch.setText("")
             }
         }
         lifecycleScope.launch {

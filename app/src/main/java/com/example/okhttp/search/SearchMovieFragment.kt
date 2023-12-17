@@ -29,13 +29,16 @@ class SearchMovieFragment : Fragment(),
     private var movieAdapter: SearchMovieAdapter? = null
     private val savedMovieListViewModel: SearchMovieListViewModel by viewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            arguments?.getString("query")?.let { savedMovieListViewModel.loadMovies(it) }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         registerWaitDialogDelegate(this)
         bindViews()
         setupObservers()
-        if (savedInstanceState == null) {
-            savedMovieListViewModel.loadMovies(binding?.etSearch?.text.toString())
-        }
     }
 
     override fun onCreateView(
