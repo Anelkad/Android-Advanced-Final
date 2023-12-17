@@ -18,4 +18,5 @@
     <string name="password">Password</string>
     <string name="rate_movie">Rate Movie</string>
     <string name="search">Search</string>
+    <string name="no_movie_found">No movie found</string>
 </resources>

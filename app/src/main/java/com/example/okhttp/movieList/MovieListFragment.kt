@@ -71,7 +71,7 @@ class MovieListFragment : Fragment(),
             }
             progressBar.isVisible = true
             ilSearch.setEndIconOnClickListener {
-
+                navigateToSearch(etSearch.text.toString())
             }
         }
         lifecycleScope.launch {
@@ -111,6 +111,16 @@ class MovieListFragment : Fragment(),
         )
         findNavController().navigate(
             R.id.action_movieListFragment_to_movieDetailsFragment,
+            bundle
+        )
+    }
+
+    private fun navigateToSearch(query: String) {
+        val bundle = bundleOf(
+            "query" to query
+        )
+        findNavController().navigate(
+            R.id.action_movieListFragment_to_searchMovieFragment,
             bundle
         )
     }

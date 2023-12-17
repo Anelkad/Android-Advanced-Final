@@ -7,13 +7,13 @@ data class MovieDetails(
     val overview: String,
     val releaseDate: String,
     val posterPath: String,
-    val backdropPath: String,
+    val backdropPath: String?,
     val voteAverage: Float,
     val voteCount: Int,
     val productionCountries: List<ProductionCountry>,
     val genres: List<Genre>,
     val tagline: String,
-    val revenue: Int,
+    val revenue: Long,
     val runtime: Int
 ){
     fun toMovie(): Movie =

@@ -76,5 +76,5 @@ interface MovieApi {
     suspend fun searchMovie(
         @Query("query")
         query: String
-    ): MovieListResponseDTO
+    ): Response<MovieListResponseDTO>
 }

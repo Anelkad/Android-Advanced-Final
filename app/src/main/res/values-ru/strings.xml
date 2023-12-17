@@ -18,4 +18,5 @@
     <string name="password">Пароль</string>
     <string name="rate_movie">Оценить фильм</string>
     <string name="search">Поиск</string>
+    <string name="no_movie_found">Фильм не найден</string>
 </resources>
