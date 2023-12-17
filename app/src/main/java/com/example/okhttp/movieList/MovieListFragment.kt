@@ -55,11 +55,14 @@ class MovieListFragment : Fragment(),
             saveMovieListener = { movieListViewModel.saveMovie(it) }
         )
         binding?.apply {
-            rvMovies.layoutManager =
-                StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+            val layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL).apply {
+                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+            }
+            rvMovies.layoutManager = layoutManager
             rvMovies.adapter = movieAdapter?.withLoadStateFooter(
                 MovieLoadStateAdapter { movieAdapter?.retry() }
             )
+            rvMovies.itemAnimator = null
             swipeRefresh.setOnRefreshListener {
                 movieAdapter?.refresh()
             }
