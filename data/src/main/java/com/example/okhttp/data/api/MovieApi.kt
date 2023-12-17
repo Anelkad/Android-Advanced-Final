@@ -71,4 +71,10 @@ interface MovieApi {
         @Path("movie_id")
         movieId: Int
     ): Response<AddMovieResponseDTO>
+
+    @GET("search/movie")
+    suspend fun searchMovie(
+        @Query("query")
+        query: String
+    ): MovieListResponseDTO
 }

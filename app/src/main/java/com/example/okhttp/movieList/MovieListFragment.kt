@@ -70,6 +70,9 @@ class MovieListFragment : Fragment(),
                 movieAdapter?.retry()
             }
             progressBar.isVisible = true
+            ilSearch.setEndIconOnClickListener {
+
+            }
         }
         lifecycleScope.launch {
             movieListViewModel.pagedMovieList.collectLatest {

@@ -17,4 +17,5 @@
     <string name="username">Имя пользователя</string>
     <string name="password">Пароль</string>
     <string name="rate_movie">Оценить фильм</string>
+    <string name="search">Поиск</string>
 </resources>
