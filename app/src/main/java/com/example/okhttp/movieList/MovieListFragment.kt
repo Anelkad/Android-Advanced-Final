@@ -72,6 +72,10 @@ class MovieListFragment : Fragment(),
             progressBar.isVisible = true
             ilSearch.setEndIconOnClickListener {
                 navigateToSearch(etSearch.text.toString())
+                EventManager.logEvent(
+                    eventName = "movieSearch",
+                    bundle = bundleOf("query" to etSearch.text.toString())
+                )
                 etSearch.setText("")
             }
         }
@@ -165,7 +169,7 @@ class MovieListFragment : Fragment(),
                     }
                     is MovieListViewModel.Effect.MovieSaved -> {
                         EventManager.logEvent(
-                            eventName = "movie_saved",
+                            eventName = "movieSaved",
                             bundle = bundleOf("movieId" to it.movieId)
                         )
                         Toast.makeText(

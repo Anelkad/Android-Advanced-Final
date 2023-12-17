@@ -67,6 +67,10 @@ class SearchMovieFragment : Fragment(),
                 savedMovieListViewModel.search(etSearch.text.toString())
             }
             ilSearch.setEndIconOnClickListener {
+                EventManager.logEvent(
+                    eventName = "movieSearch",
+                    bundle = bundleOf("query" to etSearch.text.toString())
+                )
                 savedMovieListViewModel.search(etSearch.text.toString())
             }
         }
