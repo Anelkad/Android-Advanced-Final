@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.okhttp.R
+import com.example.okhttp.alert.LimitationAlert
 import com.example.okhttp.auth.AuthActivity
 import com.example.okhttp.databinding.FragmentProfileBinding
 import com.example.okhttp.firebase.EventManager
@@ -43,6 +44,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             when (state) {
                 is ProfileViewModel.State.Profile -> {
                     binding?.apply {
+                        cvProfile.visibility = View.VISIBLE
                         tvUsername.text = state.username
                         tvId.text = state.id
                         tvSession.text = state.session
@@ -54,6 +56,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     goToAuth()
                 }
 
+                ProfileViewModel.State.NoAccess -> {
+                    LimitationAlert(
+                        context = requireContext(),
+                        onDismissAction = { goToLogin() }
+                    ).show()
+                }
+
                 else -> {}
             }
         }.launchIn(lifecycleScope)
@@ -62,6 +71,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private fun goToAuth() {
         val intent = Intent(context, AuthActivity::class.java)
         intent.putExtra(Screen.SCREEN, Screen.AUTH)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(context, AuthActivity::class.java)
+        intent.putExtra(Screen.SCREEN, Screen.SPLASH)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }

@@ -1,5 +1,6 @@
 package com.example.okhttp.movieDetails
 
+import android.content.Intent
 import com.example.core.utils.ApiConstants.IMAGE_URL
 import com.example.core.utils.IntentConstants.MOVIE_ID
 import com.example.core.utils.IntentConstants.RATING
@@ -14,7 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.example.core.utils.Screen
 import com.example.okhttp.R
+import com.example.okhttp.alert.LimitationAlert
+import com.example.okhttp.auth.AuthActivity
 import com.example.okhttp.databinding.FragmentMovieDetailsBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
@@ -137,6 +141,23 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                         ).show()
                         movieViewModel.getIsMovieSaved(it.movieId)
                     }
+
+                    MovieDetailsViewModel.Effect.NoAccess -> {
+                        binding?.apply {
+                            btnRate.setOnClickListener {
+                                LimitationAlert(
+                                    context = requireContext(),
+                                    onDismissAction = { goToLogin() }
+                                ).show()
+                            }
+                            btnSave.setOnClickListener {
+                                LimitationAlert(
+                                    context = requireContext(),
+                                    onDismissAction = { goToLogin() }
+                                ).show()
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -204,5 +225,12 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details),
                 .error(R.drawable.baseline_image_24)
                 .into(ivBackgroundPoster)
         }
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(context, AuthActivity::class.java)
+        intent.putExtra(Screen.SCREEN, Screen.SPLASH)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 }

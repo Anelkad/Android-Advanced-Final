@@ -1,17 +1,13 @@
-package com.example.okhttp.movieList
+package com.example.okhttp.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import com.example.okhttp.domain.model.ListItem
-import com.example.okhttp.domain.usecases.GetMovieUseCase
-import com.example.okhttp.domain.usecases.GetUserPrefsUseCase
+import com.example.okhttp.domain.model.Movie
 import com.example.okhttp.domain.usecases.SaveMovieUseCase
+import com.example.okhttp.domain.usecases.SearchMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -20,10 +16,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MovieListViewModel @Inject constructor(
-    private val getMovieUseCase: GetMovieUseCase,
+class SearchMovieListViewModel @Inject constructor(
     private val saveMovieUseCase: SaveMovieUseCase,
-    private val getUserPrefsUseCase: GetUserPrefsUseCase
+    private val searchMovieUseCase: SearchMovieUseCase
 ) : ViewModel() {
 
     private var _state = MutableStateFlow<State>(State.ShowLoading)
@@ -31,9 +26,6 @@ class MovieListViewModel @Inject constructor(
 
     private val _effect: Channel<Effect> = Channel()
     val effect = _effect.receiveAsFlow()
-
-    val pagedMovieList: Flow<PagingData<ListItem>> =
-        getMovieUseCase.getPagedMovieList().cachedIn(viewModelScope)
 
     private fun setState(newState: State) {
         _state.value = newState
@@ -43,16 +35,39 @@ class MovieListViewModel @Inject constructor(
         viewModelScope.launch { _effect.send(effectValue) }
     }
 
-    fun saveMovie(movieId: Int) = viewModelScope.launch {
-        if (getUserPrefsUseCase.isAccessSessionEmpty()) {
-            setEffect(Effect.NoAccess)
-            return@launch
+    fun loadMovies(query: String) = viewModelScope.launch {
+        searchMovieUseCase.searchMovie(query).collect { response ->
+            setState(State.HideLoading)
+            response.result?.let {
+                setState(State.FoundMovieList(it))
+            }
+            response.error?.let {
+                setEffect(Effect.ShowToast(it))
+                setState(State.Error(it))
+            }
         }
+    }
+
+    fun search(query: String) = viewModelScope.launch {
+        setState(State.ShowLoading)
+        searchMovieUseCase.searchMovie(query).collect { response ->
+            setState(State.HideLoading)
+            response.result?.let {
+                setState(State.FoundMovieList(it))
+            }
+            response.error?.let {
+                setEffect(Effect.ShowToast(it))
+                setState(State.Error(it))
+            }
+        }
+    }
+
+    fun saveMovie(movieId: Int) = viewModelScope.launch {
         setEffect(Effect.ShowWaitDialog)
         val response = withContext(Dispatchers.IO) {
             saveMovieUseCase.saveMovie(movieId)
         }
-        response.result?.let { setEffect(Effect.MovieSaved(movieId))  }
+        response.result?.let { setEffect(Effect.MovieSaved(movieId)) }
         response.error?.let {
             setState(State.Error(it))
             setEffect(Effect.ShowToast(it))
@@ -63,11 +78,11 @@ class MovieListViewModel @Inject constructor(
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
+        data class FoundMovieList(val movies: List<Movie>) : State()
         data class Error(val error: String) : State()
     }
 
     sealed interface Effect {
-        object NoAccess : Effect
         object ShowWaitDialog : Effect
         data class MovieSaved(val movieId: Int) : Effect
         data class ShowToast(var text: String) : Effect

@@ -14,7 +14,7 @@ data class MovieDetailsDTO(
     @SerializedName("poster_path")
     val posterPath: String,
     @SerializedName("backdrop_path")
-    val backdropPath: String,
+    val backdropPath: String?,
     @SerializedName("vote_average")
     val voteAverage: Float,
     @SerializedName("vote_count")
@@ -23,7 +23,7 @@ data class MovieDetailsDTO(
     val productionCountries: List<ProductionCountryDTO>,
     val genres: List<GenreDTO>,
     val tagline: String,
-    val revenue: Int,
+    val revenue: Long,
     val runtime: Int
 ){
     fun toDomain(): MovieDetails = MovieDetails(

@@ -6,11 +6,13 @@ import androidx.paging.PagingData
 import com.example.core.utils.CommonResult
 import com.example.okhttp.data.api.MovieApi
 import com.example.okhttp.domain.model.ListItem
+import com.example.okhttp.domain.model.Movie
 import com.example.okhttp.domain.model.MovieDetails
 import com.example.okhttp.domain.model.MovieIsSaved
 import com.example.okhttp.domain.repository.MovieRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -41,5 +43,14 @@ class MovieRepositoryImp @Inject constructor(
         return Pager(PagingConfig(pageSize = 10, initialLoadSize = 10)) {
             MoviePagingSource(api)
         }.flow
+    }
+
+    override fun searchMovie(query: String): Flow<CommonResult<List<Movie>>> = flow {
+        val response = api.searchMovie(query = query)
+        if (response.isSuccessful) {
+            emit(CommonResult(result = response.body()?.results?.map { it.toDomain() }))
+        } else {
+            emit(CommonResult(error = response.message()))
+        }
     }
 }

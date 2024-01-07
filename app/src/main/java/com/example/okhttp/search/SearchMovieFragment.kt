@@ -1,6 +1,5 @@
-package com.example.okhttp.savedMovieList
+package com.example.okhttp.search
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.core.utils.Screen
 import com.example.okhttp.R
-import com.example.okhttp.alert.LimitationAlert
-import com.example.okhttp.auth.AuthActivity
-import com.example.okhttp.databinding.FragmentSavedMovieBinding
+import com.example.okhttp.databinding.FragmentSearchMovieBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
 import com.example.okhttp.firebase.EventManager
@@ -26,13 +22,19 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SavedMovieFragment : Fragment(),
+class SearchMovieFragment : Fragment(),
     DialogDelegate by WaitDialogDelegate() {
 
-    private var binding: FragmentSavedMovieBinding? = null
-    private var movieAdapter: SavedMovieAdapter? = null
-    private val savedMovieListViewModel: SavedMovieListViewModel by viewModels()
+    private var binding: FragmentSearchMovieBinding? = null
+    private var movieAdapter: SearchMovieAdapter? = null
+    private val savedMovieListViewModel: SearchMovieListViewModel by viewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            arguments?.getString("query")?.let { savedMovieListViewModel.loadMovies(it) }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         registerWaitDialogDelegate(this)
         bindViews()
@@ -44,26 +46,40 @@ class SavedMovieFragment : Fragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSavedMovieBinding.inflate(inflater, container, false)
+        binding = FragmentSearchMovieBinding.inflate(inflater, container, false)
         return binding?.root
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("saveQuery", binding?.etSearch?.text.toString())
+    }
+
     private fun bindViews() {
-        binding?.tvNoSavedMovie?.isVisible = movieAdapter?.currentList?.isEmpty() == true
-        movieAdapter = SavedMovieAdapter(
+        movieAdapter = SearchMovieAdapter(
             onItemClickListener = ::navigateToDetails,
-            deleteMovieListener = { savedMovieListViewModel.deleteMovie(it) }
+            saveMovieListener = { savedMovieListViewModel.saveMovie(it) }
         )
-        binding?.rvMovies?.adapter = movieAdapter
-        binding?.swipeRefresh?.setOnRefreshListener {
-            savedMovieListViewModel.getMovieList()
+        binding?.apply {
+            etSearch.setText(arguments?.getString("query"))
+            rvMovies.adapter = movieAdapter
+            swipeRefresh.setOnRefreshListener {
+                savedMovieListViewModel.search(etSearch.text.toString())
+            }
+            ilSearch.setEndIconOnClickListener {
+                EventManager.logEvent(
+                    eventName = "movieSearch",
+                    bundle = bundleOf("query" to etSearch.text.toString())
+                )
+                savedMovieListViewModel.search(etSearch.text.toString())
+            }
         }
     }
 
     private fun setupObservers() {
         savedMovieListViewModel.state.onEach { state ->
             when (state) {
-                is SavedMovieListViewModel.State.Error -> {
+                is SearchMovieListViewModel.State.Error -> {
                     Toast.makeText(
                         context,
                         getString(R.string.smth_went_wrong),
@@ -71,37 +87,30 @@ class SavedMovieFragment : Fragment(),
                     ).show()
                 }
 
-                is SavedMovieListViewModel.State.HideLoading -> {
+                is SearchMovieListViewModel.State.HideLoading -> {
                     binding?.progressBar?.isVisible = false
                     binding?.swipeRefresh?.isRefreshing = false
                 }
 
-                is SavedMovieListViewModel.State.ShowLoading -> {
+                is SearchMovieListViewModel.State.ShowLoading -> {
+                    movieAdapter?.submitList(emptyList())
                     binding?.apply {
                         if (!swipeRefresh.isRefreshing) progressBar.isVisible = true
+                        tvNoFoundMovie.visibility = View.GONE
                     }
                 }
 
-                is SavedMovieListViewModel.State.SavedMovieList -> {
+                is SearchMovieListViewModel.State.FoundMovieList -> {
                     movieAdapter?.submitList(state.movies)
-                    binding?.tvNoSavedMovie?.isVisible = state.movies.isEmpty()
+                    binding?.tvNoFoundMovie?.isVisible = state.movies.isEmpty()
                 }
-
-                else -> Unit
             }
         }.launchIn(lifecycleScope)
 
         viewLifecycleOwner.lifecycleScope.launch {
             savedMovieListViewModel.effect.collect { effect ->
                 when (effect) {
-                    SavedMovieListViewModel.Effect.NoAccess -> {
-                        LimitationAlert(
-                            context = requireContext(),
-                            onDismissAction = { goToLogin() }
-                        ).show()
-                    }
-
-                    is SavedMovieListViewModel.Effect.ShowToast -> {
+                    is SearchMovieListViewModel.Effect.ShowToast -> {
                         Toast.makeText(
                             context,
                             effect.text,
@@ -109,31 +118,24 @@ class SavedMovieFragment : Fragment(),
                         ).show()
                     }
 
-                    SavedMovieListViewModel.Effect.ShowWaitDialog -> {
+                    SearchMovieListViewModel.Effect.ShowWaitDialog -> {
                         showWaitDialog()
                     }
 
-                    SavedMovieListViewModel.Effect.HideWaitDialog -> {
+                    SearchMovieListViewModel.Effect.HideWaitDialog -> {
                         hideWaitDialog()
                     }
 
-                    is SavedMovieListViewModel.Effect.MovieDeleted -> {
+                    is SearchMovieListViewModel.Effect.MovieSaved -> {
                         EventManager.logEvent(
-                            eventName = "movieDeleted",
+                            eventName = "movieSaved",
                             bundle = bundleOf("movieId" to effect.movieId)
                         )
                         Toast.makeText(
                             context,
-                            getString(R.string.movie_deleted_title),
+                            getString(R.string.movie_saved_title),
                             Toast.LENGTH_SHORT
                         ).show()
-                        movieAdapter?.deleteMovie(
-                            movieId = effect.movieId,
-                            update = {
-                                binding?.tvNoSavedMovie?.isVisible =
-                                    movieAdapter?.currentList?.isEmpty() == true
-                            }
-                        )
                     }
                 }
             }
@@ -143,15 +145,8 @@ class SavedMovieFragment : Fragment(),
     private fun navigateToDetails(movieId: Int) {
         val bundle = bundleOf("id" to movieId)
         findNavController().navigate(
-            R.id.action_savedMovieFragment_to_movieDetailsFragment,
+            R.id.action_searchMovieFragment_to_movieDetailsFragment,
             bundle
         )
-    }
-
-    private fun goToLogin() {
-        val intent = Intent(context, AuthActivity::class.java)
-        intent.putExtra(Screen.SCREEN, Screen.SPLASH)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.okhttp.movieList
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,10 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.core.utils.Screen
 import com.example.okhttp.R
+import com.example.okhttp.alert.LimitationAlert
+import com.example.okhttp.auth.AuthActivity
 import com.example.okhttp.databinding.FragmentMovieListBinding
 import com.example.okhttp.delegates.DialogDelegate
 import com.example.okhttp.delegates.WaitDialogDelegate
@@ -70,6 +74,14 @@ class MovieListFragment : Fragment(),
                 movieAdapter?.retry()
             }
             progressBar.isVisible = true
+            ilSearch.setEndIconOnClickListener {
+                navigateToSearch(etSearch.text.toString())
+                EventManager.logEvent(
+                    eventName = "movieSearch",
+                    bundle = bundleOf("query" to etSearch.text.toString())
+                )
+                etSearch.setText("")
+            }
         }
         lifecycleScope.launch {
             movieListViewModel.pagedMovieList.collectLatest {
@@ -108,6 +120,16 @@ class MovieListFragment : Fragment(),
         )
         findNavController().navigate(
             R.id.action_movieListFragment_to_movieDetailsFragment,
+            bundle
+        )
+    }
+
+    private fun navigateToSearch(query: String) {
+        val bundle = bundleOf(
+            "query" to query
+        )
+        findNavController().navigate(
+            R.id.action_movieListFragment_to_searchMovieFragment,
             bundle
         )
     }
@@ -151,7 +173,7 @@ class MovieListFragment : Fragment(),
                     }
                     is MovieListViewModel.Effect.MovieSaved -> {
                         EventManager.logEvent(
-                            eventName = "movie_saved",
+                            eventName = "movieSaved",
                             bundle = bundleOf("movieId" to it.movieId)
                         )
                         Toast.makeText(
@@ -160,8 +182,22 @@ class MovieListFragment : Fragment(),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+
+                    MovieListViewModel.Effect.NoAccess -> {
+                        LimitationAlert(
+                            context = requireContext(),
+                            onDismissAction = { goToLogin() }
+                        ).show()
+                    }
                 }
             }
         }
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(context, AuthActivity::class.java)
+        intent.putExtra(Screen.SCREEN, Screen.SPLASH)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 }
